@@ -84,14 +84,14 @@ const StandardSearchScreen = (props) => {
     }
 
     const renderRecipePreviews = ({item,index}) =>{
-        return <RecipePreview title={item.title} id={item.id} image={item.image} readyInMinutes={item.readyInMinutes} servings={item.servings} />
+        return <RecipePreview title={item.title} id={item.id} image={item.imageUrls.length > 1 ? item.imageUrls[item.imageUrls.length - 1] : item.image} readyInMinutes={item.readyInMinutes} servings={item.servings} />
     }
 
 
     return (
         <View style={styles.screen} >
             <Logo color={Colors.blue} />
-            <TouchableWithoutFeedback style={{ flex: 1 }} onPress={() => { Keyboard.dismiss() }}>
+            <TouchableWithoutFeedback disabled={recipesList ? true : false} style={{ flex: 1 }} onPress={() => { Keyboard.dismiss() }}>
                 <View style={styles.restOfTheScreenContainer}>
                     <Animated.View style={[styles.searchTextInputAnimatedContainer, { top: searchBarDistanceFromTop }]}>
                         <TouchableOpacity style={{ width: '60%' }} activeOpacity={animationCompleted ? 1 : 0.5} onPressOut={animationCompleted ? null : startAnimationAfterRealase} >
@@ -159,7 +159,8 @@ const styles = StyleSheet.create({
         borderTopColor:Colors.gray
     },
     listStyle:{
-        margin:'3%',
+        marginHorizontal:'3%',
+        marginTop:'3%',
         flex:1
     }
 })
