@@ -2,7 +2,8 @@ import { NavigationContainer } from '@react-navigation/native';
 import { AppLoading } from 'expo';
 import * as Font from 'expo-font';
 import React, { useState } from 'react';
-import { StyleSheet, UIManager } from 'react-native';
+import { UIManager } from 'react-native';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import GrocerEatsNavigator from './Navigation/GrocerEatsNavigator';
 
 const fetchFonts = () => {
@@ -31,18 +32,11 @@ export default function App() {
 
 
   return (
-    <NavigationContainer>
-      <GrocerEatsNavigator />
-    </NavigationContainer>
-
+    <SafeAreaProvider>
+      <NavigationContainer>
+        <GrocerEatsNavigator />
+      </NavigationContainer>
+    </SafeAreaProvider>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});

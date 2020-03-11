@@ -1,18 +1,21 @@
 import React, { useRef } from 'react'
 import { View, Text, StyleSheet } from 'react-native'
-import { SafeAreaView } from 'react-native-safe-area-context'
+
 import Colors from '../constants/Colors'
 import { Ionicons } from '@expo/vector-icons'
+import { SafeAreaView, useSafeArea } from 'react-native-safe-area-context'
+
 
 const Logo = (props) => {
+    const insets = useSafeArea();
 
     return (
-        <SafeAreaView style={styles.safeAreaViewWrapper}>
+        <View style={{...styles.safeAreaViewWrapper,paddingTop: insets.top }}>
             {props.goBack && <View style={styles.arrowContainer}>
                 <Ionicons style={styles.arrow} name='ios-arrow-back' size={23} onPress={() => { props.goBack() }} />
             </View>}
             <Text style={{...styles.logo, color:props.color}}>GrocerEats</Text>
-        </SafeAreaView>
+        </View>
     )
 }
 const styles = StyleSheet.create({
@@ -21,7 +24,8 @@ const styles = StyleSheet.create({
         //elevation: 2,
         overflow: 'hidden',
         borderBottomWidth: 0,
-        borderBottomColor: Colors.gray
+        borderBottomColor: Colors.gray,
+        
     },
     
     logo: {

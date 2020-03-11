@@ -13,14 +13,21 @@ import MealDetailsScreen from '../screens/MealDetailsScreen';
 import Logo from '../components/Logo';
 
 
-const StandardBottomTabNavigator = Platform.OS === 'android' ? createMaterialBottomTabNavigator() : createBottomTabNavigator();
+const BottomTabNavigator = Platform.OS === 'android' ? createMaterialBottomTabNavigator() : createBottomTabNavigator();
 const iconSize = 24;
 
-const forFade = ({ current, closing }) => ({
-    cardStyle: {
-        opacity: current.progress,
-    },
-});
+const forFade = ({ current, closing }) => {
+    return (
+        {
+            cardStyle: {
+                opacity: current.progress.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: [0, 1],
+                  }),
+            },
+        }
+    )
+};
 
 const IOSTabBarOptions = {
     showLabel: false,
@@ -29,64 +36,74 @@ const IOSTabBarOptions = {
 
 const StackNavigator = createStackNavigator();
 
-const searchStackNavigator = () => {
+const searchStackNavigator = ({navigation, route}) => {
+    if(route.state && route.state.index > 0){
+        navigation.setOptions({tabBarVisible:false})
+    }else{
+        navigation.setOptions({tabBarVisible:true})
+    }
     return (<StackNavigator.Navigator headerMode='none' >
         <StackNavigator.Screen name="StandardSearch" component={StandardSearchScreen} options={{ cardStyleInterpolator: forFade }} />
-        <StackNavigator.Screen name="MealDetails" component={MealDetailsScreen} options={{ cardStyleInterpolator: forFade }}  />
+        <StackNavigator.Screen name="MealDetails" component={MealDetailsScreen} options={{ cardStyleInterpolator: forFade }} />
     </StackNavigator.Navigator>)
 }
 const searchByIngradientsStackNavigator = () => {
     return (<StackNavigator.Navigator headerMode='none'>
-        <StackNavigator.Screen name="SearchByIngradients" component={SearchByIngredientsScreen} />
-        <StackNavigator.Screen name="MealDetails" component={MealDetailsScreen} />
+        <StackNavigator.Screen name="SearchByIngradients" component={SearchByIngredientsScreen} options={{ cardStyleInterpolator: forFade }} />
+        <StackNavigator.Screen name="MealDetails" component={MealDetailsScreen} options={{ cardStyleInterpolator: forFade }} />
     </StackNavigator.Navigator>)
 }
 const searchByNutrientsStackNavigator = () => {
     return (<StackNavigator.Navigator headerMode='none'>
-        <StackNavigator.Screen name="SearchByNutrients" component={SearchByNutrientsScreen} />
-        <StackNavigator.Screen name="MealDetails" component={MealDetailsScreen} />
+        <StackNavigator.Screen name="SearchByNutrients" component={SearchByNutrientsScreen} options={{ cardStyleInterpolator: forFade }} />
+        <StackNavigator.Screen name="MealDetails" component={MealDetailsScreen} options={{ cardStyleInterpolator: forFade }} />
     </StackNavigator.Navigator>)
 }
 const yourGroceryListStackNavigator = () => {
     return (<StackNavigator.Navigator headerMode='none'>
-        <StackNavigator.Screen name="YourGroceryList" component={YourGroceryListScreen} />
-        <StackNavigator.Screen name="MealDetails" component={MealDetailsScreen} />
+        <StackNavigator.Screen name="YourGroceryList" component={YourGroceryListScreen} options={{ cardStyleInterpolator: forFade }} />
+        <StackNavigator.Screen name="MealDetails" component={MealDetailsScreen} options={{ cardStyleInterpolator: forFade }} />
     </StackNavigator.Navigator>)
 }
 
-const myTabNavigator = () => {
+const mainTabNavigator = () => {
     return (
-        <StandardBottomTabNavigator.Navigator labeled={true} backBehavior='history' >
-            <StandardBottomTabNavigator.Screen name="StandardSearch" component={searchStackNavigator} options={{
+        <BottomTabNavigator.Navigator labeled={true} backBehavior='history' keyboardHidesNavigationBar={false} >
+            <BottomTabNavigator.Screen name="StandardSearch" component={searchStackNavigator} options={{
                 tabBarLabel: 'Search',
                 tabBarColor: Colors.blue,
                 tabBarIcon: ({ color }) => {
                     return <Ionicons name="ios-search" size={iconSize} color={color} />
                 },
+                cardStyleInterpolator: forFade 
+        
             }} />
-            <StandardBottomTabNavigator.Screen name="SearchByIngradients" component={searchByIngradientsStackNavigator} options={{
+            <BottomTabNavigator.Screen name="SearchByIngradients" component={searchByIngradientsStackNavigator} options={{
                 tabBarLabel: 'Ingredients',
                 tabBarColor: Colors.yellow,
                 tabBarIcon: ({ color }) => {
                     return <MaterialCommunityIcons name="food-variant" size={iconSize} color={color} />
-                }
+                },
+                cardStyleInterpolator: forFade 
             }} />
-            <StandardBottomTabNavigator.Screen name="SearchByNutrients" component={searchByNutrientsStackNavigator} options={{
+            <BottomTabNavigator.Screen name="SearchByNutrients" component={searchByNutrientsStackNavigator} options={{
                 tabBarLabel: 'Nutrients',
                 tabBarColor: Colors.green,
                 tabBarIcon: ({ color }) => {
                     return <AntDesign name='piechart' size={iconSize} color={color} />
-                }
+                },
+                cardStyleInterpolator: forFade 
             }} />
-            <StandardBottomTabNavigator.Screen name="YourGroceryList" component={yourGroceryListStackNavigator} options={{
+            <BottomTabNavigator.Screen name="YourGroceryList" component={yourGroceryListStackNavigator} options={{
                 tabBarLabel: 'Your List',
                 tabBarColor: Colors.red,
                 tabBarIcon: ({ color }) => {
                     return <Ionicons name='ios-list-box' size={iconSize} color={color} />
-                }
+                },
+                cardStyleInterpolator: forFade 
             }} />
-        </StandardBottomTabNavigator.Navigator>
+        </BottomTabNavigator.Navigator>
     )
 }
 
-export default myTabNavigator
+export default mainTabNavigator
