@@ -1,26 +1,45 @@
 import React from 'react'
 import { View, Text, StyleSheet, Image } from 'react-native'
 import DefaultText from '../components/DefaultText'
-import {Ionicons} from '@expo/vector-icons'
+import {Ionicons, AntDesign,MaterialCommunityIcons} from '@expo/vector-icons'
 import Colors from '../constants/Colors'
+
 
 const RecipePreview = (props) => {
     const { title, id, image, readyInMinutes, servings } = props;
+    const readyInMinutesChangedToHoursAndMinutes = readyInMinutes > 60 ? `${parseInt(readyInMinutes/60)} hr ${readyInMinutes - (60*parseInt(readyInMinutes/60))} min` : `${readyInMinutes} min`
+    let clockColor = readyInMinutes <= 45 ? clockColor=Colors.green : readyInMinutes <= 75 ? clockColor=Colors.yellow : clockColor=Colors.red;
+    let servingsColor = servings <= 4 ? servingsColor=Colors.green : servings <= 8 ? servingsColor=Colors.yellow : servingsColor=Colors.blue ;
 
-
+    // if(readyInMinutes <= 45){
+    //     clockColor=Colors.green
+    // }else if(readyInMinutes <= 75){
+    //     clockColor=Colors.yellow
+    // }else{
+    //     clockColor=Colors.red
+    // }
+    // if(servings <= 4){
+    //     servingsColor=Colors.green
+    // }else if(servings <= 8){
+    //     servingsColor=Colors.yellow
+    // }else{
+    //     servingsColor=Colors.blue
+    // }
 
     return (
         <View style={styles.mainContainer}>
             <View style={styles.imageContainer}>
-                <Image source={{ uri:`https://spoonacular.com/recipeImages/${image}`}} style={styles.image} />
+               <Image source={{ uri:`https://spoonacular.com/recipeImages/${image}`}} style={styles.image} /> 
             </View>
             <View style={styles.infoContainer}>
                 <View style={styles.titleContainer}>
-                    <DefaultText style={styles.title}>{title}</DefaultText>
+                    <DefaultText numberOfLines={1} style={styles.title}>{title}</DefaultText>
                 </View>
                 <View style={styles.timeAndServingsInfoContanier} >
-                    <DefaultText style={styles.timeandServingsInfo}>{readyInMinutes}</DefaultText>
-                    <DefaultText style={styles.timeandServingsInfo}>{servings}</DefaultText>
+                    <AntDesign name="clockcircleo" color={clockColor} size={15} style={styles.indicatorIcons} />
+                    <DefaultText style={styles.timeandServingsInfo}>{readyInMinutesChangedToHoursAndMinutes}</DefaultText>
+                    <MaterialCommunityIcons name="silverware-fork-knife" color={servingsColor} size={15} style={styles.indicatorIcons} />
+                    <DefaultText style={styles.timeandServingsInfo}>{servings} servings</DefaultText>
                     
                 </View>
                 <View style={styles.arrowConatiner}>
@@ -48,28 +67,33 @@ const styles = StyleSheet.create({
     },
     timeAndServingsInfoContanier:{
         flexDirection:'row',
-        
+        paddingTop:'3%',
+        alignItems:'center',
+     
     },
     timeandServingsInfo:{
-        color:Colors.darkGray
+        color:Colors.darkGray,
+        marginRight:'10%'
     },
     infoContainer:{
-        width:'75%'
+        width:'75%',
+        paddingHorizontal:'5%'
     },
     titleContainer:{
-        height:'50%'
+        
     },
     title:{
         fontFamily:'sofia-bold',
         fontSize:18,
-        textAlign:'center',
-        
+        //textAlign:'center',
+    
     },
     arrowConatiner:{
         flexDirection:'row-reverse',
-        paddingLeft:'5%'
+    },
+    indicatorIcons:{
+        marginRight:'1.5%'
     }
-
 })
 
 export default RecipePreview
