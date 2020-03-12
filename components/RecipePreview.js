@@ -1,12 +1,13 @@
 import React from 'react'
-import { View, Text, StyleSheet, Image } from 'react-native'
+import { View, Text, StyleSheet, Image, Animated } from 'react-native'
 import DefaultText from '../components/DefaultText'
 import {Ionicons, AntDesign,MaterialCommunityIcons} from '@expo/vector-icons'
 import Colors from '../constants/Colors'
 
 
+
 const RecipePreview = (props) => {
-    const { title, id, image, readyInMinutes, servings } = props;
+    const { title, id, image, readyInMinutes, servings, panResponder } = props;
     const readyInMinutesChangedToHoursAndMinutes = readyInMinutes > 60 ? `${parseInt(readyInMinutes/60)} hr ${readyInMinutes - (60*parseInt(readyInMinutes/60))} min` : `${readyInMinutes} min`
     let clockColor = readyInMinutes <= 45 ? clockColor=Colors.green : readyInMinutes <= 75 ? clockColor=Colors.yellow : clockColor=Colors.red;
     let servingsColor = servings <= 4 ? servingsColor=Colors.green : servings <= 8 ? servingsColor=Colors.yellow : servingsColor=Colors.blue ;
@@ -27,7 +28,7 @@ const RecipePreview = (props) => {
     // }
 
     return (
-        <View style={styles.mainContainer}>
+        <Animated.View {...panResponder} style={styles.mainContainer}>
             <View style={styles.imageContainer}>
                <Image source={{ uri:`https://spoonacular.com/recipeImages/${image}`}} style={styles.image} /> 
             </View>
@@ -46,13 +47,14 @@ const RecipePreview = (props) => {
                     <Ionicons name="ios-arrow-round-forward" size={28} />
                 </View>
             </View>
-        </View>
+        </Animated.View>
     )
 }
 const styles = StyleSheet.create({
     mainContainer: {
         flex: 1,
         flexDirection: 'row',
+        borderWidth:1
     },
     imageContainer: {
         width: '25%',

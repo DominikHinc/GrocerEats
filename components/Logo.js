@@ -25,7 +25,7 @@ const styles = StyleSheet.create({
         overflow: 'hidden',
         // borderBottomWidth: 0,
         // borderBottomColor: Colors.gray,
-        
+       
     },
     
     logo: {

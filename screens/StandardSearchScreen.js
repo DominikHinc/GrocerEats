@@ -1,6 +1,6 @@
 import { Ionicons } from '@expo/vector-icons'
-import React, { useRef, useState, useEffect } from 'react'
-import { Animated, StyleSheet, View, TouchableOpacity, Easing, Keyboard, TextInput, TouchableWithoutFeedback, Alert, FlatList, ActivityIndicator } from 'react-native'
+import React, { useRef, useState, useEffect, useMemo } from 'react'
+import { Animated, StyleSheet, View, TouchableOpacity, Easing, Keyboard, TextInput, TouchableWithoutFeedback, Alert, FlatList, ActivityIndicator, PanResponder } from 'react-native'
 
 import { SafeAreaView } from 'react-native-safe-area-context'
 import Logo from '../components/Logo'
@@ -11,9 +11,9 @@ import { useSafeArea } from 'react-native-safe-area-context'
 import DefaultText from '../components/DefaultText'
 
 
-const renderRecipePreviews = ({ item, index }) => {
-    return <RecipePreview title={item.title} id={item.id} image={item.imageUrls.length > 1 ? item.imageUrls[item.imageUrls.length - 1] : item.image} readyInMinutes={item.readyInMinutes} servings={item.servings} />
-}
+
+const HEADER_EXPANDED_HEIGHT = 100
+const HEADER_COLLAPSED_HEIGHT = 0
 
 const StandardSearchScreen = (props) => {
     const sizeAndOpacityAnimationValue = new Animated.Value(1);
@@ -27,10 +27,7 @@ const StandardSearchScreen = (props) => {
     const [couldNotFindRecipe, setCouldNotFindRecipe] = useState(false)
     const [logoAnimationProgress, setLogoAnimationProgress] = useState(new Animated.Value(1))
     const [currentLogoMargin, setCurrentLogoMargin] = useState(0)
-    // const [currentListOffset, setCurrentListOffset] = useState(0)
     const currentListOffset = useRef(0)
-
-    //const currentLogoMargin = useRef(0)
     const insets = useSafeArea();
 
     const getResponseFromServer = async () => {
@@ -74,7 +71,7 @@ const StandardSearchScreen = (props) => {
 
     const logoHeight = logoAnimationProgress.interpolate({
         inputRange: [0, 1],
-        outputRange: ['0%', '12%' ]
+        outputRange: ['0%', '12%']
     })
     const logoOpacity = logoAnimationProgress.interpolate({
         inputRange: [0, 1],
@@ -91,6 +88,32 @@ const StandardSearchScreen = (props) => {
     const searchBarTexInputChangedHandler = (text) => {
         setSearchBarTextInputValue(text)
     }
+
+    const position = useRef(new Animated.ValueXY()).current;
+    const panResponder = React.useMemo(() => PanResponder.create({
+        onStartShouldSetPanResponder: (evt, gestureState) => true,
+        onShouldBlockNativeResponder: () => false,
+        onPanResponderMove: (evt, gestureState) => {
+
+            position.setValue({ x: gestureState.dx, y: gestureState.dy });
+
+
+        },
+        onPanResponderRelease: (evt, gestureState) => { },
+    }), []);
+
+    const headerSize = position.y.interpolate({
+        inputRange: [-100, 0],
+        outputRange: ['0%', '12%'],
+        extrapolate: 'clamp'
+    })
+
+    const canListScroll = position.y.interpolate({
+        inputRange: [-100, 0],
+        outputRange: [true, false],
+        extrapolate: 'clamp'
+    })
+
 
     const startAnimationAfterRealase = () => {
         Animated.timing(distanceFromTopAnimationValue, {
@@ -121,8 +144,8 @@ const StandardSearchScreen = (props) => {
 
 
     const onScrollHandler = (e) => {
-        // console.log(e.nativeEvent.velocity.y)
-        if(e.nativeEvent.contentOffset.y > 50){
+        //console.log(e.nativeEvent.velocity.y)
+        if (e.nativeEvent.contentOffset.y > 50) {
             hideLogo()
         }
         // console.log(e.nativeEvent.contentOffset.y)
@@ -140,16 +163,18 @@ const StandardSearchScreen = (props) => {
         // currentListOffset.current = e.nativeEvent.contentOffset.y;
         // console.log(currentLogoMargin)
     }
-    const onMomentumStopHandler = (e) =>{
-        if(e.nativeEvent.contentOffset.y === 0){
+    const onMomentumStopHandler = (e) => {
+        if (e.nativeEvent.contentOffset.y === 0) {
             showLogo()
         }
     }
-
+    const renderRecipePreviews = ({ item, index }) => {
+        return <RecipePreview panResponder = {panResponder.panHandlers} title={item.title} id={item.id} image={item.imageUrls.length > 1 ? item.imageUrls[item.imageUrls.length - 1] : item.image} readyInMinutes={item.readyInMinutes} servings={item.servings} />
+    }
 
     return (
         <View style={styles.screen} >
-            <Logo color={Colors.blue} logoContainerStyle={{ height: logoHeight, opacity:logoOpacity }} />
+            <Logo color={Colors.blue} logoContainerStyle={{ height: headerSize, opacity: logoOpacity }} />
             <TouchableWithoutFeedback disabled={recipesList ? true : false} style={{ flex: 1 }} onPress={() => { Keyboard.dismiss() }}>
                 <View style={styles.restOfTheScreenContainer}>
                     <Animated.View style={[styles.searchTextInputAnimatedContainer, { top: searchBarDistanceFromTop }]}>
@@ -162,14 +187,14 @@ const StandardSearchScreen = (props) => {
                             </View>
                         </TouchableOpacity>
                     </Animated.View>
-                    {recipesList && !couldNotFindRecipe && !loading && <FlatList style={styles.listStyle} keyExtractor={item => item.id.toString()} data={recipesList}
+                    {recipesList && !couldNotFindRecipe && !loading && <Animated.View  style={{ flex: 1, borderWidth: 1 }}><View style={{ flex: 1 }}><FlatList style={styles.listStyle} keyExtractor={item => item.id.toString()} data={recipesList}
                         renderItem={renderRecipePreviews} showsVerticalScrollIndicator={false} ItemSeparatorComponent={(hilighted) => <View style={styles.recipesListItemSeparator} />}
-                        contentContainerStyle={{ paddingBottom: '3%' }} onScroll={onScrollHandler} onMomentumScrollEnd={onMomentumStopHandler} scrollEventThrottle={30} />}
+                        contentContainerStyle={{ paddingBottom: '3%' }} onScroll={onScrollHandler} onMomentumScrollEnd={onMomentumStopHandler} scrollEventThrottle={30}
+                        scrollEnabled={false} nestedScrollEnabled={true} /></View></Animated.View>}
                     {loading && <View style={styles.loadingContainer}><ActivityIndicator size='large' color='black' /></View>}
                     {couldNotFindRecipe && <View style={styles.loadingContainer}><DefaultText style={styles.errorText}>Could not find any recipes</DefaultText></View>}
                 </View>
             </TouchableWithoutFeedback>
-
         </View>
     )
 }
@@ -183,7 +208,7 @@ const styles = StyleSheet.create({
         flex: 1,
         zIndex: 1,
         backgroundColor: 'white',
-        marginTop:'2%'
+        marginTop: '2%'
     },
     searchTextInputAnimatedContainer: {
         alignItems: 'center',
