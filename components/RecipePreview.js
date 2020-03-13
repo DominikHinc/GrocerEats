@@ -3,14 +3,16 @@ import { View, Text, StyleSheet, Image, Animated, TouchableNativeFeedback, Touch
 import DefaultText from '../components/DefaultText'
 import { Ionicons, AntDesign, MaterialCommunityIcons } from '@expo/vector-icons'
 import Colors from '../constants/Colors'
+import { calculateServingsColor, calculateTimeColor } from '../methods/calculateColors'
+import { changeMinutesToHoursAndMinutes } from '../methods/mathHelper'
 
 
 
 const RecipePreview = (props) => {
     const { title, id, image, readyInMinutes, servings, onPress } = props;
-    const readyInMinutesChangedToHoursAndMinutes = readyInMinutes > 60 ? `${parseInt(readyInMinutes / 60)} hr ${readyInMinutes - (60 * parseInt(readyInMinutes / 60))} min` : `${readyInMinutes} min`
-    let clockColor = readyInMinutes <= 45 ? clockColor = Colors.green : readyInMinutes <= 75 ? clockColor = Colors.yellow : clockColor = Colors.red;
-    let servingsColor = servings <= 4 ? servingsColor = Colors.green : servings <= 8 ? servingsColor = Colors.yellow : servingsColor = Colors.blue;
+    const readyInMinutesChangedToHoursAndMinutes = changeMinutesToHoursAndMinutes(readyInMinutes)
+    let clockColor = calculateTimeColor(readyInMinutes)
+    let servingsColor = calculateServingsColor(servings)
 
     // if(readyInMinutes <= 45){
     //     clockColor=Colors.green

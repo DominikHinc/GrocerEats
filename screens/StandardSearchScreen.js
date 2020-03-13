@@ -37,7 +37,7 @@ const StandardSearchScreen = (props) => {
         setCouldNotFindRecipe(false);
         let response;
         try {
-            response = await fetch(`https://api.spoonacular.com/recipes/search?query=${searchBarTextInputValue}&number=10&apiKey=${APIKEY_STANDARD_SEARCH}`)
+            response = await fetch(`https://api.spoonacular.com/recipes/search?query=${searchBarTextInputValue}&number=25&apiKey=${APIKEY_STANDARD_SEARCH}`)
         } catch (error) {
             Alert.alert("Something went wrong", error.message)
             return;
