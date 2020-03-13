@@ -12,6 +12,9 @@ const fetchFonts = () => {
     'sofia': require('./assets/Fonts/Sofia-Regular.ttf'),
     'sofia-med': require('./assets/Fonts/Sofia-Medium.ttf'),
     'sofia-bold': require('./assets/Fonts/Sofia-Bold.ttf'),
+    'AvertaStd-Regular':require('./assets/Fonts/Sofia-Regular.ttf'),
+    'AvertaStd-Semibold':require('./assets/Fonts/Sofia-Medium.ttf'),
+
   })
 }
 

@@ -5,10 +5,11 @@ import { Animated, StyleSheet, View, TouchableOpacity, Easing, Keyboard, TextInp
 import { SafeAreaView } from 'react-native-safe-area-context'
 import Logo from '../components/Logo'
 import Colors from '../constants/Colors'
-import { APIKEY } from '../constants/APIKEY'
+import { APIKEY_STANDARD_SEARCH } from '../constants/APIKEY'
 import RecipePreview from '../components/RecipePreview'
 import { useSafeArea } from 'react-native-safe-area-context'
 import DefaultText from '../components/DefaultText'
+import AnimatedHeader from 'react-native-animated-header';
 
 
 
@@ -36,7 +37,7 @@ const StandardSearchScreen = (props) => {
         setCouldNotFindRecipe(false);
         let response;
         try {
-            response = await fetch(`https://api.spoonacular.com/recipes/search?query=${searchBarTextInputValue}&number=10&apiKey=${APIKEY}`)
+            response = await fetch(`https://api.spoonacular.com/recipes/search?query=${searchBarTextInputValue}&number=10&apiKey=${APIKEY_STANDARD_SEARCH}`)
         } catch (error) {
             Alert.alert("Something went wrong", error.message)
             return;
@@ -83,7 +84,7 @@ const StandardSearchScreen = (props) => {
         console.log('Searching');
         Keyboard.dismiss();
         setFetchFromServer(true);
-        showLogo()
+        hideLogo()
     }
 
     const searchBarTexInputChangedHandler = (text) => {
@@ -144,9 +145,9 @@ const StandardSearchScreen = (props) => {
 
     const onScrollHandler = (e) => {
         //console.log(e.nativeEvent.velocity.y)
-        if (e.nativeEvent.contentOffset.y > 50) {
-            hideLogo()
-        }
+        // if (e.nativeEvent.contentOffset.y > 50) {
+        //     hideLogo()
+        // }
         // console.log(e.nativeEvent.contentOffset.y)
         // if (Math.abs(e.nativeEvent.contentOffset.y - currentListOffset.current) > 15) {
         //     if (e.nativeEvent.contentOffset.y > currentListOffset.current) {
@@ -163,17 +164,21 @@ const StandardSearchScreen = (props) => {
         // console.log(currentLogoMargin)
     }
     const onMomentumStopHandler = (e) => {
-        if (e.nativeEvent.contentOffset.y === 0) {
-            showLogo()
-        }
+        // if (e.nativeEvent.contentOffset.y === 0) {
+        //     showLogo()
+        // }
+    }
+    const navigateToMealDetailsScreen = (id)=>{
+        props.navigation.navigate("MealDetails",{id:id, color:Colors.blue})
     }
     const renderRecipePreviews = ({ item, index }) => {
-        return <RecipePreview title={item.title} id={item.id} image={item.imageUrls.length > 1 ? item.imageUrls[item.imageUrls.length - 1] : item.image} readyInMinutes={item.readyInMinutes} servings={item.servings} />
+        return <RecipePreview onPress={()=>{navigateToMealDetailsScreen(item.id)}} title={item.title} id={item.id} image={item.imageUrls.length > 1 ? item.imageUrls[item.imageUrls.length - 1] : item.image} readyInMinutes={item.readyInMinutes} servings={item.servings} />
     }
 
+    
     return (
         <View style={styles.screen} >
-            <Logo color={Colors.blue} logoContainerStyle={{ height: headerSize}} />
+            <Logo color={Colors.blue} logoContainerStyle={{ height: logoHeight}} />
             <TouchableWithoutFeedback disabled={recipesList ? true : false} style={{ flex: 1 }} onPress={() => { Keyboard.dismiss() }}>
                 <View style={styles.restOfTheScreenContainer}>
                     <Animated.View style={[styles.searchTextInputAnimatedContainer, { top: searchBarDistanceFromTop }]}>
@@ -189,7 +194,7 @@ const StandardSearchScreen = (props) => {
                     {recipesList && !couldNotFindRecipe && !loading && <Animated.View  style={{ flex: 1 }}><FlatList style={styles.listStyle} keyExtractor={item => item.id.toString()} data={recipesList}
                         renderItem={renderRecipePreviews} showsVerticalScrollIndicator={false} ItemSeparatorComponent={(hilighted) => <View style={styles.recipesListItemSeparator} />}
                         contentContainerStyle={{ paddingBottom: '3%' }} onScroll={onScrollHandler} onMomentumScrollEnd={onMomentumStopHandler} scrollEventThrottle={30}/></Animated.View>}
-                    {loading && <View style={styles.loadingContainer}><ActivityIndicator size='large' color='black' /></View>}
+                    {loading && <View style={styles.loadingContainer}><ActivityIndicator size='large' color={Colors.blue} /></View>}
                     {couldNotFindRecipe && <View style={styles.loadingContainer}><DefaultText style={styles.errorText}>Could not find any recipes</DefaultText></View>}
                 </View>
             </TouchableWithoutFeedback>

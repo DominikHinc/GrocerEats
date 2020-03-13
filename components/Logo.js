@@ -42,7 +42,6 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         borderWidth: 0,
-        height: '100%',
         width: '100%',
     },
     arrow: {
