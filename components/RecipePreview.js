@@ -54,7 +54,8 @@ const styles = StyleSheet.create({
     mainContainer: {
         flex: 1,
         flexDirection: 'row',
-        borderWidth:1
+        borderWidth:1,
+        borderColor:'white'
     },
     imageContainer: {
         width: '25%',

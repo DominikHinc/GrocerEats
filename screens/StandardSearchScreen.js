@@ -1,6 +1,6 @@
 import { Ionicons } from '@expo/vector-icons'
 import React, { useRef, useState, useEffect, useMemo } from 'react'
-import { Animated, StyleSheet, View, TouchableOpacity, Easing, Keyboard, TextInput, TouchableWithoutFeedback, Alert, FlatList, ActivityIndicator, PanResponder } from 'react-native'
+import { Animated, StyleSheet, View, TouchableOpacity, Easing, Keyboard, TextInput, TouchableWithoutFeedback, Alert, FlatList, ActivityIndicator, PanResponder, ScrollView } from 'react-native'
 
 import { SafeAreaView } from 'react-native-safe-area-context'
 import Logo from '../components/Logo'
@@ -29,7 +29,8 @@ const StandardSearchScreen = (props) => {
     const [currentLogoMargin, setCurrentLogoMargin] = useState(0)
     const currentListOffset = useRef(0)
     const insets = useSafeArea();
-
+    let canListScroll = useRef(false).current
+    const textInputRef = useRef()
     const getResponseFromServer = async () => {
         setLoading(true)
         setCouldNotFindRecipe(false);
@@ -62,7 +63,7 @@ const StandardSearchScreen = (props) => {
         }
     }, [fetchFromServer])
 
-    const textInputRef = useRef()
+    
 
     const searchBarDistanceFromTop = distanceFromTopAnimationValue.interpolate({
         inputRange: [0, 1],
@@ -88,13 +89,15 @@ const StandardSearchScreen = (props) => {
     const searchBarTexInputChangedHandler = (text) => {
         setSearchBarTextInputValue(text)
     }
-
+    
     const position = useRef(new Animated.ValueXY()).current;
     const panResponder = React.useMemo(() => PanResponder.create({
         onStartShouldSetPanResponder: (evt, gestureState) => true,
         onShouldBlockNativeResponder: () => false,
         onPanResponderMove: (evt, gestureState) => {
-
+            console.log(position.y._value )
+            canListScroll = position.y._value < -100 ? true : false
+            console.log(canListScroll)
             position.setValue({ x: gestureState.dx, y: gestureState.dy });
 
 
@@ -108,11 +111,7 @@ const StandardSearchScreen = (props) => {
         extrapolate: 'clamp'
     })
 
-    const canListScroll = position.y.interpolate({
-        inputRange: [-100, 0],
-        outputRange: [true, false],
-        extrapolate: 'clamp'
-    })
+    
 
 
     const startAnimationAfterRealase = () => {
@@ -169,12 +168,12 @@ const StandardSearchScreen = (props) => {
         }
     }
     const renderRecipePreviews = ({ item, index }) => {
-        return <RecipePreview panResponder = {panResponder.panHandlers} title={item.title} id={item.id} image={item.imageUrls.length > 1 ? item.imageUrls[item.imageUrls.length - 1] : item.image} readyInMinutes={item.readyInMinutes} servings={item.servings} />
+        return <RecipePreview title={item.title} id={item.id} image={item.imageUrls.length > 1 ? item.imageUrls[item.imageUrls.length - 1] : item.image} readyInMinutes={item.readyInMinutes} servings={item.servings} />
     }
 
     return (
         <View style={styles.screen} >
-            <Logo color={Colors.blue} logoContainerStyle={{ height: headerSize, opacity: logoOpacity }} />
+            <Logo color={Colors.blue} logoContainerStyle={{ height: headerSize}} />
             <TouchableWithoutFeedback disabled={recipesList ? true : false} style={{ flex: 1 }} onPress={() => { Keyboard.dismiss() }}>
                 <View style={styles.restOfTheScreenContainer}>
                     <Animated.View style={[styles.searchTextInputAnimatedContainer, { top: searchBarDistanceFromTop }]}>
@@ -187,10 +186,9 @@ const StandardSearchScreen = (props) => {
                             </View>
                         </TouchableOpacity>
                     </Animated.View>
-                    {recipesList && !couldNotFindRecipe && !loading && <Animated.View  style={{ flex: 1, borderWidth: 1 }}><View style={{ flex: 1 }}><FlatList style={styles.listStyle} keyExtractor={item => item.id.toString()} data={recipesList}
+                    {recipesList && !couldNotFindRecipe && !loading && <Animated.View  style={{ flex: 1 }}><FlatList style={styles.listStyle} keyExtractor={item => item.id.toString()} data={recipesList}
                         renderItem={renderRecipePreviews} showsVerticalScrollIndicator={false} ItemSeparatorComponent={(hilighted) => <View style={styles.recipesListItemSeparator} />}
-                        contentContainerStyle={{ paddingBottom: '3%' }} onScroll={onScrollHandler} onMomentumScrollEnd={onMomentumStopHandler} scrollEventThrottle={30}
-                        scrollEnabled={false} nestedScrollEnabled={true} /></View></Animated.View>}
+                        contentContainerStyle={{ paddingBottom: '3%' }} onScroll={onScrollHandler} onMomentumScrollEnd={onMomentumStopHandler} scrollEventThrottle={30}/></Animated.View>}
                     {loading && <View style={styles.loadingContainer}><ActivityIndicator size='large' color='black' /></View>}
                     {couldNotFindRecipe && <View style={styles.loadingContainer}><DefaultText style={styles.errorText}>Could not find any recipes</DefaultText></View>}
                 </View>
