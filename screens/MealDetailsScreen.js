@@ -35,7 +35,7 @@ const MealDetailsScreen = (props) => {
             unitSecondary: ''
         }
     })
-    
+    const [mealAddedToFavorites, setMealAddedToFavorites] = useState(false)
     let currentApiKey = useRef(1).current
 
     const setModalVisiblilty = (shouldBeVisible) => {
@@ -109,13 +109,7 @@ const MealDetailsScreen = (props) => {
         easing: Easing.ease,
 
     })
-    const floatingHeartAnimationProgress = currentContentOffset.interpolate({
-        inputRange: [0, Dimensions.get('screen').height / 2],
-        outputRange: [0, 1],
-        extrapolate: 'clamp',
-        easing: Easing.ease,
 
-    })
     const renderIngredients = () => {
         if (mealDetails.extendedIngredients) {
             let ingredientsMap = {};
@@ -142,7 +136,7 @@ const MealDetailsScreen = (props) => {
     return (
         <View style={{ ...styles.screen, backgroundColor: loading ? 'white' : 'black' }}>
             <GoBackArrow goBack={() => { props.navigation.goBack() }} />
-            <FloatingHeartIcon animationProgress = {floatingHeartAnimationProgress} />
+            <FloatingHeartIcon onPress={()=>{setMealAddedToFavorites(prev=>!prev)}} active={mealAddedToFavorites} />
             <Animated.Image source={{ uri: `https://spoonacular.com/recipeImages/${id}-636x393.${mealDetails.imageType}` }} style={[styles.backgroundImage, { opacity: imageOpacity, height: imageHeight }]} resizeMode='cover' />
 
             {!loading && <ScrollView scrollEnabled={scrollable} style={styles.mainScrollView} onScroll={onScrollHandler}
