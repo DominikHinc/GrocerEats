@@ -4,11 +4,11 @@ import Logo from '../components/Logo'
 import Colors from '../constants/Colors'
 
 
-const SearchByNutrientsScreen = (props) => {
+const SavedRecipesScreen = (props) => {
     return (
         <View style={styles.screen}>
-            <Logo color={Colors.green} />
-            <Text>SearchByNutrientsScreen</Text>
+            <Logo color={Colors.red} />
+            <Text>Saved Recipes Screen</Text>
         </View>
     )
 }
@@ -20,4 +20,4 @@ const styles = StyleSheet.create({
     }
 })
 
-export default SearchByNutrientsScreen
+export default SavedRecipesScreen

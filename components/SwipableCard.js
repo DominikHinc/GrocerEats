@@ -8,10 +8,19 @@ import { normalizeMarginSize, normalizePaddingSize, normalizeIconSize } from '..
 
 const SwipableCard = (props) => {
     const { item, setScrolling, setInfoForModal } = props;
-    const translateX = useRef(new Animated.ValueXY()).current; 
+    //Variables related to animation
+    const translateX = useRef(new Animated.ValueXY()).current;
+    //Variables related to units and their amounts
+    let rounderdAmountMain = item.amount > 1 ? Math.round(item.amount) : Math.round(item.amount * 100) / 100;
+    let rounderdAmountSecondary;
+    const unitMain = item.unit;
+    const unitSecondary = item.unit === item.measures.metric.unitShort || item.unit === item.measures.metric.unitLong ? item.measures.us.unitShort : item.measures.metric.unitShort;
 
-    const rounderdAmount = item.measures.metric.amount > 1 ? Math.round(item.measures.metric.amount) : Math.round(item.measures.metric.amount * 100) / 100
-
+    if (item.unit === item.measures.metric.unitShort || item.unit === item.measures.metric.unitLong) {
+        rounderdAmountSecondary = item.measures.us.amount > 1 ? Math.round(item.measures.us.amount) : Math.round(item.measures.us.amount * 100) / 100
+    } else {
+        rounderdAmountSecondary = item.measures.metric.amount > 1 ? Math.round(item.measures.metric.amount) : Math.round(item.measures.metric.amount * 100) / 100
+    }
 
     const startReturnToOrginalPositionAnimation = () => {
         Animated.spring(translateX.x, {
@@ -26,10 +35,12 @@ const SwipableCard = (props) => {
             modalVisible: true,
             title: item.name,
             imageUrl: `https://spoonacular.com/cdn/ingredients_100x100/${item.image}`,
-            amount:rounderdAmount,
-            unitMetric:item.measures.metric.unitShort,
-            unitUs:item.measures.us.unitShort
-
+            amountControl: {
+                amountMain: rounderdAmountMain,
+                amountSecondary: rounderdAmountSecondary,
+                unitMain: unitMain,
+                unitSecondary: unitSecondary
+            }
         })
     }
 
@@ -45,21 +56,18 @@ const SwipableCard = (props) => {
             gestureState.dx > 0 ? null : gestureState.dx <= -Dimensions.get('window').width / 4 ? null : translateX.setValue({ x: gestureState.dx, y: gestureState.dy });
         },
         onPanResponderGrant: (evt, gestureState) => {
-            // The gesture has started. Show visual feedback so the user knows
-            // what is happening!
-            // gestureState.d{x,y} will be set to zero now
             setScrolling(false)
 
         },
         onPanResponderRelease: (evt, gestureState) => {
             setScrolling(true)
             startReturnToOrginalPositionAnimation();
-            gestureState.dx <= (-Dimensions.get('window').width / 4)+normalizeIconSize(30)  ? modalShouldAppear() : null
+            gestureState.dx <= (-Dimensions.get('window').width / 4) + normalizeIconSize(30) ? modalShouldAppear() : null
         },
         onPanResponderTerminate: (evt, gestureState) => {
             setScrolling(true)
             startReturnToOrginalPositionAnimation();
-            gestureState.dx <= (-Dimensions.get('window').width/ 4)+normalizeIconSize(30) ? modalShouldAppear() : null
+            gestureState.dx <= (-Dimensions.get('window').width / 4) + normalizeIconSize(30) ? modalShouldAppear() : null
         },
     }), []);
 
@@ -77,6 +85,11 @@ const SwipableCard = (props) => {
         outputRange: [Dimensions.get('window').width / 10, 0]
     })
 
+    const plusIconOpacity = translateX.x.interpolate({
+        inputRange: [-Dimensions.get('window').width / 4, 0],
+        outputRange: [1, 0]
+    })
+
     return (
         <Animated.View style={styles.netherContainer}>
             <Animated.View style={[styles.ingredientContainer, { transform: [{ translateX: translateX.x }] }]} >
@@ -85,14 +98,14 @@ const SwipableCard = (props) => {
                 </View>
                 <View style={styles.ingredientInfoContainer}>
                     <DefaultText style={styles.ingredientNameLabel} >{item.name[0].toUpperCase() + item.name.slice(1, item.name.length)}</DefaultText>
-                    <DefaultText style={styles.ingredientNameLabel}>{rounderdAmount} {item.measures.metric.unitShort}</DefaultText>
+                    <DefaultText style={styles.ingredientNameLabel}>{rounderdAmountMain} {unitMain}</DefaultText>
                 </View>
                 <View style={styles.draggableArrowContainer} {...panResponder.panHandlers}>
-                    <Ionicons name='ios-arrow-dropleft' size={normalizeIconSize(27) } />
+                    <Ionicons name='ios-arrow-dropleft' size={normalizeIconSize(27)} />
                 </View>
 
             </Animated.View>
-            <Animated.View style={[styles.plusIconContainer, plusIconContainerScale, { paddingRight: plusIconContainerPaddingRight }]} >
+            <Animated.View style={[styles.plusIconContainer, plusIconContainerScale, { paddingRight: plusIconContainerPaddingRight, opacity:plusIconOpacity }]} >
                 <Entypo name='plus' size={normalizeIconSize(33)} style={{ ...styles.plusIcon }} />
             </Animated.View>
 
@@ -105,7 +118,7 @@ const styles = StyleSheet.create({
     netherContainer: {
         //backgroundColor:'red'
         backgroundColor: Colors.gray,
-        marginVertical: normalizeMarginSize(8) 
+        marginVertical: normalizeMarginSize(8)
     },
     ingredientContainer: {
         width: '100%',
@@ -114,7 +127,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         backgroundColor: 'white',
         zIndex: 2,
-        paddingLeft:normalizePaddingSize(8) 
+        paddingLeft: normalizePaddingSize(8)
     },
     ingredientImageRoundWrapper: {
         width: Dimensions.get('window').width / 6,
@@ -123,7 +136,7 @@ const styles = StyleSheet.create({
         //borderWidth: 1,
         //borderColor: Colors.gray,
         backgroundColor: 'white',
-        elevation:2,
+        elevation: 2,
         overflow: 'hidden',
         zIndex: 0
     },
@@ -136,7 +149,7 @@ const styles = StyleSheet.create({
     },
     ingredientInfoContainer: {
         flex: 0.8,
-        paddingLeft: normalizePaddingSize(10) 
+        paddingLeft: normalizePaddingSize(10)
     },
     draggableArrowContainer: {
         flex: 0.2,
@@ -153,10 +166,6 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
 
     },
-    plusIcon: {
-
-
-    }
 
 })
 

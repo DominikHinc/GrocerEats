@@ -4,7 +4,7 @@ import { createMaterialBottomTabNavigator } from '@react-navigation/material-bot
 import { createStackNavigator } from '@react-navigation/stack';
 import StandardSearchScreen from '../screens/StandardSearchScreen'
 import SearchByIngredientsScreen from '../screens/SearchByIngredientsScreen'
-import SearchByNutrientsScreen from '../screens/SearchByNutrientsScreen'
+import SearchByNutrientsScreen from '../screens/SavedRecipesScreen'
 import YourGroceryListScreen from '../screens/YourGroceryListScreen'
 import { Ionicons, AntDesign, MaterialCommunityIcons } from '@expo/vector-icons'
 import Colors from '../constants/Colors'
@@ -88,17 +88,17 @@ const mainTabNavigator = () => {
                 },
                 cardStyleInterpolator: forFade 
             }} />
-            <BottomTabNavigator.Screen name="SearchByNutrients" component={searchByNutrientsStackNavigator} options={{
-                tabBarLabel: 'Nutrients',
-                tabBarColor: Colors.green,
+            <BottomTabNavigator.Screen name="SavedRecipesScreen" component={searchByNutrientsStackNavigator} options={{
+                tabBarLabel: 'Saved Recipes',
+                tabBarColor: Colors.red,
                 tabBarIcon: ({ color }) => {
-                    return <AntDesign name='piechart' size={iconSize} color={color} />
+                    return <AntDesign name='heart' size={iconSize} color={color} />
                 },
                 cardStyleInterpolator: forFade 
             }} />
             <BottomTabNavigator.Screen name="YourGroceryList" component={yourGroceryListStackNavigator} options={{
                 tabBarLabel: 'Your List',
-                tabBarColor: Colors.red,
+                tabBarColor: Colors.green,
                 tabBarIcon: ({ color }) => {
                     return <Ionicons name='ios-list-box' size={iconSize} color={color} />
                 },

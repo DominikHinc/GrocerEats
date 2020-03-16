@@ -4,36 +4,44 @@ import DefaultText from './DefaultText';
 import { Feather, AntDesign } from '@expo/vector-icons'
 import Colors from '../constants/Colors';
 import { normalizeBorderRadiusSize, normalizePaddingSize, normalizeFontSize, normalizeIconSize } from '../methods/normalizeSizes';
+import AmountOfGroceriesManager from './AmountOfGroceriesManager';
 
 const AddToGroceryListModal = (props) => {
-    const { setModalVisible, modalVisible, imageUrl, title, unitUs, unitMetric } = props;
-    //console.log(title)
+    const { setModalVisible, modalVisible, imageUrl, title, amountControl } = props;
+    
+    //Variables related to amount and unit of ingredient
+    const [amount, setAmount] = useState(amountControl.amountMain.toString())
+    const [selectedUnit, setSelectedUnit] = useState(amountControl.unitMain)
 
-    const [amount, setAmount] = useState(props.amount.toString())
+    //Variables related to text input of amount
     const [keyboardIsDisplayed, setKeyboardIsDisplayed] = useState(false)
-    const [selectedUnit, setSelectedUnit] = useState(unitMetric)
-
     let keyboardDidShowListener = useRef().current
     let keyboardDidHideListener = useRef().current
     const textInputRef = useRef()
 
+    //Use effect will listen to keyboard change event and will clean up when modal is closed
     useEffect(() => {
         keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', () => setKeyboardIsDisplayed(true))
         keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => setKeyboardIsDisplayed(false))
         return () => {
-            //console.log('All subscriptions from modal will be canceled')
             keyboardDidShowListener.remove();
             keyboardDidHideListener.remove();
         }
     }, [])
-    useEffect(() => {
-        if (modalVisible) {
-            textInputRef.current.focus();
-            setSelectedUnit(unitMetric)
-        }
-    }, [modalVisible])
 
-    const closeModal = (elementCallingThis) => {
+
+    //When grocery list is implemented this function will be responsible for adding ingradient to it
+    const addToGroceryList = () => {
+        const isValid = amount.match(/^-?\d*(\.\d+)?$/);
+        if (isValid) {
+            closeModalHandler()
+        } else {
+            Alert.alert("Invalid Amount", "You can only enter numbers")
+        }
+    }
+
+    //Modal Handlers
+    const closeModalHandler = (elementCallingThis) => {
         if (keyboardIsDisplayed && elementCallingThis === 'background') {
             Keyboard.dismiss()
         } else {
@@ -41,37 +49,12 @@ const AddToGroceryListModal = (props) => {
         }
 
     }
-    const addOneToAmount = () => {
-        console.log(parseInt(amount))
-        if (amount.length > 0 && parseInt(amount).toString() !== 'NaN') {
-            setAmount(prev => (parseInt(prev) + 1).toString())
-        } else {
-            setAmount('1')
-        }
-    }
-    const substractOneFromAmount = () => {
-        if (amount.length > 0 && parseInt(amount) > 0 && parseInt(amount).toString() !== 'NaN') {
-            setAmount(prev => (parseInt(prev) - 1).toString())
-        } else {
-            setAmount('1')
-        }
-
-    }
-    const setTextinputText = (text) => {
-        setAmount(text.toString())
-    }
-
-    const addToGroceryList = () => {
-        const isValid = amount.match(/^-?\d*(\.\d+)?$/);
-        if (isValid) {
-            closeModal()
-        } else {
-            Alert.alert("Invalid Amount", "You can only enter numbers")
-        }
-    }
 
     const modalShowHandler = () => {
-        setAmount(props.amount.toString())
+        //What should be set when modal in opening
+        setAmount(amountControl.amountMain.toString())
+        textInputRef.current.focus();
+        setSelectedUnit(amountControl.unitMain)
     }
 
     return (
@@ -81,14 +64,14 @@ const AddToGroceryListModal = (props) => {
             animationType='fade'
             transparent={true}
             visible={modalVisible}
-            onRequestClose={closeModal}>
+            onRequestClose={closeModalHandler}>
             <View style={styles.mainModalView}>
-                <TouchableOpacity style={styles.dismissModalTouchable} activeOpacity={1} onPress={() => { closeModal('background') }}>
+                <TouchableOpacity style={styles.dismissModalTouchable} activeOpacity={1} onPress={() => { closeModalHandler('background') }}>
                     <View style={styles.mainCardContainer}>
                         <TouchableOpacity style={{ flex: 1 }} activeOpacity={1}>
                             <View>
                                 <View style={styles.cardTitleAndDismissIconContainer}>
-                                    <Feather name="x" size={normalizeIconSize(25)} onPress={closeModal} style={styles.dismissIcon} />
+                                    <Feather name="x" size={normalizeIconSize(25)} onPress={closeModalHandler} style={styles.dismissIcon} />
                                     <DefaultText style={styles.cardTitle}>Add To Your Grocery List</DefaultText>
                                 </View>
                                 <View style={styles.imageContainer}>
@@ -104,60 +87,8 @@ const AddToGroceryListModal = (props) => {
                                     <DefaultText style={{ textAlign: 'center', color: Colors.red }}>This item is not on your list</DefaultText>
                                 </View>
                             </View>
-                            <View style={styles.amountDetailsContainer}>
-                                <View style={styles.addButtonsContainer}>
-                                    <TouchableOpacity style={styles.addButtonTouchable} onPress={closeModal}>
-                                        <View style={styles.insideOfButton}>
-                                            <DefaultText>Add Note</DefaultText>
-                                        </View>
-                                    </TouchableOpacity>
-                                    <TouchableOpacity style={styles.addButtonTouchable} onPress={addToGroceryList}>
-                                        <View style={styles.insideOfButton}>
-                                            <DefaultText>Add</DefaultText>
-                                        </View>
-                                    </TouchableOpacity>
-                                </View>
-                                <View style={styles.amountButtonsContainer}>
-                                    <TouchableOpacity style={styles.touchableButton} onPress={substractOneFromAmount}>
-                                        <View style={styles.insideOfButton}>
-                                            <AntDesign name="minus" size={normalizeIconSize(18)} />
-                                        </View>
-                                    </TouchableOpacity>
-                                    <View style={styles.amountWithUnitContainer}>
-                                        <TextInput style={styles.amountTextInput} maxLength={6} keyboardType='numeric' value={amount}
-                                            onChangeText={setTextinputText} onSubmitEditing={addToGroceryList} ref={textInputRef} />
-                                        <DefaultText style={styles.unitLabel}> {selectedUnit}</DefaultText>
-                                        <View style={styles.pickerContainer}>
-
-                                            <Picker
-                                                enabled={true}
-                                                selectedValue={selectedUnit}
-                                                style={styles.unitPicker}
-                                                prompt="Select unit"
-                                                onValueChange={(itemValue, itemIndex) =>
-                                                    setSelectedUnit(itemValue)
-                                                }>
-                                                <Picker.Item label="No Unit" value=" " />
-                                                {unitMetric.length > 0 && <Picker.Item label={unitMetric} value={unitMetric} />}
-                                                {unitMetric !== unitUs && <Picker.Item label={unitUs} value={unitUs} />}
-                                                {unitMetric !== 'g' && <Picker.Item label={'g'} value={'g'} />}
-                                                {unitUs !== 'lb' && <Picker.Item label={'lb'} value={'lb'} />}
-                                            </Picker>
-                                        </View>
-                                    </View>
-
-
-                                    <TouchableOpacity style={styles.touchableButton} onPress={addOneToAmount}>
-                                        <View style={styles.insideOfButton}>
-
-                                            <AntDesign name="plus" size={normalizeIconSize(18)} />
-                                        </View>
-                                    </TouchableOpacity>
-                                </View>
-                                <View style={styles.amountLabelContainer}>
-                                    <DefaultText style={styles.amountLabel}>Amount:</DefaultText>
-                                </View>
-                            </View>
+                            <AmountOfGroceriesManager closeModal={closeModalHandler} textInputRef={textInputRef} amount={amount} setAmount={setAmount} 
+                            selectedUnit={selectedUnit} setSelectedUnit={setSelectedUnit} amountControl={amountControl} addToGroceryList={addToGroceryList} />
                         </TouchableOpacity>
 
                     </View>
@@ -237,93 +168,6 @@ const styles = StyleSheet.create({
     additionalInfoContainer: {
         paddingTop: '2%'
     },
-    amountDetailsContainer: {
-        flexDirection: 'column-reverse',
-        flex: 1,
-        width: '100%',
-        paddingBottom: normalizePaddingSize(15)
-    },
-    amountButtonsContainer: {
-        flexDirection: 'row',
-        justifyContent: 'center',
-        alignItems: 'center',
-        paddingBottom: 15
-    },
-    amountButtonLabel: {
-        fontFamily: 'sofia-bold',
-        fontSize: 25,
-        textAlign: 'center',
-        justifyContent: 'center',
-        alignItems: 'center'
-    },
-    touchableButton: {
-        backgroundColor: 'white',
-        width: '12%',
-        aspectRatio: 1,
-        borderRadius: normalizeBorderRadiusSize(10),
-        elevation: 2,
-        marginHorizontal: '5%'
-    },
-    insideOfButton: {
-        justifyContent: 'center',
-        alignItems: 'center',
-        flex: 1
-    },
-    addButtonsContainer: {
-        justifyContent: 'center',
-        alignItems: 'center',
-        paddingTop: normalizePaddingSize(5),
-        flexDirection: 'row',
-        justifyContent: 'space-evenly'
-    },
-    addButtonTouchable: {
-        backgroundColor: 'white',
-        width: '25%',
-        aspectRatio: 1.9,
-        borderRadius: normalizeBorderRadiusSize(10),
-        elevation: 2,
-    },
-    amountLabelContainer: {
-        paddingBottom: normalizePaddingSize(10)
-    },
-    amountLabel: {
-        textAlign: 'center',
-        fontFamily: 'sofia-med',
-        fontSize: 18,
-
-    },
-    amountTextInput: {
-        fontFamily: 'sofia',
-        textAlign: 'center',
-        //borderBottomWidth: 1,
-        //borderColor: Colors.lightGray,
-        paddingHorizontal: normalizePaddingSize(10),
-        fontSize: normalizeFontSize(18),
-
-    },
-    amountWithUnitContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        paddingLeft: 10,
-        //borderWidth:1
-    },
-    unitLabel: {
-        paddingLeft: 1
-    },
-    pickerContainer: {
-        flexDirection: 'row',
-        //width: '45%',
-        //borderWidth: 1,
-        alignItems: 'center',
-
-    },
-    unitPicker: {
-        borderWidth: 1,
-        paddingLeft: 50,
-        width: 10,
-        height: 30,
-        marginLeft: -20,
-
-    }
+    
 })
 export default AddToGroceryListModal

@@ -1,20 +1,19 @@
-import React, { useState, useEffect, useRef } from 'react'
-import { View, StyleSheet, ActivityIndicator, Alert, ImageBackground, Image, Dimensions, Animated, Easing } from 'react-native'
-import { TextInput, ScrollView } from 'react-native-gesture-handler';
-import { APIKEY_DETAILS_1, gettingAPIKEYfailed, getAPIKEYforDetails } from '../constants/APIKEY';
-import GoBackArrow from '../components/GoBackArrow';
-import { Ionicons, SimpleLineIcons, AntDesign, MaterialCommunityIcons, FontAwesome } from '@expo/vector-icons'
-import Colors from '../constants/Colors';
-import DefaultText from '../components/DefaultText';
-import { calculateTimeColor, calculateServingsColor, calculateHearthColor, calculateStarColor } from '../methods/calculateColors';
-import { changeMinutesToHoursAndMinutes } from '../methods/mathHelper';
-import SwipableCard from '../components/SwipableCard';
-import BasicMealInfo from '../components/BasicMealInfo';
+import { AntDesign, SimpleLineIcons } from '@expo/vector-icons';
+import React, { useEffect, useRef, useState } from 'react';
+import { ActivityIndicator, Alert, Animated, Dimensions, Easing, StyleSheet, View } from 'react-native';
+import { ScrollView } from 'react-native-gesture-handler';
+import AdditonalMealInfo from '../components/AdditonalMealInfo';
 import AddToGroceryListModal from '../components/AddToGroceryListModal';
+import BasicMealInfo from '../components/BasicMealInfo';
+import DefaultText from '../components/DefaultText';
+import GoBackArrow from '../components/GoBackArrow';
 import MealPreparation from '../components/MealPreparation';
 import MealTags from '../components/MealTags';
-import AdditonalMealInfo from '../components/AdditonalMealInfo';
+import SwipableCard from '../components/SwipableCard';
+import { getAPIKEYforDetails } from '../constants/APIKEY';
+import Colors from '../constants/Colors';
 import { normalizeIconSize, normalizePaddingSize } from '../methods/normalizeSizes';
+import FloatingHeartIcon from '../components/FloatingHeartIcon';
 
 const SCROLLING_TAB_BORDER_RADIUS = 30
 
@@ -24,15 +23,19 @@ const MealDetailsScreen = (props) => {
     const [mealDetails, setMealDetails] = useState(false)
     const [upArrowType, setUpArrowType] = useState('arrow-up')
     const [scrollable, setScrollable] = useState(true)
+    const currentContentOffset = new Animated.Value(0)
     const [modalControl, setModalControl] = useState({
         modalVisible: false,
         title: 'Title',
         imageUrl: '',
-        amount: '',
-        unitMetric: '',
-        unitUs:''
+        amountControl: {
+            amountMain: 0,
+            amountSecondary: 0,
+            unitMain: '',
+            unitSecondary: ''
+        }
     })
-    const currentContentOffset = new Animated.Value(0)
+    
     let currentApiKey = useRef(1).current
 
     const setModalVisiblilty = (shouldBeVisible) => {
@@ -63,7 +66,7 @@ const MealDetailsScreen = (props) => {
             Alert.alert("Something went wrong", error.message)
             return;
         }
-        //console.log(readableResponse)
+        
         if (readableResponse.code === 402 || readableResponse.status === "failure") {
             if (currentApiKey === 10) {
                 Alert.alert("Something went wrong", "Maximum number of calls has been reached")
@@ -72,7 +75,7 @@ const MealDetailsScreen = (props) => {
                 fetchMealDataFromServer()
             }
         }
-        //console.log(readableResponse) 
+        
         setMealDetails(readableResponse)
 
         setLoading(false)
@@ -106,7 +109,13 @@ const MealDetailsScreen = (props) => {
         easing: Easing.ease,
 
     })
+    const floatingHeartAnimationProgress = currentContentOffset.interpolate({
+        inputRange: [0, Dimensions.get('screen').height / 2],
+        outputRange: [0, 1],
+        extrapolate: 'clamp',
+        easing: Easing.ease,
 
+    })
     const renderIngredients = () => {
         if (mealDetails.extendedIngredients) {
             let ingredientsMap = {};
@@ -130,10 +139,10 @@ const MealDetailsScreen = (props) => {
     }
 
 
-
     return (
         <View style={{ ...styles.screen, backgroundColor: loading ? 'white' : 'black' }}>
             <GoBackArrow goBack={() => { props.navigation.goBack() }} />
+            <FloatingHeartIcon animationProgress = {floatingHeartAnimationProgress} />
             <Animated.Image source={{ uri: `https://spoonacular.com/recipeImages/${id}-636x393.${mealDetails.imageType}` }} style={[styles.backgroundImage, { opacity: imageOpacity, height: imageHeight }]} resizeMode='cover' />
 
             {!loading && <ScrollView scrollEnabled={scrollable} style={styles.mainScrollView} onScroll={onScrollHandler}
@@ -151,11 +160,11 @@ const MealDetailsScreen = (props) => {
 
                     <BasicMealInfo mealDetails={mealDetails} />
 
-                    <View style={styles.mainTagsContainer}>
+                    {mealDetails.dishTypes.length > 0 && <View style={styles.mainTagsContainer}>
                         <View style={styles.tagsContainer}>
                             <MealTags tags={mealDetails.dishTypes} />
                         </View>
-                    </View>
+                    </View>}
                     <DefaultText style={styles.sectionTitle}>
                         Ingredients:
                     </DefaultText>
@@ -184,8 +193,8 @@ const MealDetailsScreen = (props) => {
             </ScrollView>}
             {loading && <View style={styles.loadingContainer} ><ActivityIndicator size='large' color={color} /></View>}
             <AddToGroceryListModal modalVisible={modalControl.modalVisible} setModalVisible={setModalVisiblilty}
-                title={modalControl.title} imageUrl={modalControl.imageUrl} amount={modalControl.amount} unitMetric={modalControl.unitMetric}
-                    unitUs={modalControl.unitUs} />
+                title={modalControl.title} imageUrl={modalControl.imageUrl}
+                amountControl={modalControl.amountControl} />
 
         </View>
     )
@@ -196,6 +205,7 @@ const styles = StyleSheet.create({
         flex: 1,
 
     },
+    
     loadingContainer: {
         flex: 1,
         justifyContent: 'center',
@@ -216,7 +226,7 @@ const styles = StyleSheet.create({
     },
     mainScrollView: {
         flex: 1,
-    
+
     },
     spaceFiller: {
         height: Dimensions.get('screen').height / 2,
@@ -237,10 +247,10 @@ const styles = StyleSheet.create({
 
     },
     upArrow: {
-        height: normalizeIconSize(23) 
+        height: normalizeIconSize(23)
     },
     titleContainer: {
-        paddingTop: normalizePaddingSize(5) ,
+        paddingTop: normalizePaddingSize(5),
         alignItems: 'center',
         paddingHorizontal: normalizePaddingSize(5)
     },

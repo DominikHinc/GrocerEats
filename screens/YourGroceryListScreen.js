@@ -6,7 +6,7 @@ import Colors from '../constants/Colors'
 const YourGroceryListScreen = () => {
     return (
         <View style={styles.screen}>
-            <Logo color={Colors.red} />
+            <Logo color={Colors.green} />
             <Text>YourGroceryListScreen</Text>
         </View>
     )

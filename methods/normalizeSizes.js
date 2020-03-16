@@ -31,3 +31,9 @@ export const normalizeMarginSize = (size)=>{
 export const normalizeBorderRadiusSize = (size)=>{
     return normalizeFontSize(size); 
 }
+export const normalizeWidth = (size)=>{
+    return normalizeFontSize(size);
+}
+export const normalizeHeight = (size)=>{
+    return normalizeFontSize(size);
+}
