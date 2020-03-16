@@ -5,6 +5,7 @@ import { Ionicons, AntDesign, MaterialCommunityIcons } from '@expo/vector-icons'
 import Colors from '../constants/Colors'
 import { calculateServingsColor, calculateTimeColor } from '../methods/calculateColors'
 import { changeMinutesToHoursAndMinutes } from '../methods/mathHelper'
+import { normalizeIconSize, normalizeBorderRadiusSize } from '../methods/normalizeSizes'
 
 
 
@@ -28,27 +29,28 @@ const RecipePreview = (props) => {
     // }else{
     //     servingsColor=Colors.blue
     // }
+    //console.log(`https://spoonacular.com/recipeImages/${id}-636x393.${(image.split('.'))[1]}`)
 
     return (
         <View>
             <TouchableOpacity style={{flex:1}} onPress={onPress}>
                 <View style={styles.mainContainer}>
                     <View style={styles.imageContainer}>
-                        <Image source={{ uri: `https://spoonacular.com/recipeImages/${image}` }} style={styles.image} />
+                        <Image source={{ uri: image !== undefined ? `https://spoonacular.com/recipeImages/${id}-240x150.${(image.split('.'))[1]}` : null}} style={styles.image} />
                     </View>
                     <View style={styles.infoContainer}>
                         <View style={styles.titleContainer}>
                             <DefaultText numberOfLines={1} style={styles.title}>{title}</DefaultText>
                         </View>
                         <View style={styles.timeAndServingsInfoContanier} >
-                            <AntDesign name="clockcircleo" color={clockColor} size={15} style={styles.indicatorIcons} />
+                            <AntDesign name="clockcircleo" color={clockColor} size={normalizeIconSize(16)} style={styles.indicatorIcons} />
                             <DefaultText style={styles.timeandServingsInfo}>{readyInMinutesChangedToHoursAndMinutes}</DefaultText>
-                            <MaterialCommunityIcons name="silverware-fork-knife" color={servingsColor} size={15} style={styles.indicatorIcons} />
+                            <MaterialCommunityIcons name="silverware-fork-knife" color={servingsColor} size={normalizeIconSize(16) } style={styles.indicatorIcons} />
                             <DefaultText style={styles.timeandServingsInfo}>{servings} servings</DefaultText>
 
                         </View>
                         <View style={styles.arrowConatiner}>
-                            <Ionicons name="ios-arrow-round-forward" size={28} />
+                            <Ionicons name="ios-arrow-round-forward" size={normalizeIconSize(30)} />
                         </View>
                     </View>
                 </View>
@@ -65,7 +67,7 @@ const styles = StyleSheet.create({
     imageContainer: {
         width: '25%',
         aspectRatio: 1,
-        borderRadius: 12,
+        borderRadius: normalizeBorderRadiusSize(12) ,
         overflow: 'hidden'
 
     },
@@ -77,11 +79,12 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         paddingTop: '3%',
         alignItems: 'center',
-
+        
     },
     timeandServingsInfo: {
         color: Colors.darkGray,
-        marginRight: '10%'
+        marginRight: '10%',
+        
     },
     infoContainer: {
         width: '75%',
@@ -92,7 +95,7 @@ const styles = StyleSheet.create({
     },
     title: {
         fontFamily: 'sofia-bold',
-        fontSize: 18,
+        fontSize: 20,
         //textAlign:'center',
 
     },

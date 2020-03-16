@@ -1,13 +1,37 @@
-import React, { useRef, useMemo } from 'react'
+import React, { useRef, useMemo, useEffect } from 'react'
 import { View, Text, StyleSheet, Dimensions, Animated, Image, PanResponder } from 'react-native'
 import Colors from '../constants/Colors';
 import DefaultText from './DefaultText';
 import { Ionicons, Entypo } from '@expo/vector-icons'
+import { normalizeMarginSize, normalizePaddingSize, normalizeIconSize } from '../methods/normalizeSizes';
 
 
 const SwipableCard = (props) => {
-    const { item, setScrolling } = props;
-    const translateX = useRef(new Animated.ValueXY()).current;
+    const { item, setScrolling, setInfoForModal } = props;
+    const translateX = useRef(new Animated.ValueXY()).current; 
+
+    const rounderdAmount = item.measures.metric.amount > 1 ? Math.round(item.measures.metric.amount) : Math.round(item.measures.metric.amount * 100) / 100
+
+
+    const startReturnToOrginalPositionAnimation = () => {
+        Animated.spring(translateX.x, {
+            toValue: 0,
+            bounciness: 100,
+            overshootClamping: true
+        }).start();
+    }
+
+    const modalShouldAppear = () => {
+        setInfoForModal({
+            modalVisible: true,
+            title: item.name,
+            imageUrl: `https://spoonacular.com/cdn/ingredients_100x100/${item.image}`,
+            amount:rounderdAmount,
+            unitMetric:item.measures.metric.unitShort,
+            unitUs:item.measures.us.unitShort
+
+        })
+    }
 
     const panResponder = React.useMemo(() => PanResponder.create({
         onMoveShouldSetResponderCapture: () => true,
@@ -29,17 +53,13 @@ const SwipableCard = (props) => {
         },
         onPanResponderRelease: (evt, gestureState) => {
             setScrolling(true)
-            Animated.spring(translateX.x, {
-                toValue: 0,
-                bounciness: 10
-            }).start();
+            startReturnToOrginalPositionAnimation();
+            gestureState.dx <= (-Dimensions.get('window').width / 4)+normalizeIconSize(30)  ? modalShouldAppear() : null
         },
         onPanResponderTerminate: (evt, gestureState) => {
             setScrolling(true)
-            Animated.spring(translateX.x, {
-                toValue: 0,
-                bounciness: 10
-            }).start();
+            startReturnToOrginalPositionAnimation();
+            gestureState.dx <= (-Dimensions.get('window').width/ 4)+normalizeIconSize(30) ? modalShouldAppear() : null
         },
     }), []);
 
@@ -54,7 +74,7 @@ const SwipableCard = (props) => {
     }
     const plusIconContainerPaddingRight = translateX.x.interpolate({
         inputRange: [-Dimensions.get('window').width / 4, 0],
-        outputRange: [Dimensions.get('window').width / 8, 0]
+        outputRange: [Dimensions.get('window').width / 10, 0]
     })
 
     return (
@@ -65,14 +85,15 @@ const SwipableCard = (props) => {
                 </View>
                 <View style={styles.ingredientInfoContainer}>
                     <DefaultText style={styles.ingredientNameLabel} >{item.name[0].toUpperCase() + item.name.slice(1, item.name.length)}</DefaultText>
+                    <DefaultText style={styles.ingredientNameLabel}>{rounderdAmount} {item.measures.metric.unitShort}</DefaultText>
                 </View>
                 <View style={styles.draggableArrowContainer} {...panResponder.panHandlers}>
-                    <Ionicons name='ios-arrow-dropleft' size={23} />
+                    <Ionicons name='ios-arrow-dropleft' size={normalizeIconSize(27) } />
                 </View>
 
             </Animated.View>
-            <Animated.View style={[styles.plusIconContainer, plusIconContainerScale, {paddingRight:plusIconContainerPaddingRight}]} >
-                <Entypo name='plus' size={30} style={{ ...styles.plusIcon }} />
+            <Animated.View style={[styles.plusIconContainer, plusIconContainerScale, { paddingRight: plusIconContainerPaddingRight }]} >
+                <Entypo name='plus' size={normalizeIconSize(33)} style={{ ...styles.plusIcon }} />
             </Animated.View>
 
         </Animated.View>
@@ -83,22 +104,28 @@ const SwipableCard = (props) => {
 const styles = StyleSheet.create({
     netherContainer: {
         //backgroundColor:'red'
+        backgroundColor: Colors.gray,
+        marginVertical: normalizeMarginSize(8) 
     },
     ingredientContainer: {
         width: '100%',
         flexDirection: 'row',
-        marginVertical: 5,
+        //marginVertical: 5,
         alignItems: 'center',
         backgroundColor: 'white',
-        zIndex: 2
+        zIndex: 2,
+        paddingLeft:normalizePaddingSize(8) 
     },
     ingredientImageRoundWrapper: {
         width: Dimensions.get('window').width / 6,
         aspectRatio: 1,
         borderRadius: Dimensions.get('window').width / 12,
-        borderWidth: 1,
-        borderColor: Colors.gray,
-        overflow: 'hidden'
+        //borderWidth: 1,
+        //borderColor: Colors.gray,
+        backgroundColor: 'white',
+        elevation:2,
+        overflow: 'hidden',
+        zIndex: 0
     },
     ingredientImage: {
         width: '100%',
@@ -108,7 +135,8 @@ const styles = StyleSheet.create({
         fontFamily: 'sofia-med'
     },
     ingredientInfoContainer: {
-        flex: 0.8
+        flex: 0.8,
+        paddingLeft: normalizePaddingSize(10) 
     },
     draggableArrowContainer: {
         flex: 0.2,
@@ -123,7 +151,7 @@ const styles = StyleSheet.create({
         right: 0,
         height: '100%',
         justifyContent: 'center',
-        
+
     },
     plusIcon: {
 

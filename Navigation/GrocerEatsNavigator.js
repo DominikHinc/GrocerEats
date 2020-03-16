@@ -11,6 +11,8 @@ import Colors from '../constants/Colors'
 import { Platform } from 'react-native';
 import MealDetailsScreen from '../screens/MealDetailsScreen';
 import Logo from '../components/Logo';
+import { normalizeIconSize } from '../methods/normalizeSizes';
+import DefaultText from '../components/DefaultText';
 
 
 const BottomTabNavigator = Platform.OS === 'android' ? createMaterialBottomTabNavigator() : createBottomTabNavigator();
@@ -43,32 +45,32 @@ const searchStackNavigator = ({navigation, route}) => {
         navigation.setOptions({tabBarVisible:true})
     }
     return (<StackNavigator.Navigator headerMode='none' >
-        <StackNavigator.Screen name="StandardSearch" component={StandardSearchScreen} options={{ cardStyleInterpolator: forFade }} />
-        <StackNavigator.Screen name="MealDetails" component={MealDetailsScreen} options={{ cardStyleInterpolator: forFade }} />
+        <StackNavigator.Screen name="StandardSearch" component={StandardSearchScreen}   />
+        <StackNavigator.Screen name="MealDetails" component={MealDetailsScreen}   />
     </StackNavigator.Navigator>)
 }
 const searchByIngradientsStackNavigator = () => {
     return (<StackNavigator.Navigator headerMode='none'>
-        <StackNavigator.Screen name="SearchByIngradients" component={SearchByIngredientsScreen} options={{ cardStyleInterpolator: forFade }} />
-        <StackNavigator.Screen name="MealDetails" component={MealDetailsScreen} options={{ cardStyleInterpolator: forFade }} />
+        <StackNavigator.Screen name="SearchByIngradients" component={SearchByIngredientsScreen}   />
+        <StackNavigator.Screen name="MealDetails" component={MealDetailsScreen}   />
     </StackNavigator.Navigator>)
 }
 const searchByNutrientsStackNavigator = () => {
     return (<StackNavigator.Navigator headerMode='none'>
-        <StackNavigator.Screen name="SearchByNutrients" component={SearchByNutrientsScreen} options={{ cardStyleInterpolator: forFade }} />
-        <StackNavigator.Screen name="MealDetails" component={MealDetailsScreen} options={{ cardStyleInterpolator: forFade }} />
+        <StackNavigator.Screen name="SearchByNutrients" component={SearchByNutrientsScreen}   />
+        <StackNavigator.Screen name="MealDetails" component={MealDetailsScreen}   />
     </StackNavigator.Navigator>)
 }
 const yourGroceryListStackNavigator = () => {
     return (<StackNavigator.Navigator headerMode='none'>
-        <StackNavigator.Screen name="YourGroceryList" component={YourGroceryListScreen} options={{ cardStyleInterpolator: forFade }} />
-        <StackNavigator.Screen name="MealDetails" component={MealDetailsScreen} options={{ cardStyleInterpolator: forFade }} />
+        <StackNavigator.Screen name="YourGroceryList" component={YourGroceryListScreen}   />
+        <StackNavigator.Screen name="MealDetails" component={MealDetailsScreen}   />
     </StackNavigator.Navigator>)
 }
 
 const mainTabNavigator = () => {
     return (
-        <BottomTabNavigator.Navigator labeled={true} backBehavior='history' keyboardHidesNavigationBar={false} >
+        <BottomTabNavigator.Navigator labeled={true} backBehavior='history' keyboardHidesNavigationBar={false} sceneAnimationEnabled={false}  >
             <BottomTabNavigator.Screen name="StandardSearch" component={searchStackNavigator} options={{
                 tabBarLabel: 'Search',
                 tabBarColor: Colors.blue,

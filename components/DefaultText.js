@@ -1,16 +1,27 @@
 import React from 'react'
 import { StyleSheet, Text } from 'react-native'
+import { normalizeFontSize } from '../methods/normalizeSizes.js'
 
 const DefaultText = (props) => {
+    //console.log(props.style)
+    //console.log(props.style.fontSize)
+
     return (
-        <Text style={{...styles.text,...props.style}} {...props}>{props.children}</Text>
+        <Text {...props}
+            style={{
+                ...styles.text, ...props.style, fontSize: props.style === undefined ? normalizeFontSize(styles.text.fontSize)
+                    :
+                    props.style.fontSize === undefined ? normalizeFontSize(styles.text.fontSize) : normalizeFontSize(props.style.fontSize)
+            }} >
+            {props.children}
+        </Text>
     )
 }
 
 const styles = StyleSheet.create({
-    text:{
-        fontSize:14,
-        fontFamily:'sofia'
+    text: {
+        fontSize: 17,
+        fontFamily: 'sofia'
     }
 })
 

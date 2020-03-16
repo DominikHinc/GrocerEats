@@ -8,7 +8,7 @@ const SearchByNutrientsScreen = (props) => {
     return (
         <View style={styles.screen}>
             <Logo color={Colors.green} />
-            <Text>SearchByIngradientsScreen</Text>
+            <Text>SearchByNutrientsScreen</Text>
         </View>
     )
 }
