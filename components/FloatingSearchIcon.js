@@ -6,16 +6,29 @@ import { useSafeArea } from 'react-native-safe-area-context'
 import { normalizeIconSize, normalizeWidth, normalizeHeight, normalizeBorderRadiusSize, normalizePaddingSize, normalizeMarginSize } from '../methods/normalizeSizes'
 import { Easing } from 'react-native-reanimated'
 
-const FloatingSearchIcon = ({ active, onPress, wholeScreenHeight }) => {
-    const insets = useSafeArea();
-
-    const [animatedValue, setAnimatedValue] = useState(new Animated.Value(1))
+const FloatingSearchIcon = ({ onPress }) => {
 
     let keyboardDidShowListener = useRef().current
     let keyboardDidHideListener = useRef().current
-    const [keyboardheight, setkeyboardheight] = useState(0)
-    //let keyboardheight = useRef(0).current
-    let insetBottomGreatestValue = useRef(0).current
+
+    const CustomLayoutSpring = {
+        duration: 400,
+        create: {
+            type: LayoutAnimation.Types.easeInEaseOut,
+            property: LayoutAnimation.Properties.scaleXY,
+           
+        },
+        update: {
+            type: LayoutAnimation.Types.easeInEaseOut,
+            property: LayoutAnimation.Properties.scaleXY,
+           
+        },
+        delete: {
+            type: LayoutAnimation.Types.easeInEaseOut,
+            property: LayoutAnimation.Properties.scaleXY,
+        }
+
+    };
 
     useEffect(() => {
         keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', keyboardDidShowHandler)
@@ -26,66 +39,12 @@ const FloatingSearchIcon = ({ active, onPress, wholeScreenHeight }) => {
         }
     }, [])
 
-    useEffect(()=>{
-        console.log("Insest bottom changed")
-        if(insets.bottom > insetBottomGreatestValue){
-            insetBottomGreatestValue = insets.bottom
-        }
-    },[insets.bottom])
-
-
-    const startIconAnimation = (keyboardActive) => {
-        // console.log('Keyboard height')
-        // console.log(keyboardheight)
-        Animated.spring(animatedValue, {
-            toValue: keyboardActive ? 1 : 0,
-            bounciness: 5,
-            // duration: 350,
-            delay: keyboardActive ? 0 : 100,
-         
-        }).start()
-    }
 
     const keyboardDidShowHandler = (e) => {
-        // console.log("Around this should be resault: ")
-        // console.log(keyboardheight)
-        // console.log("Screen height: ")
-        // console.log(Dimensions.get('screen').height)
-        // console.log("Screen window height: ")
-        // console.log(Dimensions.get('window').height)
-        // console.log("Parent view height: ")
-        // console.log(wholeScreenHeight)
-        // console.log("Inset top: ")
-        // console.log(insets.top)
-        // console.log("Inset Bottom greatest value")
-        // console.log(insetBottomGreatestValue)
-        console.log(keyboardheight - (Dimensions.get('screen').height - wholeScreenHeight))
-        if (keyboardheight !== e.endCoordinates.height) {
-            //keyboardheight = 
-            setkeyboardheight(e.endCoordinates.height)
-        }
-        startIconAnimation(true)
+        LayoutAnimation.configureNext(CustomLayoutSpring)
     }
     const kyeboardDidHideHandler = (e) => {
-        console.log("Inset Bottom")
-        console.log(insets.bottom)
-        startIconAnimation(false)
-    }
-
-
-    const onLayout = (e)=>{
-        console.log("On layout: ")
-        console.log(e)
-    }
-
-    const iconBottomDistance = {
-        transform: [{
-            translateY: animatedValue.interpolate({
-                inputRange: [0, 1],
-                outputRange: [normalizeHeight(-20), -(insetBottomGreatestValue - (Dimensions.get('screen').height - Dimensions.get('window').height))],
-
-            })
-        }]
+        LayoutAnimation.configureNext(CustomLayoutSpring)
     }
 
     let TouchableComp = TouchableOpacity;
@@ -93,12 +52,11 @@ const FloatingSearchIcon = ({ active, onPress, wholeScreenHeight }) => {
         TouchableComp = TouchableNativeFeedback;
     }
 
-
     return (
        
             <Animated.View style={[styles.searchIconContainer,
             { height: normalizeHeight(52), width: normalizeWidth(52), borderRadius: normalizeBorderRadiusSize(27) },
-            { right: '5%', bottom:(keyboardheight - (Dimensions.get('screen').height - wholeScreenHeight)) + normalizeHeight(52)  }]}>
+            { right: '5%', bottom:Dimensions.get('window').width / 20}]}>
                 <TouchableComp onPress={onPress} style={styles.touchable}>
                     <View style={styles.innerView}>
                         <Ionicons style={styles.searchIcon} name="ios-search" size={normalizeIconSize(27)} />
@@ -120,14 +78,10 @@ const styles = StyleSheet.create({
         position: 'absolute',
         backgroundColor: 'white',
         overflow: 'hidden',
-
         zIndex: 2,
         justifyContent: 'center',
         alignItems: 'center',
         elevation: 2,
-
-
-
     },
     searchIcon: {
         zIndex: 2,

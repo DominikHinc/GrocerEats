@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { ActivityIndicator, Alert, Animated, Easing, FlatList, Keyboard, StyleSheet, TouchableWithoutFeedback, View } from 'react-native'
+import { ActivityIndicator, Alert, Animated, Easing, FlatList, Keyboard, StyleSheet, TouchableWithoutFeedback, View, KeyboardAvoidingView } from 'react-native'
 import DefaultText from '../components/DefaultText'
 import Logo from '../components/Logo'
 import RecipePreview from '../components/RecipePreview'
@@ -83,18 +83,20 @@ const StandardSearchScreen = (props) => {
 
     return (
         <View style={styles.screen} >
-            <Logo shouldLogoBeShown={shouldLogoBeShown} color={Colors.blue} />
-            <View style={styles.restOfTheScreenContainer}>
-                <SearchBar searchBarTextInputValue={searchBarTextInputValue} searchBarTextChangedHandler={searchBarTextChangedHandler} onSearchPress={searchHandler} />
-                {recipesList.length > 0 && !couldNotFindRecipe && !loading && <MealPreviewList data={recipesList} onEndReached={loadMore}
-                    gotDetailedData={false} noMoreDataToDisplay={hasAllRecipesOfGivenSearchBeenFetched} navigationProp={props.navigation} />}
-                {loading && <View style={styles.loadingContainer}><ActivityIndicator size='large' color={Colors.blue} /></View>}
-                {couldNotFindRecipe && <View style={styles.loadingContainer}><DefaultText style={styles.errorText}>Could not find any recipes</DefaultText></View>}
-                {recipesList.length < 1 && !loading && <TouchableWithoutFeedback disabled={recipesList.length > 0 ? true : false} style={{ flex: 1, borderWidth: 1}} onPress={() => { Keyboard.dismiss() }}>
-                    <View style={{ flex: 1}} />
-                </TouchableWithoutFeedback>}
-            </View>
-
+            <KeyboardAvoidingView style={{ flex: 1 }} behavior='height'>
+                <Logo shouldLogoBeShown={shouldLogoBeShown} color={Colors.blue} />
+                <View style={styles.restOfTheScreenContainer}>
+                    <SearchBar searchBarTextInputValue={searchBarTextInputValue} searchBarTextChangedHandler={searchBarTextChangedHandler} onSearchPress={searchHandler}
+                    hintText="Search Recipes By Name" />
+                    {recipesList.length > 0 && !couldNotFindRecipe && !loading && <MealPreviewList data={recipesList} onEndReached={loadMore}
+                        gotDetailedData={false} noMoreDataToDisplay={hasAllRecipesOfGivenSearchBeenFetched} navigationProp={props.navigation} />}
+                    {loading && <View style={styles.loadingContainer}><ActivityIndicator size='large' color={Colors.blue} /></View>}
+                    {couldNotFindRecipe && <View style={styles.loadingContainer}><DefaultText style={styles.errorText}>Could not find any recipes</DefaultText></View>}
+                    {recipesList.length < 1 && !loading && <TouchableWithoutFeedback disabled={recipesList.length > 0 ? true : false} style={{ flex: 1, borderWidth: 1 }} onPress={() => { Keyboard.dismiss() }}>
+                        <View style={{ flex: 1 }} />
+                    </TouchableWithoutFeedback>}
+                </View>
+            </KeyboardAvoidingView>
         </View>
     )
 }

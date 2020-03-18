@@ -49,29 +49,24 @@ const SearchByIngredientsScreen = (props) => {
         setAddBarTextInputValue(text)
     }
 
-    const onLayout = (e)=>{
-        // console.log("Screen view layout height: ")
-        // console.log(e.nativeEvent.layout.height)
-        // console.log("Screen height")
-        // console.log(Dimensions.get('screen').height)
-
-        setWholeScreenHeight(e.nativeEvent.layout.height);
-    }
 
     return (
-        <View style={styles.screen} onLayout={onLayout}>
-            <Logo color={Colors.yellow} />
-            <View style={styles.restOfTheScreenContainer}>
-                <SearchBar searchBarTextInputValue={addBarTextInputValue} searchBarTextChangedHandler={setAddBarText} onSearchPress={addIngredient}
-                    backgroundColor={Colors.yellow} useAddBarPreset={true} placeholder="Add Ingredient" />
-                <IngredientsList ingredientsList={ingredientsList} removeIngredient={removeIngredient} />
-                {recipesList.length < 1 && <TouchableWithoutFeedback disabled={recipesList.length > 0 ? true : false} style={{ flex: 1 }} onPress={() => { Keyboard.dismiss() }}>
-                    <View style={{ flex: 1 }} />
-                </TouchableWithoutFeedback>}
-                
-            </View>
-            {ingredientsList.length > 0 && <FloatingSearchIcon active={true} wholeScreenHeight={wholeScreenHeight} />}
-           
+        <View style={styles.screen}>
+            <KeyboardAvoidingView style={{flex:1}} behavior='height'>
+                <Logo color={Colors.yellow} />
+                <View style={styles.restOfTheScreenContainer}>
+                    <SearchBar searchBarTextInputValue={addBarTextInputValue} searchBarTextChangedHandler={setAddBarText} onSearchPress={addIngredient}
+                        backgroundColor={Colors.yellow} useAddBarPreset={true} placeholder="Add Ingredient" hintText="Search Recipes By Ingradients" />
+                    <IngredientsList ingredientsList={ingredientsList} removeIngredient={removeIngredient} />
+                    {recipesList.length < 1 && <TouchableWithoutFeedback disabled={recipesList.length > 0 ? true : false} style={{ flex: 1 }} onPress={() => { Keyboard.dismiss() }}>
+                        <View style={{ flex: 1 }} />
+                    </TouchableWithoutFeedback>}
+
+                </View>
+                {ingredientsList.length > 0 && <FloatingSearchIcon active={true} wholeScreenHeight={wholeScreenHeight} />}
+            </KeyboardAvoidingView>
+
+
         </View>
     )
 }
@@ -80,7 +75,7 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: 'white',
         
-       
+
     },
     restOfTheScreenContainer: {
         flex: 1,

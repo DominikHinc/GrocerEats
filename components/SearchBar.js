@@ -3,9 +3,9 @@ import React, { useRef, useState } from 'react'
 import { Animated, Easing, StyleSheet, TextInput, TouchableOpacity, View, Dimensions } from 'react-native'
 import Colors from '../constants/Colors'
 import { normalizeBorderRadiusSize, normalizeFontSize, normalizeIconSize, normalizePaddingSize } from '../methods/normalizeSizes'
+import DefaultText from './DefaultText'
 
-const SearchBar = (props) => {
-    const {searchBarTextInputValue, searchBarTextChangedHandler, onSearchPress, backgroundColor, useAddBarPreset, placeholder} = props
+const SearchBar = ({searchBarTextInputValue, searchBarTextChangedHandler, onSearchPress, backgroundColor, useAddBarPreset, placeholder, hintText}) => {
     const textInputRef = useRef()
 
     const distanceFromTopAnimationValue = new Animated.Value(1);
@@ -26,11 +26,12 @@ const SearchBar = (props) => {
 
     const searchBarDistanceFromTop = distanceFromTopAnimationValue.interpolate({
         inputRange: [0, 1],
-        outputRange: [0, Dimensions.get('window').height/2]
+        outputRange: [0, Dimensions.get('window').height/2.5]
     })
 
     return (
         <Animated.View style={[styles.searchTextInputAnimatedContainer, { marginTop: searchBarDistanceFromTop }]}>
+            {animationCompleted === false &&<DefaultText style={styles.hintLabel}>{hintText}</DefaultText>}
             <TouchableOpacity style={{ width: '60%' }} activeOpacity={animationCompleted ? 1 : 0.5} onPressOut={animationCompleted ? null : startAnimationAfterRealase} >
                 <View style={{...styles.searchTextInputContainer, backgroundColor: backgroundColor === undefined ? Colors.blue : backgroundColor}}>
                     <TextInput ref={textInputRef} style={styles.searchTextInput} placeholder={placeholder === undefined ? "Search" : placeholder}
@@ -70,6 +71,9 @@ const styles = StyleSheet.create({
         fontSize: normalizeFontSize(18),
         paddingVertical: normalizePaddingSize(3)
     },
+    hintLabel:{
+        color:Colors.gray
+    }
 })
 
 export default SearchBar
