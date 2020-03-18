@@ -1,5 +1,5 @@
-import React, { useRef } from 'react'
-import { View, Text, StyleSheet, Animated } from 'react-native'
+import React, { useRef, useState, useEffect } from 'react'
+import { View, Text, StyleSheet, Animated, Easing } from 'react-native'
 
 import Colors from '../constants/Colors'
 import { Ionicons } from '@expo/vector-icons'
@@ -10,9 +10,43 @@ import { normalizeIconSize, normalizeFontSize } from '../methods/normalizeSizes'
 
 const Logo = (props) => {
     const insets = useSafeArea();
+    const {shouldLogoBeShown} = props
 
+    const [logoAnimationProgress, setLogoAnimationProgress] = useState(new Animated.Value(shouldLogoBeShown===undefined ? 1 : shouldLogoBeShown ? 1 : 0))
+    let logoInitialHeight = useRef(-1).current;
+
+    useEffect(()=>{
+        shouldLogoBeShown=== undefined ? showLogo() : shouldLogoBeShown ? showLogo() : hideLogo()
+    },[shouldLogoBeShown])
+    
+    const hideLogo = () => {
+        Animated.timing(logoAnimationProgress, {
+            toValue: 0,
+            duration: 150,
+            easing: Easing.linear
+        }).start()
+    }
+    const showLogo = () => {
+        Animated.timing(logoAnimationProgress, {
+            toValue: 1,
+            duration: 150,
+            easing: Easing.linear
+        }).start()
+    }
+
+    const logoHeight = logoAnimationProgress.interpolate({
+        inputRange: [0, 1],
+        outputRange: [0, logoInitialHeight],
+    })
+    const logoOpacity = logoAnimationProgress.interpolate({
+        inputRange: [0, 1],
+        outputRange: [0, 1]
+    })
+    
+    
     return (
-        <Animated.View {...props} style={{ ...styles.safeAreaViewWrapper, paddingTop: insets.top, ...props.logoContainerStyle }}>
+        <Animated.View onLayout={(e) => { logoInitialHeight === -1 ? logoInitialHeight = e.nativeEvent.layout.height : null }}  
+        style={{ ...styles.safeAreaViewWrapper, paddingTop: insets.top, height: logoHeight, opacity: logoOpacity }}>
             {props.goBack && <View style={styles.arrowContainer}>
                 <Ionicons style={styles.arrow} name='ios-arrow-back' size={normalizeIconSize(23)} onPress={() => { props.goBack() }} />
             </View>}
@@ -25,9 +59,6 @@ const styles = StyleSheet.create({
         backgroundColor: 'white',
         //elevation: 2,
         overflow: 'hidden',
-        // borderBottomWidth: 0,
-        // borderBottomColor: Colors.gray,
-
     },
 
     logo: {

@@ -1,29 +1,36 @@
 import { AntDesign, SimpleLineIcons } from '@expo/vector-icons';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, Alert, Animated, Dimensions, Easing, StyleSheet, View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
+import { useDispatch, useSelector } from 'react-redux';
 import AdditonalMealInfo from '../components/AdditonalMealInfo';
 import AddToGroceryListModal from '../components/AddToGroceryListModal';
 import BasicMealInfo from '../components/BasicMealInfo';
 import DefaultText from '../components/DefaultText';
+import FloatingHeartIcon from '../components/FloatingHeartIcon';
 import GoBackArrow from '../components/GoBackArrow';
 import MealPreparation from '../components/MealPreparation';
 import MealTags from '../components/MealTags';
 import SwipableCard from '../components/SwipableCard';
-import { getAPIKEYforDetails } from '../constants/APIKEY';
 import Colors from '../constants/Colors';
+import { ERROR_WHILE_FETCHING, fetchMealDetailsFromServer, MAXIMUM_NUMERS_OF_CALLS_REACHED, SUCCESS } from '../methods/fetchFromServer';
 import { normalizeIconSize, normalizePaddingSize } from '../methods/normalizeSizes';
-import FloatingHeartIcon from '../components/FloatingHeartIcon';
+import { removeSavedRecipe, saveRecipe } from '../store/actions/SavedRecipesActions';
 
 const SCROLLING_TAB_BORDER_RADIUS = 30
 
 const MealDetailsScreen = (props) => {
-    const { color, id } = props.route.params;
+    const { color, id, gotDetailedData } = props.route.params;
+    const savedRecipesList = useSelector(state => state.savedRecipes.savedRecipes)
     const [loading, setLoading] = useState(true)
     const [mealDetails, setMealDetails] = useState(false)
+
     const [upArrowType, setUpArrowType] = useState('arrow-up')
     const [scrollable, setScrollable] = useState(true)
     const currentContentOffset = new Animated.Value(0)
+
+    const [isMealSaved, setIsMealSaved] = useState(savedRecipesList.find(item => item.id === id) === undefined ? false : true)
+
     const [modalControl, setModalControl] = useState({
         modalVisible: false,
         title: 'Title',
@@ -35,9 +42,11 @@ const MealDetailsScreen = (props) => {
             unitSecondary: ''
         }
     })
-    const [mealAddedToFavorites, setMealAddedToFavorites] = useState(false)
-    let currentApiKey = useRef(1).current
 
+    const dispatch = useDispatch()
+
+
+    //Setters
     const setModalVisiblilty = (shouldBeVisible) => {
         setModalControl(prev => {
             return { ...prev, modalVisible: shouldBeVisible };
@@ -49,44 +58,43 @@ const MealDetailsScreen = (props) => {
         setModalControl(info)
     }
 
-    const fetchMealDataFromServer = async (apiNumber) => {
-        setLoading(true)
-        let response;
-        let readableResponse;
-        try {
-            console.log('Using APIKEY: ' + getAPIKEYforDetails(currentApiKey))
-            response = await fetch(`https://api.spoonacular.com/recipes/${id}/information?includeNutrition=false&apiKey=${getAPIKEYforDetails(currentApiKey)}`)
-        } catch (error) {
-            Alert.alert("Something went wrong", error.message)
-            return;
-        }
-        try {
-            readableResponse = await response.json();
-        } catch (error) {
-            Alert.alert("Something went wrong", error.message)
-            return;
-        }
-        
-        if (readableResponse.code === 402 || readableResponse.status === "failure") {
-            if (currentApiKey === 10) {
-                Alert.alert("Something went wrong", "Maximum number of calls has been reached")
-            } else {
-                currentApiKey += 1;
-                fetchMealDataFromServer()
-            }
-        }
-        
-        setMealDetails(readableResponse)
-
-        setLoading(false)
+    const setScrolling = (canScroll) => {
+        setScrollable(canScroll);
     }
 
     useEffect(() => {
         if (mealDetails === false) {
-            fetchMealDataFromServer();
+            if (gotDetailedData === true) {
+                setMealDetails(savedRecipesList.find(item => item.id === id).mealDetails)
+                setLoading(false)
+            } else {
+                setLoading(true)
+                fetchMealDetailsFromServer(id).then(response => {
+                    switch (response.status) {
+                        case ERROR_WHILE_FETCHING:
+                            props.navigation.goBack()
+                            Alert.alert("Something went wrong", response.error)
+                            break;
+                        case MAXIMUM_NUMERS_OF_CALLS_REACHED:
+                            props.navigation.goBack()
+                            Alert.alert("Something went wrong", response.error)
+                            //, [{text:"Ok",onPress:()=>{props.navigation.goBack()}}]
+                            break;
+                        case SUCCESS:
+                            setMealDetails(response.response)
+                            break;
+                    }
+                    setLoading(false)
+                }).catch(error => {
+                    Alert.alert("Something went wrong", error.message)
+                })
+            }
         }
+
     }, [])
 
+
+    //On Event happen handlers
     const onScrollHandler = (e) => {
         currentContentOffset.setValue(e.nativeEvent.contentOffset.y);
         setUpArrowType('minus');
@@ -95,7 +103,14 @@ const MealDetailsScreen = (props) => {
         currentContentOffset.setValue(e.nativeEvent.contentOffset.y);
         setUpArrowType('arrow-up')
     }
+    const onHeartIconPressed = () => {
+        if (!loading) {
+            !isMealSaved ? dispatch(saveRecipe(id, mealDetails)) : dispatch(removeSavedRecipe(id))
+            setIsMealSaved(prev => !prev)
+        }
+    }
 
+    //Interpolated variables
     const imageOpacity = currentContentOffset.interpolate({
         inputRange: [0, Dimensions.get('screen').height / 2],
         outputRange: [1, 0],
@@ -126,21 +141,14 @@ const MealDetailsScreen = (props) => {
         }
     }
 
-
-
-    const setScrolling = (canScroll) => {
-        setScrollable(canScroll);
-    }
-
-
     return (
         <View style={{ ...styles.screen, backgroundColor: loading ? 'white' : 'black' }}>
             <GoBackArrow goBack={() => { props.navigation.goBack() }} />
-            <FloatingHeartIcon onPress={()=>{setMealAddedToFavorites(prev=>!prev)}} active={mealAddedToFavorites} />
+            <FloatingHeartIcon onPress={onHeartIconPressed} active={isMealSaved} />
             <Animated.Image source={{ uri: `https://spoonacular.com/recipeImages/${id}-636x393.${mealDetails.imageType}` }} style={[styles.backgroundImage, { opacity: imageOpacity, height: imageHeight }]} resizeMode='cover' />
 
             {!loading && <ScrollView scrollEnabled={scrollable} style={styles.mainScrollView} onScroll={onScrollHandler}
-                onMomentumScrollEnd={onMomentumEndHandler} showsVerticalScrollIndicator={false} scrollEventThrottle={17}>
+                onMomentumScrollEnd={onMomentumEndHandler} showsVerticalScrollIndicator={false} scrollEventThrottle={17} onScrollBeginDrag={onScrollHandler}>
                 <View style={styles.spaceFiller} />
                 <View style={styles.mainContainer}>
                     <View style={styles.upArrowContainer}>
@@ -154,7 +162,7 @@ const MealDetailsScreen = (props) => {
 
                     <BasicMealInfo mealDetails={mealDetails} />
 
-                    {mealDetails.dishTypes.length > 0 && <View style={styles.mainTagsContainer}>
+                    {mealDetails !== false && mealDetails.dishTypes.length > 0 && <View style={styles.mainTagsContainer}>
                         <View style={styles.tagsContainer}>
                             <MealTags tags={mealDetails.dishTypes} />
                         </View>
@@ -170,7 +178,7 @@ const MealDetailsScreen = (props) => {
                         {renderIngredients()}
                     </View>
 
-                    {mealDetails.analyzedInstructions.length > 0 ? <View style={styles.stepsMainContainer}>
+                    {mealDetails !== false && mealDetails.analyzedInstructions.length > 0 ? <View style={styles.stepsMainContainer}>
                         <DefaultText style={styles.sectionTitle}>Preparation:</DefaultText>
                         <MealPreparation steps={mealDetails.analyzedInstructions} />
                     </View>
@@ -199,7 +207,7 @@ const styles = StyleSheet.create({
         flex: 1,
 
     },
-    
+
     loadingContainer: {
         flex: 1,
         justifyContent: 'center',

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { View, Text, StyleSheet, Image, Animated, TouchableNativeFeedback, TouchableHighlight, TouchableOpacity } from 'react-native'
 import DefaultText from '../components/DefaultText'
 import { Ionicons, AntDesign, MaterialCommunityIcons } from '@expo/vector-icons'
@@ -7,6 +7,10 @@ import { calculateServingsColor, calculateTimeColor } from '../methods/calculate
 import { changeMinutesToHoursAndMinutes } from '../methods/mathHelper'
 import { normalizeIconSize, normalizeBorderRadiusSize } from '../methods/normalizeSizes'
 
+import FloatingHeartIcon from './FloatingHeartIcon'
+import { useSelector, useDispatch } from 'react-redux'
+import { saveRecipe, removeSavedRecipe } from '../store/actions/SavedRecipesActions'
+
 
 
 const RecipePreview = (props) => {
@@ -14,29 +18,24 @@ const RecipePreview = (props) => {
     const readyInMinutesChangedToHoursAndMinutes = changeMinutesToHoursAndMinutes(readyInMinutes)
     let clockColor = calculateTimeColor(readyInMinutes)
     let servingsColor = calculateServingsColor(servings)
-
-    // if(readyInMinutes <= 45){
-    //     clockColor=Colors.green
-    // }else if(readyInMinutes <= 75){
-    //     clockColor=Colors.yellow
-    // }else{
-    //     clockColor=Colors.red
-    // }
-    // if(servings <= 4){
-    //     servingsColor=Colors.green
-    // }else if(servings <= 8){
-    //     servingsColor=Colors.yellow
-    // }else{
-    //     servingsColor=Colors.blue
-    // }
-    //console.log(`https://spoonacular.com/recipeImages/${id}-636x393.${(image.split('.'))[1]}`)
-
+    //let isMealSaved = useSelector(state => state.savedRecipes.savedRecipes).find(item => item.id === id)
+    const [isMealSaved, setIsMealSaved] = useState(useSelector(state => state.savedRecipes.savedRecipes).find(item => item.id === id))
+    const dispatch = useDispatch();
+    //TODO implement saving logic that will work with just preview
+    const onHeartIconPressed = () => {
+        // !isMealSaved ? dispatch(saveRecipe(id)) : dispatch(removeSavedRecipe(id))
+        console.log(isMealSaved)
+        setIsMealSaved(prev => prev === true ? false : true)
+    }
+    
     return (
         <View>
+            <FloatingHeartIcon active={isMealSaved} small={true} alignLeft={true} onPress={onHeartIconPressed} /> 
             <TouchableOpacity style={{flex:1}} onPress={onPress}>
                 <View style={styles.mainContainer}>
                     <View style={styles.imageContainer}>
-                        <Image source={{ uri: image !== undefined ? `https://spoonacular.com/recipeImages/${id}-240x150.${(image.split('.'))[1]}` : null}} style={styles.image} />
+                        <Image source={{ uri: image !== undefined ? `https://spoonacular.com/recipeImages/${id}-240x150.${image.includes(".") ? (image.split('.'))[1] : image}` : null}} 
+                        style={styles.image} defaultSource={require('../assets/Images/No_Internet_Connection.png')} />
                     </View>
                     <View style={styles.infoContainer}>
                         <View style={styles.titleContainer}>

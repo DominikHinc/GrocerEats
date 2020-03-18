@@ -1,8 +1,8 @@
-import React from 'react'
-import { View, Text, StyleSheet, TouchableNativeFeedback, TouchableOpacity, Platform } from 'react-native'
-import { useSafeArea } from 'react-native-safe-area-context'
 import { Ionicons } from '@expo/vector-icons'
-import { normalizeIconSize, normalizeHeight, normalizeWidth, normalizeBorderRadiusSize } from '../methods/normalizeSizes'
+import React from 'react'
+import { Platform, StyleSheet, TouchableNativeFeedback, TouchableOpacity, View } from 'react-native'
+import { useSafeArea } from 'react-native-safe-area-context'
+import { normalizeBorderRadiusSize, normalizeHeight, normalizeIconSize, normalizePaddingSize, normalizeWidth } from '../methods/normalizeSizes'
 
 const GoBackArrow = (props) => {
     const insets = useSafeArea();
@@ -15,7 +15,7 @@ const GoBackArrow = (props) => {
     }
 
     return (
-        <View style={{ ...styles.mainArrowContainer, top: insets.top }}>
+        <View style={{ ...styles.mainArrowContainer, top: insets.top + normalizePaddingSize(7) }}>
             <TouchableComp style={styles.touchable} onPress={() => { props.goBack() }}>
                 <View style={styles.innerView}>
                     <Ionicons style={{ ...styles.arrow }} name='ios-arrow-back' size={normalizeIconSize(25)} />
@@ -33,7 +33,7 @@ const styles = StyleSheet.create({
         elevation: 2,
         height: normalizeHeight(52),
         width: normalizeWidth(52),
-        borderRadius: normalizeBorderRadiusSize(26),
+        borderRadius: normalizeBorderRadiusSize(27),
         //backgroundColor: 'white',
         zIndex: 2,
         justifyContent: 'center',

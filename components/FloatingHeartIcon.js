@@ -3,19 +3,20 @@ import { View, Text, StyleSheet, Platform, TouchableNativeFeedback, TouchableOpa
 import { AntDesign } from '@expo/vector-icons'
 import Colors from '../constants/Colors'
 import { useSafeArea } from 'react-native-safe-area-context'
-import { normalizeIconSize, normalizeWidth, normalizeHeight, normalizeBorderRadiusSize } from '../methods/normalizeSizes'
+import { normalizeIconSize, normalizeWidth, normalizeHeight, normalizeBorderRadiusSize, normalizePaddingSize, normalizeMarginSize } from '../methods/normalizeSizes'
 
 
 const FloatingHeartIcon = (props) => {
     const insets = useSafeArea();
-    const { active } = props
+    const { active, id, alignLeft, small } = props
 
-    const [animatedValue, setAnimatedValue] = useState(new Animated.Value(0))
+    const [animatedValue, setAnimatedValue] = useState(new Animated.Value(active ? 1 : 0))
 
     useEffect(() => {
         Animated.spring(animatedValue, {
             toValue: active ? 1 : 0,
             friction: 10,
+            useNativeDriver:true
         }).start()
     }, [active])
 
@@ -34,20 +35,22 @@ const FloatingHeartIcon = (props) => {
         }]
     }
 
-    let TouchableComp;
+    let TouchableComp = TouchableOpacity;
+
     if (Platform.OS === 'android' && Platform.Version > 21) {
         TouchableComp = TouchableNativeFeedback;
     }
-    if (props.forceOpacity) {
-        TouchableComp = TouchableOpacity;
-    }
+    
 
 
     return (
-        <Animated.View style={ [styles.heartIconContainer,{ top: insets.top}, iconRotation] }>
+        <Animated.View style={ [styles.heartIconContainer, iconRotation,
+        {height:normalizeHeight(small ? 26 : 52), width: normalizeWidth(small ? 26 : 52),borderRadius: normalizeBorderRadiusSize(small ? 13 : 27)},
+        {right: alignLeft ? undefined : '6%', left: alignLeft ? '20%' : undefined,top: alignLeft ? normalizeMarginSize(-5) : insets.top + normalizePaddingSize(7)}
+        ] }>
             <TouchableComp onPress={props.onPress} style={styles.touchable} background={TouchableNativeFeedback.Ripple(props.active ? Colors.gray : Colors.red, false)}>
                 <View style={styles.innerView}>
-                    <AntDesign name="heart" size={normalizeIconSize(27)} color={active ? Colors.red : Colors.gray} style={{ ...styles.heartIcon }} />
+                    <AntDesign name="heart" size={normalizeIconSize(small ? 15 : 27)} color={active ? Colors.red : Colors.gray} style={{ ...styles.heartIcon }} />
                 </View>
             </TouchableComp>
 
@@ -57,17 +60,14 @@ const FloatingHeartIcon = (props) => {
 const styles = StyleSheet.create({
     heartIconContainer: {
         position: 'absolute',
-        width: normalizeWidth(52),
-        height: normalizeHeight(52),
         backgroundColor: 'white',
-        borderRadius: normalizeBorderRadiusSize(27),
         overflow: 'hidden',
-        right: 0,
+        
         zIndex: 2,
         justifyContent: 'center',
         alignItems: 'center',
         elevation: 2,
-        right: '6%',
+        
 
 
     },

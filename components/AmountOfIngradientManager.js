@@ -1,9 +1,8 @@
-import React, { useState, useRef, useEffect } from 'react'
-import { View, Alert, Image, Modal, StyleSheet, TouchableOpacity, Dimensions, TouchableHighlight, TextInput, Keyboard, Picker, } from 'react-native'
+import { AntDesign, Ionicons } from '@expo/vector-icons';
+import React, { useEffect, useState } from 'react';
+import { Picker, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
+import { normalizeBorderRadiusSize, normalizeFontSize, normalizeHeight, normalizeIconSize, normalizeMarginSize, normalizePaddingSize, normalizeWidth } from '../methods/normalizeSizes';
 import DefaultText from './DefaultText';
-import { Feather, AntDesign, Ionicons } from '@expo/vector-icons'
-import Colors from '../constants/Colors';
-import { normalizeBorderRadiusSize, normalizePaddingSize, normalizeFontSize, normalizeIconSize, normalizeMarginSize, normalizeWidth, normalizeHeight } from '../methods/normalizeSizes';
 
 const AmountOfGroceriesManager = (props) => {
     const { closeModal, textInputRef, amount, setAmount, selectedUnit, setSelectedUnit, amountControl, addToGroceryList } = props
@@ -19,13 +18,16 @@ const AmountOfGroceriesManager = (props) => {
         if (amountControl.unitMain.toLowerCase() !== amountControl.unitSecondary.toLowerCase() && amountControl.unitSecondary.length > 0) {
             setTabOfUnits(prev => [...prev, { label: amountControl.unitSecondary, value: amountControl.unitSecondary }])
         }
+        //Beside units got from server there is option to add ingradient to list in standard weight units
         if (amountControl.unitMain !== 'g' && amountControl.unitSecondary !== 'g') {
             setTabOfUnits(prev => [...prev, { label: 'g', value: 'g' }])
         }
         if (amountControl.unitMain !== 'lb' && amountControl.unitSecondary !== 'lb') {
             setTabOfUnits(prev => [...prev, { label: 'lb', value: 'lb' }])
         }
-
+        if (amountControl.unitMain !== 'oz' && amountControl.unitMain !== 'ounces' && amountControl.unitSecondary !== 'oz' && amountControl.unitSecondary !== 'ounces') {
+            setTabOfUnits(prev => [...prev, { label: 'oz', value: 'oz' }])
+        }
 
     }, [])
     const setTextinputText = (text) => {
@@ -33,7 +35,6 @@ const AmountOfGroceriesManager = (props) => {
     }
 
     const addOneToAmount = () => {
-        console.log(parseInt(amount))
         if (amount.length > 0 && parseInt(amount).toString() !== 'NaN') {
             setAmount(prev => (parseInt(prev) + 1).toString())
         } else {
@@ -49,6 +50,7 @@ const AmountOfGroceriesManager = (props) => {
     }
 
     const pickerValueChangeHandler = (itemValue, itemIndex) => {
+        //Called when new unit is selected
         setSelectedUnit(itemValue);
         if (itemValue === amountControl.unitMain) {
             setAmount(amountControl.amountMain.toString());
@@ -94,23 +96,16 @@ const AmountOfGroceriesManager = (props) => {
                     <View style={styles.pickerContainer}>
                         <Ionicons style={styles.pickerIcon} name="ios-arrow-down" size={normalizeIconSize(18)} />
                         <View style={{opacity:0}}>
-                            <Picker
-                                enabled={true}
-                                selectedValue={selectedUnit}
-                                style={styles.unitPicker}
-                                prompt="Select unit"
-                                onValueChange={pickerValueChangeHandler}>
+                            <Picker enabled={true} selectedValue={selectedUnit} style={styles.unitPicker}
+                                prompt="Select unit" onValueChange={pickerValueChangeHandler}>
                                 {getPickerOptions()}
                             </Picker>
                         </View>
 
                     </View>
                 </View>
-
-
                 <TouchableOpacity style={styles.touchableButton} onPress={addOneToAmount}>
                     <View style={styles.insideOfButton}>
-
                         <AntDesign name="plus" size={normalizeIconSize(18)} />
                     </View>
                 </TouchableOpacity>
