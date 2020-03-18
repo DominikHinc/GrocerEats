@@ -27,7 +27,7 @@ const RecipePreview = (props) => {
         console.log(isMealSaved)
         setIsMealSaved(prev => prev === true ? false : true)
     }
-    
+    //console.log(`https://spoonacular.com/recipeImages/${id}-240x150.${image.includes(".") ? (image.split('.'))[1] : image}`)
     return (
         <View>
             <FloatingHeartIcon active={isMealSaved} small={true} alignLeft={true} onPress={onHeartIconPressed} /> 
@@ -42,10 +42,10 @@ const RecipePreview = (props) => {
                             <DefaultText numberOfLines={1} style={styles.title}>{title}</DefaultText>
                         </View>
                         <View style={styles.timeAndServingsInfoContanier} >
-                            <AntDesign name="clockcircleo" color={clockColor} size={normalizeIconSize(16)} style={styles.indicatorIcons} />
-                            <DefaultText style={styles.timeandServingsInfo}>{readyInMinutesChangedToHoursAndMinutes}</DefaultText>
-                            <MaterialCommunityIcons name="silverware-fork-knife" color={servingsColor} size={normalizeIconSize(16) } style={styles.indicatorIcons} />
-                            <DefaultText style={styles.timeandServingsInfo}>{servings} servings</DefaultText>
+                            {readyInMinutes !== undefined &&<AntDesign name="clockcircleo" color={clockColor} size={normalizeIconSize(16)} style={styles.indicatorIcons} />}
+                            {readyInMinutes !== undefined &&<DefaultText style={styles.timeandServingsInfo}>{readyInMinutesChangedToHoursAndMinutes}</DefaultText>}
+                            {servings!==undefined && <MaterialCommunityIcons name="silverware-fork-knife" color={servingsColor} size={normalizeIconSize(16) } style={styles.indicatorIcons} />}
+                            {servings!==undefined && <DefaultText style={styles.timeandServingsInfo}>{servings} servings</DefaultText>}
 
                         </View>
                         <View style={styles.arrowConatiner}>

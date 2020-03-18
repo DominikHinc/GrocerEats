@@ -13,10 +13,12 @@ const Logo = (props) => {
     const {shouldLogoBeShown} = props
 
     const [logoAnimationProgress, setLogoAnimationProgress] = useState(new Animated.Value(shouldLogoBeShown===undefined ? 1 : shouldLogoBeShown ? 1 : 0))
-    let logoInitialHeight = useRef(-1).current;
+    //let logoInitialHeight = useRef(-1).current;
+    const [logoInitialHeight, setLogoInitialHeight] = useState(-1)
 
     useEffect(()=>{
         shouldLogoBeShown=== undefined ? showLogo() : shouldLogoBeShown ? showLogo() : hideLogo()
+        
     },[shouldLogoBeShown])
     
     const hideLogo = () => {
@@ -43,9 +45,19 @@ const Logo = (props) => {
         outputRange: [0, 1]
     })
     
-    
+    const onLayout = (e)=>{
+        //console.log(e)
+        if(logoInitialHeight < 0){
+            setLogoInitialHeight(e.nativeEvent.layout.height)
+            
+        }
+
+    }
+
+    console.log(logoInitialHeight)
+    //(e) => { logoInitialHeight === -1 ? logoInitialHeight = e.nativeEvent.layout.height : null }
     return (
-        <Animated.View onLayout={(e) => { logoInitialHeight === -1 ? logoInitialHeight = e.nativeEvent.layout.height : null }}  
+        <Animated.View onLayout={onLayout}  
         style={{ ...styles.safeAreaViewWrapper, paddingTop: insets.top, height: logoHeight, opacity: logoOpacity }}>
             {props.goBack && <View style={styles.arrowContainer}>
                 <Ionicons style={styles.arrow} name='ios-arrow-back' size={normalizeIconSize(23)} onPress={() => { props.goBack() }} />

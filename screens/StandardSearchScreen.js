@@ -22,7 +22,6 @@ const StandardSearchScreen = (props) => {
     const [loading, setLoading] = useState(false)
     let firstSearchId = useRef().current;
     const perLoadAmount = 25;
-
     //Animation Realted Variables
     const [shouldLogoBeShown, setShouldLogoBeShown] = useState(true)
 
@@ -83,20 +82,18 @@ const StandardSearchScreen = (props) => {
 
     return (
         <View style={styles.screen} >
-            <KeyboardAvoidingView style={{ flex: 1 }} behavior='height'>
-                <Logo shouldLogoBeShown={shouldLogoBeShown} color={Colors.blue} />
-                <View style={styles.restOfTheScreenContainer}>
-                    <SearchBar searchBarTextInputValue={searchBarTextInputValue} searchBarTextChangedHandler={searchBarTextChangedHandler} onSearchPress={searchHandler}
+            <Logo shouldLogoBeShown={shouldLogoBeShown} color={Colors.blue} />
+            <View style={styles.restOfTheScreenContainer}>
+                <SearchBar searchBarTextInputValue={searchBarTextInputValue} searchBarTextChangedHandler={searchBarTextChangedHandler} onSearchPress={searchHandler}
                     hintText="Search Recipes By Name" />
-                    {recipesList.length > 0 && !couldNotFindRecipe && !loading && <MealPreviewList data={recipesList} onEndReached={loadMore}
-                        gotDetailedData={false} noMoreDataToDisplay={hasAllRecipesOfGivenSearchBeenFetched} navigationProp={props.navigation} />}
-                    {loading && <View style={styles.loadingContainer}><ActivityIndicator size='large' color={Colors.blue} /></View>}
-                    {couldNotFindRecipe && <View style={styles.loadingContainer}><DefaultText style={styles.errorText}>Could not find any recipes</DefaultText></View>}
-                    {recipesList.length < 1 && !loading && <TouchableWithoutFeedback disabled={recipesList.length > 0 ? true : false} style={{ flex: 1, borderWidth: 1 }} onPress={() => { Keyboard.dismiss() }}>
-                        <View style={{ flex: 1 }} />
-                    </TouchableWithoutFeedback>}
-                </View>
-            </KeyboardAvoidingView>
+                {recipesList.length > 0 && !couldNotFindRecipe && !loading && <MealPreviewList data={recipesList} onEndReached={loadMore}
+                    gotDetailedData={false} noMoreDataToDisplay={hasAllRecipesOfGivenSearchBeenFetched} navigationProp={props.navigation} />}
+                {loading && <View style={styles.loadingContainer}><ActivityIndicator size='large' color={Colors.blue} /></View>}
+                {couldNotFindRecipe && <View style={styles.loadingContainer}><DefaultText style={styles.errorText}>Could not find any recipes</DefaultText></View>}
+                {recipesList.length < 1 && !loading && couldNotFindRecipe === false && <TouchableWithoutFeedback disabled={recipesList.length > 0 ? true : false} style={{ flex: 1, borderWidth: 1 }} onPress={() => { Keyboard.dismiss() }}>
+                    <View style={{ flex: 1 }} />
+                </TouchableWithoutFeedback>}
+            </View>
         </View>
     )
 }

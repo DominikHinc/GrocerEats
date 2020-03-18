@@ -5,7 +5,7 @@ import Colors from '../constants/Colors'
 import { normalizeBorderRadiusSize, normalizeFontSize, normalizeIconSize, normalizePaddingSize } from '../methods/normalizeSizes'
 import DefaultText from './DefaultText'
 
-const SearchBar = ({searchBarTextInputValue, searchBarTextChangedHandler, onSearchPress, backgroundColor, useAddBarPreset, placeholder, hintText}) => {
+const SearchBar = ({searchBarTextInputValue, searchBarTextChangedHandler, onSearchPress, backgroundColor, useAddBarPreset, placeholder, hintText,onBlur, onFocus}) => {
     const textInputRef = useRef()
 
     const distanceFromTopAnimationValue = new Animated.Value(1);
@@ -36,7 +36,8 @@ const SearchBar = ({searchBarTextInputValue, searchBarTextChangedHandler, onSear
                 <View style={{...styles.searchTextInputContainer, backgroundColor: backgroundColor === undefined ? Colors.blue : backgroundColor}}>
                     <TextInput ref={textInputRef} style={styles.searchTextInput} placeholder={placeholder === undefined ? "Search" : placeholder}
                         placeholderTextColor={useAddBarPreset ? Colors.lighterGray : Colors.lightGray} editable={animationCompleted}
-                        onSubmitEditing={onSearchPress} value={searchBarTextInputValue} onChangeText={searchBarTextChangedHandler} blurOnSubmit={useAddBarPreset ? false : true} />
+                        onSubmitEditing={onSearchPress} value={searchBarTextInputValue} onChangeText={searchBarTextChangedHandler} blurOnSubmit={useAddBarPreset ? false : true} 
+                        onBlur = {onBlur=== undefined ? null : onBlur} onFocus={onFocus === undefined ? null : onFocus}/>
                         {useAddBarPreset ?
                         <Entypo style={{ paddingRight: normalizePaddingSize(15) }} name="plus" size={normalizeIconSize(23)} onPress={animationCompleted ? onSearchPress : null} />
                         :
