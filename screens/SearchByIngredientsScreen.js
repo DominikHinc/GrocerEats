@@ -1,58 +1,37 @@
-import React, { useState, useRef, useEffect } from 'react'
-import { View, Text, StyleSheet, Picker, Image, TouchableWithoutFeedback, Keyboard, LayoutAnimation, KeyboardAvoidingView, Dimensions, Alert, ActivityIndicator } from 'react-native'
-import Logo from '../components/Logo'
-import Colors from '../constants/Colors'
-import SearchBar from '../components/SearchBar'
-import IngredientsList from '../components/IngredientsList'
-import FloatingSearchIcon from '../components/FloatingSearchIcon'
-import { fetchSearchByIngredientsFromServer, NO_MORE_RECIPES, RECIPE_COULD_NOT_BE_FOUND, SUCCESS, MAXIMUM_NUMERS_OF_CALLS_REACHED, ERROR_WHILE_FETCHING } from '../methods/fetchFromServer'
-import MealPreviewList from '../components/MealPreviewList'
+import React, { useEffect, useState } from 'react'
+import { ActivityIndicator, Alert, Keyboard, KeyboardAvoidingView, LayoutAnimation, StyleSheet, TouchableWithoutFeedback, View } from 'react-native'
 import DefaultText from '../components/DefaultText'
+import FloatingSearchIcon from '../components/FloatingSearchIcon'
+import IngredientsList from '../components/IngredientsList'
+import Logo from '../components/Logo'
+import MealPreviewList from '../components/MealPreviewList'
+import SearchBar from '../components/SearchBar'
+import Colors from '../constants/Colors'
+import { CustomLayoutSpring } from '../constants/LayoutAnimations'
+import { ERROR_WHILE_FETCHING, fetchSearchByIngredientsFromServer, MAXIMUM_NUMERS_OF_CALLS_REACHED, RECIPE_COULD_NOT_BE_FOUND, SUCCESS } from '../methods/fetchFromServer'
 
 
 const SearchByIngredientsScreen = (props) => {
-    const [addBarTextInputValue, setAddBarTextInputValue] = useState('');
     const [recipesList, setRecipesList] = useState([])
+
+    const [addBarTextInputValue, setAddBarTextInputValue] = useState('');
     const [ingredientsList, setIngredientsList] = useState([])
+
     const [shouldDataBeFetchedFromServer, setShouldDataBeFetchedFromServer] = useState(false)
     const [couldNotFindRecipe, setCouldNotFindRecipe] = useState(false)
-    const [recipesFetchOffset, setRecipesFetchOffset] = useState(0)
-    const [hasAllRecipesOfGivenSearchBeenFetched, setHasAllRecipesOfGivenSearchBeenFetched] = useState(false)
     const [loading, setLoading] = useState(false)
-    let firstSearchId = useRef().current;
-    const perLoadAmount = 25;
+    const perLoadAmount = 50;
 
     const [shouldLogoBeShown, setShouldLogoBeShown] = useState(true)
 
     const [isKeyboardDisplayed, setIsKeyboardDisplayed] = useState(false)
-
-
-    const CustomLayoutSpring = {
-        duration: 300,
-        create: {
-            type: LayoutAnimation.Types.easeInEaseOut,
-            property: LayoutAnimation.Properties.scaleXY,
-            springDamping: 2,
-        },
-        update: {
-            type: LayoutAnimation.Types.easeInEaseOut,
-            property: LayoutAnimation.Properties.scaleXY,
-            springDamping: 2,
-        },
-        delete: {
-            type: LayoutAnimation.Types.easeInEaseOut,
-            property: LayoutAnimation.Properties.scaleXY,
-            springDamping: 2,
-        }
-
-    };
 
     useEffect(() => {
         if (shouldDataBeFetchedFromServer === true) {
             recipesList.length > 0 ? null : setLoading(true)
             setShouldDataBeFetchedFromServer(false);
             setCouldNotFindRecipe(false);
-            fetchSearchByIngredientsFromServer(ingredientsList, recipesList.length, recipesFetchOffset, firstSearchId, perLoadAmount).then(response => {
+            fetchSearchByIngredientsFromServer(ingredientsList, recipesList.length, perLoadAmount).then(response => {
                 switch (response.status) {
                     case RECIPE_COULD_NOT_BE_FOUND:
                         setCouldNotFindRecipe(true);
@@ -63,15 +42,24 @@ const SearchByIngredientsScreen = (props) => {
                     case MAXIMUM_NUMERS_OF_CALLS_REACHED:
                         Alert.alert("Something went wrong", response.error)
                         break;
-                    case NO_MORE_RECIPES:
-                        setHasAllRecipesOfGivenSearchBeenFetched(true);
+                    //Because there is no way to offset search by ingredinets there is no need to implement case NO_MORE_RECIPES
                     case SUCCESS:
                         if (response.firstSearchId !== undefined) {
                             firstSearchId = response.firstSearchId;
                         }
-                        const data = recipesList.concat(response.response)
-                        
-                        setRecipesList(data);
+                        //console.log(response.response[0])
+                        let uniqueRecipes = {};
+                        response.response.forEach(item =>{
+                            if(uniqueRecipes[item.title] === undefined){
+                                uniqueRecipes[item.title] = item;
+                            }
+                        })
+                        let uniqueRecipesArray = [];
+                        for(let uniqueRecipe in uniqueRecipes){
+                            uniqueRecipesArray = [...uniqueRecipesArray, uniqueRecipes[uniqueRecipe]]
+                        }
+                        //console.log(uniqueRecipesArray)
+                        setRecipesList(uniqueRecipesArray);
                         break;
                 }
                 setLoading(false)
@@ -80,6 +68,7 @@ const SearchByIngredientsScreen = (props) => {
             })
         }
     }, [shouldDataBeFetchedFromServer])
+
 
     const addIngredient = () => {
         if (ingredientsList.find(item => addBarTextInputValue === item) === undefined && addBarTextInputValue.includes("&") === false && addBarTextInputValue.length > 0) {
@@ -104,15 +93,12 @@ const SearchByIngredientsScreen = (props) => {
         setRecipesList([]);
         Keyboard.dismiss();
         setShouldDataBeFetchedFromServer(true);
-        setHasAllRecipesOfGivenSearchBeenFetched(false)
-        setRecipesFetchOffset(0)
         setShouldLogoBeShown(false)
     }
 
 
     return (
         <View style={styles.screen}>
-
             <Logo color={Colors.yellow} shouldLogoBeShown={shouldLogoBeShown} />
             <View style={styles.restOfTheScreenContainer}>
                 <SearchBar searchBarTextInputValue={addBarTextInputValue} searchBarTextChangedHandler={setAddBarText} onSearchPress={addIngredient}

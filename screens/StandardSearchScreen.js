@@ -1,12 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { ActivityIndicator, Alert, Animated, Easing, FlatList, Keyboard, StyleSheet, TouchableWithoutFeedback, View, KeyboardAvoidingView } from 'react-native'
+import { ActivityIndicator, Alert, Keyboard, StyleSheet, TouchableWithoutFeedback, View } from 'react-native'
 import DefaultText from '../components/DefaultText'
 import Logo from '../components/Logo'
-import RecipePreview from '../components/RecipePreview'
+import MealPreviewList from '../components/MealPreviewList'
 import SearchBar from '../components/SearchBar'
 import Colors from '../constants/Colors'
-import { ERROR_WHILE_FETCHING, fetchStandardSearchFromServer, NO_MORE_RECIPES, RECIPE_COULD_NOT_BE_FOUND, SUCCESS, MAXIMUM_NUMERS_OF_CALLS_REACHED } from '../methods/fetchFromServer'
-import MealPreviewList from '../components/MealPreviewList'
+import { ERROR_WHILE_FETCHING, fetchStandardSearchFromServer, MAXIMUM_NUMERS_OF_CALLS_REACHED, NO_MORE_RECIPES, RECIPE_COULD_NOT_BE_FOUND, SUCCESS } from '../methods/fetchFromServer'
 
 
 const StandardSearchScreen = (props) => {

@@ -1,34 +1,14 @@
-import React, { useState, useEffect, useRef } from 'react'
-import { View, Text, StyleSheet, Platform, TouchableNativeFeedback, TouchableOpacity, Animated, Image, LayoutAnimation, Keyboard, Dimensions, KeyboardAvoidingView } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
-import Colors from '../constants/Colors'
-import { useSafeArea } from 'react-native-safe-area-context'
-import { normalizeIconSize, normalizeWidth, normalizeHeight, normalizeBorderRadiusSize, normalizePaddingSize, normalizeMarginSize } from '../methods/normalizeSizes'
-import { Easing } from 'react-native-reanimated'
+import React, { useEffect, useRef } from 'react'
+import { Animated, Dimensions, Keyboard, LayoutAnimation, Platform, StyleSheet, TouchableNativeFeedback, TouchableOpacity, View } from 'react-native'
+import { CustomLayoutSpring } from '../constants/LayoutAnimations'
+import { normalizeBorderRadiusSize, normalizeHeight, normalizeIconSize, normalizeWidth } from '../methods/normalizeSizes'
 
 const FloatingSearchIcon = ({ onPress }) => {
 
     let keyboardDidShowListener = useRef().current
     let keyboardDidHideListener = useRef().current
 
-    const CustomLayoutSpring = {
-        duration: 400,
-        create: {
-            type: LayoutAnimation.Types.easeInEaseOut,
-            property: LayoutAnimation.Properties.scaleXY,
-           
-        },
-        update: {
-            type: LayoutAnimation.Types.easeInEaseOut,
-            property: LayoutAnimation.Properties.scaleXY,
-           
-        },
-        delete: {
-            type: LayoutAnimation.Types.easeInEaseOut,
-            property: LayoutAnimation.Properties.scaleXY,
-        }
-
-    };
 
     useEffect(() => {
         keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', keyboardDidShowHandler)

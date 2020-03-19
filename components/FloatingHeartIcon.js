@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react'
-import { View, Text, StyleSheet, Platform, TouchableNativeFeedback, TouchableOpacity, Animated, Image } from 'react-native'
 import { AntDesign } from '@expo/vector-icons'
-import Colors from '../constants/Colors'
+import React, { useEffect, useState } from 'react'
+import { Animated, Platform, StyleSheet, TouchableNativeFeedback, TouchableOpacity, View } from 'react-native'
 import { useSafeArea } from 'react-native-safe-area-context'
-import { normalizeIconSize, normalizeWidth, normalizeHeight, normalizeBorderRadiusSize, normalizePaddingSize, normalizeMarginSize } from '../methods/normalizeSizes'
+import Colors from '../constants/Colors'
+import { normalizeBorderRadiusSize, normalizeHeight, normalizeIconSize, normalizeMarginSize, normalizePaddingSize, normalizeWidth } from '../methods/normalizeSizes'
 
 
 const FloatingHeartIcon = (props) => {

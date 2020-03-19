@@ -1,20 +1,18 @@
+import { AntDesign, Foundation, Ionicons, MaterialCommunityIcons } from '@expo/vector-icons'
 import React, { useState } from 'react'
-import { View, Text, StyleSheet, Image, Animated, TouchableNativeFeedback, TouchableHighlight, TouchableOpacity } from 'react-native'
+import { Image, StyleSheet, TouchableOpacity, View } from 'react-native'
+import { useDispatch, useSelector } from 'react-redux'
 import DefaultText from '../components/DefaultText'
-import { Ionicons, AntDesign, MaterialCommunityIcons } from '@expo/vector-icons'
 import Colors from '../constants/Colors'
 import { calculateServingsColor, calculateTimeColor } from '../methods/calculateColors'
 import { changeMinutesToHoursAndMinutes } from '../methods/mathHelper'
-import { normalizeIconSize, normalizeBorderRadiusSize } from '../methods/normalizeSizes'
-
+import { normalizeBorderRadiusSize, normalizeIconSize, normalizeMarginSize } from '../methods/normalizeSizes'
 import FloatingHeartIcon from './FloatingHeartIcon'
-import { useSelector, useDispatch } from 'react-redux'
-import { saveRecipe, removeSavedRecipe } from '../store/actions/SavedRecipesActions'
 
 
 
-const RecipePreview = (props) => {
-    const { title, id, image, readyInMinutes, servings, onPress } = props;
+
+const RecipePreview = ({ title, id, image, readyInMinutes, servings, onPress, missedIngredients, usedIngredients }) => {
     const readyInMinutesChangedToHoursAndMinutes = changeMinutesToHoursAndMinutes(readyInMinutes)
     let clockColor = calculateTimeColor(readyInMinutes)
     let servingsColor = calculateServingsColor(servings)
@@ -24,31 +22,37 @@ const RecipePreview = (props) => {
     //TODO implement saving logic that will work with just preview
     const onHeartIconPressed = () => {
         // !isMealSaved ? dispatch(saveRecipe(id)) : dispatch(removeSavedRecipe(id))
-        console.log(isMealSaved)
+        //console.log(isMealSaved)
         setIsMealSaved(prev => prev === true ? false : true)
     }
     //console.log(`https://spoonacular.com/recipeImages/${id}-240x150.${image.includes(".") ? (image.split('.'))[1] : image}`)
     return (
         <View>
-            <FloatingHeartIcon active={isMealSaved} small={true} alignLeft={true} onPress={onHeartIconPressed} /> 
-            <TouchableOpacity style={{flex:1}} onPress={onPress}>
+            <FloatingHeartIcon active={isMealSaved} small={true} alignLeft={true} onPress={onHeartIconPressed} />
+            <TouchableOpacity style={{ flex: 1 }} onPress={onPress}>
                 <View style={styles.mainContainer}>
                     <View style={styles.imageContainer}>
-                        <Image source={{ uri: image !== undefined ? `https://spoonacular.com/recipeImages/${id}-240x150.${image.includes(".") ? (image.split('.'))[1] : image}` : null}} 
-                        style={styles.image} defaultSource={require('../assets/Images/No_Internet_Connection.png')} />
+                        <Image source={{ uri: image !== undefined ? `https://spoonacular.com/recipeImages/${id}-240x150.${image.includes(".") ? (image.split('.'))[1] : image}` : null }}
+                            style={styles.image} defaultSource={require('../assets/Images/No_Internet_Connection.png')} />
                     </View>
                     <View style={styles.infoContainer}>
                         <View style={styles.titleContainer}>
                             <DefaultText numberOfLines={1} style={styles.title}>{title}</DefaultText>
                         </View>
-                        <View style={styles.timeAndServingsInfoContanier} >
-                            {readyInMinutes !== undefined &&<AntDesign name="clockcircleo" color={clockColor} size={normalizeIconSize(16)} style={styles.indicatorIcons} />}
-                            {readyInMinutes !== undefined &&<DefaultText style={styles.timeandServingsInfo}>{readyInMinutesChangedToHoursAndMinutes}</DefaultText>}
-                            {servings!==undefined && <MaterialCommunityIcons name="silverware-fork-knife" color={servingsColor} size={normalizeIconSize(16) } style={styles.indicatorIcons} />}
-                            {servings!==undefined && <DefaultText style={styles.timeandServingsInfo}>{servings} servings</DefaultText>}
+                        {usedIngredients !== undefined && missedIngredients !== undefined && <DefaultText style={styles.basicInfo}>Ingredients:</DefaultText>}
+                        <View style={[styles.basicInfoContainer, { paddingTop: usedIngredients !== undefined && missedIngredients !== undefined ? 0 : '3%' }]} >
+                            {readyInMinutes !== undefined && <AntDesign name="clockcircleo" color={clockColor} size={normalizeIconSize(16)} style={styles.indicatorIcons} />}
+                            {readyInMinutes !== undefined && <DefaultText style={styles.basicInfo}>{readyInMinutesChangedToHoursAndMinutes}</DefaultText>}
+                            {servings !== undefined && <MaterialCommunityIcons name="silverware-fork-knife" color={servingsColor} size={normalizeIconSize(16)} style={styles.indicatorIcons} />}
+                            {servings !== undefined && <DefaultText style={styles.basicInfo}>{servings} servings</DefaultText>}
+
+                            {usedIngredients !== undefined && usedIngredients > 0 && <Foundation name="check" color={Colors.green} size={normalizeIconSize(16)} style={styles.indicatorIcons} />}
+                            {usedIngredients !== undefined && usedIngredients > 0 && <DefaultText style={styles.basicInfo}>{usedIngredients} used</DefaultText>}
+                            {missedIngredients !== undefined && missedIngredients > 0 && <Foundation name="x" color={Colors.red} size={normalizeIconSize(16)} style={styles.indicatorIcons} />}
+                            {missedIngredients !== undefined && missedIngredients > 0 && <DefaultText style={styles.basicInfo}>{missedIngredients} missing</DefaultText>}
 
                         </View>
-                        <View style={styles.arrowConatiner}>
+                        <View style={[styles.arrowConatiner, { marginTop: usedIngredients !== undefined && missedIngredients !== undefined ? 0 : normalizeMarginSize(-5) }]}>
                             <Ionicons name="ios-arrow-round-forward" size={normalizeIconSize(30)} />
                         </View>
                     </View>
@@ -66,7 +70,7 @@ const styles = StyleSheet.create({
     imageContainer: {
         width: '25%',
         aspectRatio: 1,
-        borderRadius: normalizeBorderRadiusSize(12) ,
+        borderRadius: normalizeBorderRadiusSize(12),
         overflow: 'hidden'
 
     },
@@ -74,16 +78,16 @@ const styles = StyleSheet.create({
         width: '100%',
         height: '100%'
     },
-    timeAndServingsInfoContanier: {
+    basicInfoContainer: {
         flexDirection: 'row',
-        paddingTop: '3%',
+
         alignItems: 'center',
-        
+
     },
-    timeandServingsInfo: {
+    basicInfo: {
         color: Colors.darkGray,
         marginRight: '10%',
-        
+
     },
     infoContainer: {
         width: '75%',
@@ -100,6 +104,7 @@ const styles = StyleSheet.create({
     },
     arrowConatiner: {
         flexDirection: 'row-reverse',
+        //marginTop:-10
     },
     indicatorIcons: {
         marginRight: '1.5%'

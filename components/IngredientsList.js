@@ -1,7 +1,7 @@
 import React from 'react'
-import { View, Text, FlatList, StyleSheet } from 'react-native'
+import { FlatList, StyleSheet, View } from 'react-native'
+import { normalizeHeight, normalizePaddingSize, normalizeWidth } from '../methods/normalizeSizes'
 import IngredientTag from './IngredientTag'
-import { normalizePaddingSize, normalizeHeight, normalizeWidth } from '../methods/normalizeSizes'
 
 const IngredientsList = ({ingredientsList, removeIngredient}) => {
     //console.log(ingredientsList)

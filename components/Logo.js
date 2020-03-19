@@ -1,11 +1,11 @@
-import React, { useRef, useState, useEffect } from 'react'
-import { View, Text, StyleSheet, Animated, Easing } from 'react-native'
-
-import Colors from '../constants/Colors'
 import { Ionicons } from '@expo/vector-icons'
+import React, { useEffect, useState } from 'react'
+import { Animated, Easing, StyleSheet, View } from 'react-native'
 import { useSafeArea } from 'react-native-safe-area-context'
+import Colors from '../constants/Colors'
+import { normalizeIconSize } from '../methods/normalizeSizes'
 import DefaultText from './DefaultText'
-import { normalizeIconSize, normalizeFontSize } from '../methods/normalizeSizes'
+
 
 
 const Logo = (props) => {
@@ -54,7 +54,7 @@ const Logo = (props) => {
 
     }
 
-    console.log(logoInitialHeight)
+    //console.log(logoInitialHeight)
     //(e) => { logoInitialHeight === -1 ? logoInitialHeight = e.nativeEvent.layout.height : null }
     return (
         <Animated.View onLayout={onLayout}  

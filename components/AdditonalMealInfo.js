@@ -1,8 +1,8 @@
-import React, { useState, useRef, useEffect } from 'react'
-import { View, Text, StyleSheet } from 'react-native'
-import DefaultText from './DefaultText';
+import React, { useEffect, useRef, useState } from 'react';
+import { StyleSheet, View } from 'react-native';
 import Colors from '../constants/Colors';
 import { normalizePaddingSize } from '../methods/normalizeSizes';
+import DefaultText from './DefaultText';
 
 const AdditonalMealInfo = (props) => {
     const { mealDetails } = props;

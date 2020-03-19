@@ -1,9 +1,9 @@
-import React from 'react'
-import { View, Text, StyleSheet } from 'react-native'
-import DefaultText from './DefaultText'
-import Colors from '../constants/Colors'
-import { normalizeMarginSize, normalizePaddingSize, normalizeBorderRadiusSize, normalizeIconSize } from '../methods/normalizeSizes'
 import { Feather } from '@expo/vector-icons'
+import React from 'react'
+import { StyleSheet, View } from 'react-native'
+import Colors from '../constants/Colors'
+import { normalizeBorderRadiusSize, normalizeIconSize, normalizeMarginSize, normalizePaddingSize } from '../methods/normalizeSizes'
+import DefaultText from './DefaultText'
 
 const IngredientTag = ({ingredientName, removeIngredient}) => {
     //console.log(ingredientName)

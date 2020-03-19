@@ -1,10 +1,10 @@
-import React, { useState, useRef, useEffect } from 'react'
-import { View, Alert, Image, Modal, StyleSheet, TouchableOpacity, Dimensions, TouchableHighlight, TextInput, Keyboard, Picker, } from 'react-native'
-import DefaultText from './DefaultText';
-import { Feather } from '@expo/vector-icons'
+import { Feather } from '@expo/vector-icons';
+import React, { useEffect, useRef, useState } from 'react';
+import { Alert, Dimensions, Image, Keyboard, Modal, StyleSheet, TouchableOpacity, View } from 'react-native';
 import Colors from '../constants/Colors';
-import { normalizeBorderRadiusSize, normalizePaddingSize, normalizeFontSize, normalizeIconSize } from '../methods/normalizeSizes';
+import { normalizeBorderRadiusSize, normalizeIconSize, normalizePaddingSize } from '../methods/normalizeSizes';
 import AmountOfGroceriesManager from './AmountOfIngradientManager';
+import DefaultText from './DefaultText';
 
 const AddToGroceryListModal = (props) => {
     const { setModalVisible, modalVisible, imageUrl, title, amountControl } = props;

@@ -1,7 +1,7 @@
 import React from 'react'
-import { View, Text, StyleSheet } from 'react-native'
-import DefaultText from './DefaultText'
+import { StyleSheet, View } from 'react-native'
 import { normalizePaddingSize } from '../methods/normalizeSizes'
+import DefaultText from './DefaultText'
 
 const MealPreparation = (props) => {
     const { steps } = props

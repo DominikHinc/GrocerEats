@@ -1,8 +1,8 @@
 import React from 'react'
-import { View, Text, StyleSheet } from 'react-native'
-import DefaultText from './DefaultText'
+import { StyleSheet, View } from 'react-native'
 import Colors from '../constants/Colors'
-import { normalizeFontSize, normalizeBorderRadiusSize } from '../methods/normalizeSizes'
+import { normalizeBorderRadiusSize, normalizeFontSize } from '../methods/normalizeSizes'
+import DefaultText from './DefaultText'
 
 
 const MealTags = (props) => {

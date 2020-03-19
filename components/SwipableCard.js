@@ -1,9 +1,9 @@
-import React, { useRef, useMemo, useEffect } from 'react'
-import { View, Text, StyleSheet, Dimensions, Animated, Image, PanResponder } from 'react-native'
+import { Entypo, Ionicons } from '@expo/vector-icons';
+import React, { useRef } from 'react';
+import { Animated, Dimensions, Image, PanResponder, StyleSheet, View } from 'react-native';
 import Colors from '../constants/Colors';
+import { normalizeIconSize, normalizeMarginSize, normalizePaddingSize } from '../methods/normalizeSizes';
 import DefaultText from './DefaultText';
-import { Ionicons, Entypo } from '@expo/vector-icons'
-import { normalizeMarginSize, normalizePaddingSize, normalizeIconSize } from '../methods/normalizeSizes';
 
 
 const SwipableCard = (props) => {
