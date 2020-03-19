@@ -17,7 +17,7 @@ const RecipePreview = ({ title, id, image, readyInMinutes, servings, onPress, mi
     let clockColor = calculateTimeColor(readyInMinutes)
     let servingsColor = calculateServingsColor(servings)
     //let isMealSaved = useSelector(state => state.savedRecipes.savedRecipes).find(item => item.id === id)
-    const [isMealSaved, setIsMealSaved] = useState(useSelector(state => state.savedRecipes.savedRecipes).find(item => item.id === id))
+    const [isMealSaved, setIsMealSaved] = useState(useSelector(state => state.savedRecipes.savedRecipes).find(item => item.id === id) !== undefined)
     const dispatch = useDispatch();
     //TODO implement saving logic that will work with just preview
     const onHeartIconPressed = () => {
@@ -25,6 +25,7 @@ const RecipePreview = ({ title, id, image, readyInMinutes, servings, onPress, mi
         //console.log(isMealSaved)
         setIsMealSaved(prev => prev === true ? false : true)
     }
+    //console.log(isMealSaved)
     //console.log(`https://spoonacular.com/recipeImages/${id}-240x150.${image.includes(".") ? (image.split('.'))[1] : image}`)
     return (
         <View>

@@ -5,10 +5,12 @@ import Colors from '../constants/Colors';
 import { normalizeBorderRadiusSize, normalizeIconSize, normalizePaddingSize } from '../methods/normalizeSizes';
 import AmountOfGroceriesManager from './AmountOfIngradientManager';
 import DefaultText from './DefaultText';
+import { useDispatch } from 'react-redux';
+import {addProduct} from '../store/actions/GroceryListActions'
 
-const AddToGroceryListModal = (props) => {
-    const { setModalVisible, modalVisible, imageUrl, title, amountControl } = props;
+const AddToGroceryListModal = ({id, setModalVisible, modalVisible, imageUrl, title, amountControl, aisle }) => {
     
+    const dispatch = useDispatch();
     //Variables related to amount and unit of ingredient
     const [amount, setAmount] = useState(amountControl.amountMain.toString())
     const [selectedUnit, setSelectedUnit] = useState(amountControl.unitMain)
@@ -34,7 +36,8 @@ const AddToGroceryListModal = (props) => {
     const addToGroceryList = () => {
         const isValid = amount.match(/^-?\d*(\.\d+)?$/);
         if (isValid) {
-            closeModalHandler()
+            closeModalHandler();
+            dispatch(addProduct(id,title,amount,selectedUnit,imageUrl, aisle))
         } else {
             Alert.alert("Invalid Amount", "You can only enter numbers")
         }

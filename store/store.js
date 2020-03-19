@@ -2,6 +2,7 @@ import { applyMiddleware, combineReducers, createStore } from 'redux';
 import ReduxThunk from 'redux-thunk';
 import ApiReducer from './reducers/ApiReducer';
 import SavedRecipesReducer from './reducers/SavedRecipesReducer';
+import GroceryListReducer from './reducers/GroceryListReducer';
 
 
 
@@ -9,7 +10,8 @@ import SavedRecipesReducer from './reducers/SavedRecipesReducer';
 
 const rootReducer = combineReducers({
     savedRecipes: SavedRecipesReducer,
-    api:ApiReducer
+    api:ApiReducer,
+    groceryList:GroceryListReducer
   })
 
   export default createStore(rootReducer, applyMiddleware(ReduxThunk))

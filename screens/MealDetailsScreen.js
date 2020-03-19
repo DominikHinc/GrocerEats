@@ -35,6 +35,7 @@ const MealDetailsScreen = (props) => {
 
     const [modalControl, setModalControl] = useState({
         modalVisible: false,
+        id:'',
         title: 'Title',
         imageUrl: '',
         amountControl: {
@@ -42,7 +43,8 @@ const MealDetailsScreen = (props) => {
             amountSecondary: 0,
             unitMain: '',
             unitSecondary: ''
-        }
+        },
+        aisle:''
     })
 
     //let scrollVelocity = useRef(0).current
@@ -215,8 +217,8 @@ const MealDetailsScreen = (props) => {
             </ScrollView>}
             {loading && <View style={styles.loadingContainer} ><ActivityIndicator size='large' color={color} /></View>}
             <AddToGroceryListModal modalVisible={modalControl.modalVisible} setModalVisible={setModalVisiblilty}
-                title={modalControl.title} imageUrl={modalControl.imageUrl}
-                amountControl={modalControl.amountControl} />
+                title={modalControl.title} imageUrl={modalControl.imageUrl} aisle={modalControl.aisle}
+                amountControl={modalControl.amountControl} id={modalControl.id} />
 
         </View>
     )

@@ -14,7 +14,7 @@ const SwipableCard = React.memo(({ item, setScrolling, setInfoForModal }) => {
     let rounderdAmountSecondary;
     const unitMain = item.unit;
     const unitSecondary = item.unit === item.measures.metric.unitShort || item.unit === item.measures.metric.unitLong ? item.measures.us.unitShort : item.measures.metric.unitShort;
-
+    //console.log(item)
     if (item.unit === item.measures.metric.unitShort || item.unit === item.measures.metric.unitLong) {
         rounderdAmountSecondary = item.measures.us.amount > 1 ? Math.round(item.measures.us.amount) : Math.round(item.measures.us.amount * 100) / 100
     } else {
@@ -32,6 +32,7 @@ const SwipableCard = React.memo(({ item, setScrolling, setInfoForModal }) => {
     const modalShouldAppear = () => {
         setInfoForModal({
             modalVisible: true,
+            id:item.id,
             title: item.name,
             imageUrl: `https://spoonacular.com/cdn/ingredients_100x100/${item.image}`,
             amountControl: {
@@ -39,7 +40,8 @@ const SwipableCard = React.memo(({ item, setScrolling, setInfoForModal }) => {
                 amountSecondary: rounderdAmountSecondary,
                 unitMain: unitMain,
                 unitSecondary: unitSecondary
-            }
+            },
+            aisle:item.aisle
         })
     }
 
