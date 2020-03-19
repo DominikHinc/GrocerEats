@@ -1,5 +1,5 @@
 import { AntDesign, SimpleLineIcons } from '@expo/vector-icons';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { ActivityIndicator, Alert, Animated, Dimensions, Easing, StyleSheet, View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { useDispatch, useSelector } from 'react-redux';
@@ -17,6 +17,7 @@ import { ERROR_WHILE_FETCHING, fetchMealDetailsFromServer, MAXIMUM_NUMERS_OF_CAL
 import { normalizeIconSize, normalizePaddingSize } from '../methods/normalizeSizes';
 import { removeSavedRecipe, saveRecipe } from '../store/actions/SavedRecipesActions';
 
+
 const SCROLLING_TAB_BORDER_RADIUS = 30
 
 const MealDetailsScreen = (props) => {
@@ -25,8 +26,9 @@ const MealDetailsScreen = (props) => {
     const [loading, setLoading] = useState(true)
     const [mealDetails, setMealDetails] = useState(false)
 
-    const [upArrowType, setUpArrowType] = useState('arrow-up')
-    const [scrollable, setScrollable] = useState(true)
+    // const [upArrowType, setUpArrowType] = useState('arrow-up')
+    //const [scrollable, setScrollable] = useState(true)
+    let scrollable = useRef(true).current
     const currentContentOffset = new Animated.Value(0)
 
     const [isMealSaved, setIsMealSaved] = useState(savedRecipesList.find(item => item.id === id) === undefined ? false : true)
@@ -43,6 +45,8 @@ const MealDetailsScreen = (props) => {
         }
     })
 
+    //let scrollVelocity = useRef(0).current
+
     const dispatch = useDispatch()
 
 
@@ -54,13 +58,14 @@ const MealDetailsScreen = (props) => {
         })
     }
 
-    const setInfoForModal = (info) => {
+    const setInfoForModal = useCallback((info) => {
         setModalControl(info)
-    }
+    },[setModalControl])
 
-    const setScrolling = (canScroll) => {
-        setScrollable(canScroll);
-    }
+    const setScrolling = useCallback((canScroll) => {
+        //setScrollable(canScroll);
+        scrollable = canScroll
+    },[scrollable])
 
     useEffect(() => {
         if (mealDetails === false) {
@@ -97,11 +102,15 @@ const MealDetailsScreen = (props) => {
     //On Event happen handlers
     const onScrollHandler = (e) => {
         currentContentOffset.setValue(e.nativeEvent.contentOffset.y);
-        setUpArrowType('minus');
+        //console.log(e.nativeEvent.velocity.y)
+        //scrollVelocity=e.nativeEvent.velocity.y
+        // setUpArrowType('minus');
     }
     const onMomentumEndHandler = (e) => {
         currentContentOffset.setValue(e.nativeEvent.contentOffset.y);
-        setUpArrowType('arrow-up')
+        //console.log(e.nativeEvent.velocity.y)
+        //scrollVelocity=e.nativeEvent.velocity.y
+        // setUpArrowType('arrow-up')
     }
     const onHeartIconPressed = () => {
         if (!loading) {
@@ -123,6 +132,13 @@ const MealDetailsScreen = (props) => {
         extrapolate: 'clamp',
         easing: Easing.ease,
 
+    })
+
+    const arrowScale = currentContentOffset.interpolate({
+        inputRange: [0, Dimensions.get('screen').height / 2],
+        outputRange: [1, -1],
+        extrapolate: 'clamp',
+        easing: Easing.ease,
     })
 
     const renderIngredients = () => {
@@ -153,11 +169,12 @@ const MealDetailsScreen = (props) => {
                 onMomentumScrollEnd={onMomentumEndHandler} showsVerticalScrollIndicator={false} scrollEventThrottle={17} onScrollBeginDrag={onScrollHandler}>
                 <View style={styles.spaceFiller} />
                 <View style={styles.mainContainer}>
-                    <View style={styles.upArrowContainer}>
-                        {upArrowType === 'minus' ? <AntDesign name='minus' size={normalizeIconSize(28)} color={Colors.gray} style={{ ...styles.upArrow, transform: [{ scaleX: 2 }] }} />
+                    <Animated.View style={[styles.upArrowContainer, {transform:[{scaleY:arrowScale}]}]}>
+                        <SimpleLineIcons name={'arrow-up'} size={normalizeIconSize(25)} color={Colors.gray} style={styles.upArrow} />
+                        {/* {upArrowType === 'minus' ? <AntDesign name='minus' size={normalizeIconSize(28)} color={Colors.gray} style={{ ...styles.upArrow, transform: [{ scaleX: 2 }] }} />
                             :
-                            <SimpleLineIcons name={upArrowType} size={normalizeIconSize(25)} color={Colors.gray} style={styles.upArrow} />}
-                    </View>
+                            <SimpleLineIcons name={upArrowType} size={normalizeIconSize(25)} color={Colors.gray} style={styles.upArrow} />} */}
+                    </Animated.View>
                     <View style={styles.titleContainer}>
                         <DefaultText style={styles.title}>{mealDetails.title}</DefaultText>
                     </View>
@@ -252,7 +269,7 @@ const styles = StyleSheet.create({
 
     },
     upArrow: {
-        height: normalizeIconSize(23)
+        //height: normalizeIconSize(23)
     },
     titleContainer: {
         paddingTop: normalizePaddingSize(5),

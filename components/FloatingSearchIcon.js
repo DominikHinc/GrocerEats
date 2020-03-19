@@ -4,7 +4,7 @@ import { Animated, Dimensions, Keyboard, LayoutAnimation, Platform, StyleSheet, 
 import { CustomLayoutSpring } from '../constants/LayoutAnimations'
 import { normalizeBorderRadiusSize, normalizeHeight, normalizeIconSize, normalizeWidth } from '../methods/normalizeSizes'
 
-const FloatingSearchIcon = ({ onPress }) => {
+const FloatingSearchIcon = React.memo(({ onPress }) => {
 
     let keyboardDidShowListener = useRef().current
     let keyboardDidHideListener = useRef().current
@@ -44,7 +44,7 @@ const FloatingSearchIcon = ({ onPress }) => {
                 </TouchableComp>
             </Animated.View>
     )
-}
+})
 
 const styles = StyleSheet.create({
     keyboardAvoidingView:{

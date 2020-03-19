@@ -3,8 +3,7 @@ import { StyleSheet, View } from 'react-native'
 import { normalizePaddingSize } from '../methods/normalizeSizes'
 import DefaultText from './DefaultText'
 
-const MealPreparation = (props) => {
-    const { steps } = props
+const MealPreparation = React.memo(({ steps }) => {
 
     const renderSteps = () => {
         if (steps) {
@@ -25,7 +24,7 @@ const MealPreparation = (props) => {
             {renderSteps()}
         </View>
     )
-}
+})
 
 const styles = StyleSheet.create({
     steps: {

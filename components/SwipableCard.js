@@ -6,8 +6,7 @@ import { normalizeIconSize, normalizeMarginSize, normalizePaddingSize } from '..
 import DefaultText from './DefaultText';
 
 
-const SwipableCard = (props) => {
-    const { item, setScrolling, setInfoForModal } = props;
+const SwipableCard = React.memo(({ item, setScrolling, setInfoForModal }) => {
     //Variables related to animation
     const translateX = useRef(new Animated.ValueXY()).current;
     //Variables related to units and their amounts
@@ -52,7 +51,7 @@ const SwipableCard = (props) => {
         onShouldBlockNativeResponder: () => true,
         onPanResponderMove: (evt, gestureState) => {
             //console.log(translateX.x)
-            setScrolling(false)
+            //setScrolling(false)
             gestureState.dx > 0 ? null : gestureState.dx <= -Dimensions.get('window').width / 4 ? null : translateX.setValue({ x: gestureState.dx, y: gestureState.dy });
         },
         onPanResponderGrant: (evt, gestureState) => {
@@ -112,7 +111,7 @@ const SwipableCard = (props) => {
         </Animated.View>
 
     )
-}
+})
 
 const styles = StyleSheet.create({
     netherContainer: {

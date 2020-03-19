@@ -4,8 +4,7 @@ import Colors from '../constants/Colors';
 import { normalizePaddingSize } from '../methods/normalizeSizes';
 import DefaultText from './DefaultText';
 
-const AdditonalMealInfo = (props) => {
-    const { mealDetails } = props;
+const AdditonalMealInfo = React.memo(({ mealDetails }) => {
     const additionalInfoData = useRef({
         Cheap: mealDetails.cheap,
         Dairy_Free: mealDetails.dairyFree,
@@ -74,7 +73,7 @@ const AdditonalMealInfo = (props) => {
             
         </View>
     )
-}
+})
 
 const styles = StyleSheet.create({
     listContainer: {
