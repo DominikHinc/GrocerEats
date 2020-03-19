@@ -8,7 +8,7 @@ import RecipePreview from './RecipePreview'
 
 
 
-const MealPreviewList = ({ data, onEndReached, gotDetailedData, noMoreDataToDisplay, navigationProp, endOfListText, renderRecipeSearchedByIngredinets }) => {
+const MealPreviewList = React.memo(({ data, onEndReached, gotDetailedData, noMoreDataToDisplay, navigationProp, endOfListText, renderRecipeSearchedByIngredinets }) => {
     //TODO po co rozbijasz to tu, w data wystarczy dać gotDetailedData ? data.mealDetails : data
 
     const renderRecipePreviews = ({ item, index }) => {
@@ -39,7 +39,7 @@ const renderRecipePreviewSearchedByIngredients = ({ item, index }) => {
             contentContainerStyle={{ paddingBottom: '3%', paddingTop: '5%' }} scrollEventThrottle={30}
             onEndReachedThreshold={0.1} onEndReached={onEndReached !== undefined ? onEndReached : null}
             ListFooterComponent={renderListFooter} />)
-}
+})
 
 const styles = StyleSheet.create({
     recipesListItemSeparator: {

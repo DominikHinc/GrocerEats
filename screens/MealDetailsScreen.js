@@ -141,6 +141,8 @@ const MealDetailsScreen = (props) => {
         }
     }
 
+    console.log("Rerendering mealDetails")
+
     return (
         <View style={{ ...styles.screen, backgroundColor: loading ? 'white' : 'black' }}>
             <GoBackArrow goBack={() => { props.navigation.goBack() }} />
@@ -160,7 +162,8 @@ const MealDetailsScreen = (props) => {
                         <DefaultText style={styles.title}>{mealDetails.title}</DefaultText>
                     </View>
 
-                    <BasicMealInfo mealDetails={mealDetails} />
+                    <BasicMealInfo readyInMinutes={mealDetails.readyInMinutes} servings={mealDetails.servings} 
+                    likes={mealDetails.aggregateLikes} score={mealDetails.spoonacularScore} />
 
                     {mealDetails !== false && mealDetails.dishTypes.length > 0 && <View style={styles.mainTagsContainer}>
                         <View style={styles.tagsContainer}>

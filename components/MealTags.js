@@ -5,8 +5,7 @@ import { normalizeBorderRadiusSize, normalizeFontSize } from '../methods/normali
 import DefaultText from './DefaultText'
 
 
-const MealTags = (props) => {
-    const {tags} = props
+const MealTags = React.memo(({ tags }) => {
     const renderTags = () => {
         if (tags) {
             return tags.map((item, index) => index < 3 ? <View style={styles.tagContainer} key={index}><DefaultText style={styles.tagLabel}>{item}</DefaultText></View> : null)
@@ -19,11 +18,11 @@ const MealTags = (props) => {
             {renderTags()}
         </View>
     )
-}
+})
 
 const styles = StyleSheet.create({
     tagContainer: {
-        borderRadius: normalizeBorderRadiusSize(50) ,
+        borderRadius: normalizeBorderRadiusSize(50),
         backgroundColor: Colors.lighterGray,
         marginHorizontal: normalizeFontSize(10),
         paddingHorizontal: normalizeFontSize(10),

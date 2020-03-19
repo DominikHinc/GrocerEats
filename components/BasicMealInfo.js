@@ -6,30 +6,29 @@ import Colors from '../constants/Colors';
 import { calculateHearthColor, calculateServingsColor, calculateStarColor, calculateTimeColor } from '../methods/calculateColors';
 import { changeMinutesToHoursAndMinutes } from '../methods/mathHelper';
 import { normalizeFontSize, normalizePaddingSize } from '../methods/normalizeSizes';
-const BasicMealInfo = (props) => {
-    const {mealDetails} = props
-
+const BasicMealInfo = React.memo(({readyInMinutes, servings, likes, score}) => {
+    console.log("Rerendering Basic meal info")
     return (
         <View style={styles.simpleInfoContainer}>
             <View style={styles.simpleInfo}>
-                <AntDesign name="clockcircleo" color={calculateTimeColor(mealDetails.readyInMinutes)} size={normalizeFontSize(30)} style={styles.indicatorIcons} />
-                <DefaultText style={styles.simpleInfoLabel}>{changeMinutesToHoursAndMinutes(mealDetails.readyInMinutes)}</DefaultText>
+                <AntDesign name="clockcircleo" color={calculateTimeColor(readyInMinutes)} size={normalizeFontSize(30)} style={styles.indicatorIcons} />
+                <DefaultText style={styles.simpleInfoLabel}>{changeMinutesToHoursAndMinutes(readyInMinutes)}</DefaultText>
             </View>
             <View style={styles.simpleInfo}>
-                <MaterialCommunityIcons name="silverware-fork-knife" color={calculateServingsColor(mealDetails.servings)} size={normalizeFontSize(30)} style={styles.indicatorIcons} />
-                <DefaultText style={styles.simpleInfoLabel}>{mealDetails.servings} servings</DefaultText>
+                <MaterialCommunityIcons name="silverware-fork-knife" color={calculateServingsColor(servings)} size={normalizeFontSize(30)} style={styles.indicatorIcons} />
+                <DefaultText style={styles.simpleInfoLabel}>{servings} servings</DefaultText>
             </View>
             <View style={styles.simpleInfo}>
-                <Ionicons name="ios-heart-empty" color={calculateHearthColor(mealDetails.aggregateLikes)} size={normalizeFontSize(30)} style={styles.indicatorIcons} />
-                <DefaultText style={styles.simpleInfoLabel}>{mealDetails.aggregateLikes} Likes</DefaultText>
+                <Ionicons name="ios-heart-empty" color={calculateHearthColor(likes)} size={normalizeFontSize(30)} style={styles.indicatorIcons} />
+                <DefaultText style={styles.simpleInfoLabel}>{likes} Likes</DefaultText>
             </View>
             <View style={styles.simpleInfo}>
-                <FontAwesome name="star" color={calculateStarColor(mealDetails.spoonacularScore)} size={normalizeFontSize(30)} style={styles.indicatorIcons} />
-                <DefaultText style={styles.simpleInfoLabel}>Rating: {mealDetails.spoonacularScore}/100 </DefaultText>
+                <FontAwesome name="star" color={calculateStarColor(score)} size={normalizeFontSize(30)} style={styles.indicatorIcons} />
+                <DefaultText style={styles.simpleInfoLabel}>Rating: {score}/100 </DefaultText>
             </View>
         </View>
     )
-}
+})
 
 const styles = StyleSheet.create({
     simpleInfoContainer: {
