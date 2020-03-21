@@ -8,6 +8,7 @@ import { calculateServingsColor, calculateTimeColor } from '../methods/calculate
 import { changeMinutesToHoursAndMinutes } from '../methods/mathHelper'
 import { normalizeBorderRadiusSize, normalizeIconSize, normalizeMarginSize } from '../methods/normalizeSizes'
 import FloatingHeartIcon from './FloatingHeartIcon'
+import { saveRecipe, removeSavedRecipe } from '../store/actions/SavedRecipesActions'
 
 
 
@@ -17,16 +18,18 @@ const RecipePreview = ({ title, id, image, readyInMinutes, servings, onPress, mi
     let clockColor = calculateTimeColor(readyInMinutes)
     let servingsColor = calculateServingsColor(servings)
     //let isMealSaved = useSelector(state => state.savedRecipes.savedRecipes).find(item => item.id === id)
-    const [isMealSaved, setIsMealSaved] = useState(useSelector(state => state.savedRecipes.savedRecipes).find(item => item.id === id) !== undefined)
+    //const [isMealSaved, setIsMealSaved] = useState(useSelector(state => state.savedRecipes.savedRecipes).find(item => item.id === id) !== undefined)
+    const isMealSaved = useSelector(state => state.savedRecipes.savedRecipes).find(item => item.id === id) !== undefined
     const dispatch = useDispatch();
     //TODO implement saving logic that will work with just preview
     const onHeartIconPressed = () => {
-        // !isMealSaved ? dispatch(saveRecipe(id)) : dispatch(removeSavedRecipe(id))
+        !isMealSaved ? dispatch(saveRecipe(id)) : dispatch(removeSavedRecipe(id))
         //console.log(isMealSaved)
-        setIsMealSaved(prev => prev === true ? false : true)
+        //setIsMealSaved(prev => prev === true ? false : true)
     }
+    console.log("Recipe Preview Rerendering")
     //console.log(isMealSaved)
-    //console.log(`https://spoonacular.com/recipeImages/${id}-240x150.${image.includes(".") ? (image.split('.'))[1] : image}`)
+   
     return (
         <View>
             <FloatingHeartIcon active={isMealSaved} small={true} alignLeft={true} onPress={onHeartIconPressed} />

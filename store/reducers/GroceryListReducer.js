@@ -24,7 +24,7 @@ export default (state = initialState, action) => {
                 let copyOfProductList = state.productsList;
                 copyOfProductList[addedAmountProductIndex].amountMain = currentAmount;
 
-                return {...state, productsList:copyOfProductList}
+                return {...state, productsList:[...copyOfProductList]}
             }
 
         case REMOVE_PRODUCT:
@@ -33,11 +33,11 @@ export default (state = initialState, action) => {
         case EDIT_PRODUCT:
             return state
         case SETCHECKOFPRODUCT:
-            const index = state.productsList.findIndex(item => item.id === action.id)
-            const copy = state.productsList;
-            copy[index].isChecked = action.shouldProductBeChecked;
+            const indexOfProductToChengeCheck = state.productsList.findIndex(item => item.id === action.id)
+            const copyOfProductList = state.productsList;
+            copyOfProductList[indexOfProductToChengeCheck].isChecked = action.shouldProductBeChecked;
 
-            return {...state, productsList:copy};
+            return {...state, productsList:copyOfProductList};
         default:
             return state
     }

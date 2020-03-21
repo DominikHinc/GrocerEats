@@ -5,13 +5,14 @@ import Colors from '../constants/Colors';
 import { normalizeBorderRadiusSize, normalizeIconSize, normalizePaddingSize } from '../methods/normalizeSizes';
 import AmountOfGroceriesManager from './AmountOfIngradientManager';
 import DefaultText from './DefaultText';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import {addProduct} from '../store/actions/GroceryListActions'
 import ProductModel from '../models/ProductModel';
 
 const AddToGroceryListModal = ({currentProduct, setModalVisible, modalVisible }) => {
     
     const dispatch = useDispatch();
+    const productAlreadyOnGroceryList = useSelector(state => state.groceryList.productsList.find(item=>item.id === currentProduct.id))
     //Variables related to amount and unit of ingredient
     const [amount, setAmount] = useState(currentProduct.amountMain.toString())
     const [selectedUnit, setSelectedUnit] = useState(currentProduct.unitMain)
@@ -61,9 +62,21 @@ const AddToGroceryListModal = ({currentProduct, setModalVisible, modalVisible })
 
     const modalShowHandler = () => {
         //What should be set when modal in opening
-        setAmount(currentProduct.amountMain.toString())
+        if(productAlreadyOnGroceryList === undefined){
+            setAmount(currentProduct.amountMain.toString())
+            setSelectedUnit(currentProduct.unitMain)
+        }else{
+            setSelectedUnit(productAlreadyOnGroceryList.unitMain)
+            if(productAlreadyOnGroceryList.unitMain === currentProduct.unitMain){
+                setAmount(currentProduct.amountMain.toString())
+            }else if(productAlreadyOnGroceryList.unitMain === currentProduct.unitSecondary){
+                setAmount(currentProduct.amountSecondary.toString())
+            }else{
+                setAmount("0")
+            }
+        }
+        
         textInputRef.current.focus();
-        setSelectedUnit(currentProduct.unitMain)
     }
 
     return (
@@ -93,11 +106,14 @@ const AddToGroceryListModal = ({currentProduct, setModalVisible, modalVisible })
                                     <DefaultText style={styles.title}>{currentProduct.title[0].toUpperCase() + currentProduct.title.slice(1, currentProduct.title.length)}</DefaultText>
                                 </View>
                                 <View style={styles.additionalInfoContainer}>
-                                    <DefaultText style={{ textAlign: 'center', color: Colors.red }}>This item is not on your list</DefaultText>
+                                    <DefaultText style={{ textAlign: 'center', color:productAlreadyOnGroceryList === undefined ? Colors.red : Colors.green }}>
+                                        {productAlreadyOnGroceryList === undefined ? "This product is not on your list" : "This product is already on your grocery list"}
+                                    </DefaultText>
                                 </View>
                             </View>
                             <AmountOfGroceriesManager closeModal={closeModalHandler} textInputRef={textInputRef} amount={amount} setAmount={setAmount} 
-                            selectedUnit={selectedUnit} setSelectedUnit={setSelectedUnit} currentProduct={currentProduct} addToGroceryList={addToGroceryList} />
+                            selectedUnit={selectedUnit} setSelectedUnit={setSelectedUnit} currentProduct={currentProduct} addToGroceryList={addToGroceryList}
+                            productAlreadyOnGroceryList={productAlreadyOnGroceryList} />
                         </TouchableOpacity>
 
                     </View>

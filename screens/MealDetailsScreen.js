@@ -104,7 +104,7 @@ const MealDetailsScreen = (props) => {
     }
     const onHeartIconPressed = () => {
         if (!loading) {
-            !isMealSaved ? dispatch(saveRecipe(id, mealDetails)) : dispatch(removeSavedRecipe(id))
+            !isMealSaved ? dispatch(saveRecipe(id)) : dispatch(removeSavedRecipe(id))
             setIsMealSaved(prev => !prev)
         }
     }

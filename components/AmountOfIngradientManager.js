@@ -4,7 +4,7 @@ import { Picker, StyleSheet, TextInput, TouchableOpacity, View } from 'react-nat
 import { normalizeBorderRadiusSize, normalizeFontSize, normalizeHeight, normalizeIconSize, normalizeMarginSize, normalizePaddingSize, normalizeWidth } from '../methods/normalizeSizes';
 import DefaultText from './DefaultText';
 
-const AmountOfGroceriesManager = ({ closeModal, textInputRef, amount, setAmount, selectedUnit, setSelectedUnit, currentProduct, addToGroceryList }) => {
+const AmountOfGroceriesManager = ({ closeModal, textInputRef, amount, setAmount, selectedUnit, setSelectedUnit, currentProduct, addToGroceryList,productAlreadyOnGroceryList }) => {
     const [tabOfUnits, setTabOfUnits] = useState([{ label: "No Unit", value: "" }, { label: 'g', value: 'g' }]);
 
     useEffect(() => {
@@ -92,7 +92,7 @@ const AmountOfGroceriesManager = ({ closeModal, textInputRef, amount, setAmount,
 
                     <DefaultText style={styles.unitLabel}> {selectedUnit}</DefaultText>
 
-                    <View style={styles.pickerContainer}>
+                    {productAlreadyOnGroceryList === undefined && <View style={styles.pickerContainer}>
                         <Ionicons style={styles.pickerIcon} name="ios-arrow-down" size={normalizeIconSize(18)} />
                         <View style={{opacity:0}}>
                             <Picker enabled={true} selectedValue={selectedUnit} style={styles.unitPicker}
@@ -101,7 +101,7 @@ const AmountOfGroceriesManager = ({ closeModal, textInputRef, amount, setAmount,
                             </Picker>
                         </View>
 
-                    </View>
+                    </View>}
                 </View>
                 <TouchableOpacity style={styles.touchableButton} onPress={addOneToAmount}>
                     <View style={styles.insideOfButton}>
