@@ -35,7 +35,7 @@ const SearchBar = ({searchBarTextInputValue, searchBarTextChangedHandler, onSear
             <TouchableOpacity style={{ width: '60%' }} activeOpacity={animationCompleted ? 1 : 0.5} onPressOut={animationCompleted ? null : startAnimationAfterRealase} >
                 <View style={{...styles.searchTextInputContainer, backgroundColor: backgroundColor === undefined ? Colors.blue : backgroundColor}}>
                     <TextInput ref={textInputRef} style={styles.searchTextInput} placeholder={placeholder === undefined ? "Search" : placeholder}
-                        placeholderTextColor={useAddBarPreset ? Colors.lighterGray : Colors.lightGray} editable={animationCompleted}
+                        placeholderTextColor={useAddBarPreset ? Colors.lighterGray : Colors.lightGray} editable={animationCompleted} maxLength={100}
                         onSubmitEditing={onSearchPress} value={searchBarTextInputValue} onChangeText={searchBarTextChangedHandler} blurOnSubmit={useAddBarPreset ? false : true} 
                         onBlur = {onBlur=== undefined ? null : onBlur} onFocus={onFocus === undefined ? null : onFocus}/>
                         {useAddBarPreset ?
