@@ -20,12 +20,6 @@ const fetchFonts = () => {
 
 export default function App() {
   const [fontsLoaded, setFontsLoaded] = useState(false)
-
-  if (Platform.OS === 'android') {
-    if (UIManager.setLayoutAnimationEnabledExperimental) {
-      UIManager.setLayoutAnimationEnabledExperimental(true);
-    }
-  }
   
   if (Platform.OS === 'android') {
     if (UIManager.setLayoutAnimationEnabledExperimental) {

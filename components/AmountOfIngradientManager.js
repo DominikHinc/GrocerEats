@@ -4,28 +4,27 @@ import { Picker, StyleSheet, TextInput, TouchableOpacity, View } from 'react-nat
 import { normalizeBorderRadiusSize, normalizeFontSize, normalizeHeight, normalizeIconSize, normalizeMarginSize, normalizePaddingSize, normalizeWidth } from '../methods/normalizeSizes';
 import DefaultText from './DefaultText';
 
-const AmountOfGroceriesManager = (props) => {
-    const { closeModal, textInputRef, amount, setAmount, selectedUnit, setSelectedUnit, amountControl, addToGroceryList } = props
+const AmountOfGroceriesManager = ({ closeModal, textInputRef, amount, setAmount, selectedUnit, setSelectedUnit, currentProduct, addToGroceryList }) => {
     const [tabOfUnits, setTabOfUnits] = useState([{ label: "No Unit", value: "" }, { label: 'g', value: 'g' }]);
 
     useEffect(() => {
         //Because picker does not allow creating dynamic list inside of its body the unit list must be created seperatly
 
         setTabOfUnits([{ label: "No Unit", value: "" }]);
-        if (amountControl.unitMain.length > 0) {
-            setTabOfUnits(prev => [...prev, { label: amountControl.unitMain, value: amountControl.unitMain }])
+        if (currentProduct.unitMain.length > 0) {
+            setTabOfUnits(prev => [...prev, { label: currentProduct.unitMain, value: currentProduct.unitMain }])
         }
-        if (amountControl.unitMain.toLowerCase() !== amountControl.unitSecondary.toLowerCase() && amountControl.unitSecondary.length > 0) {
-            setTabOfUnits(prev => [...prev, { label: amountControl.unitSecondary, value: amountControl.unitSecondary }])
+        if (currentProduct.unitMain.toLowerCase() !== currentProduct.unitSecondary.toLowerCase() && currentProduct.unitSecondary.length > 0) {
+            setTabOfUnits(prev => [...prev, { label: currentProduct.unitSecondary, value: currentProduct.unitSecondary }])
         }
         //Beside units got from server there is option to add ingradient to list in standard weight units
-        if (amountControl.unitMain !== 'g' && amountControl.unitSecondary !== 'g') {
+        if (currentProduct.unitMain !== 'g' && currentProduct.unitSecondary !== 'g') {
             setTabOfUnits(prev => [...prev, { label: 'g', value: 'g' }])
         }
-        if (amountControl.unitMain !== 'lb' && amountControl.unitSecondary !== 'lb') {
+        if (currentProduct.unitMain !== 'lb' && currentProduct.unitSecondary !== 'lb') {
             setTabOfUnits(prev => [...prev, { label: 'lb', value: 'lb' }])
         }
-        if (amountControl.unitMain !== 'oz' && amountControl.unitMain !== 'ounces' && amountControl.unitSecondary !== 'oz' && amountControl.unitSecondary !== 'ounces') {
+        if (currentProduct.unitMain !== 'oz' && currentProduct.unitMain !== 'ounces' && currentProduct.unitSecondary !== 'oz' && currentProduct.unitSecondary !== 'ounces') {
             setTabOfUnits(prev => [...prev, { label: 'oz', value: 'oz' }])
         }
 
@@ -52,10 +51,10 @@ const AmountOfGroceriesManager = (props) => {
     const pickerValueChangeHandler = (itemValue, itemIndex) => {
         //Called when new unit is selected
         setSelectedUnit(itemValue);
-        if (itemValue === amountControl.unitMain) {
-            setAmount(amountControl.amountMain.toString());
-        } else if (itemValue === amountControl.unitSecondary) {
-            setAmount(amountControl.amountSecondary.toString());
+        if (itemValue === currentProduct.unitMain) {
+            setAmount(currentProduct.amountMain.toString());
+        } else if (itemValue === currentProduct.unitSecondary) {
+            setAmount(currentProduct.amountSecondary.toString());
         } else {
             setAmount('0');
         }

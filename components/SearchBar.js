@@ -57,7 +57,7 @@ const styles = StyleSheet.create({
     searchTextInputContainer: {
         width: '100%',
         //backgroundColor: Colors.blue,
-        borderRadius: normalizeBorderRadiusSize(15),
+        borderRadius: normalizeBorderRadiusSize(20),
         flexDirection: 'row',
         alignItems: 'center',
 

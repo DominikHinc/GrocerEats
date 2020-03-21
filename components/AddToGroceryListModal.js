@@ -7,13 +7,14 @@ import AmountOfGroceriesManager from './AmountOfIngradientManager';
 import DefaultText from './DefaultText';
 import { useDispatch } from 'react-redux';
 import {addProduct} from '../store/actions/GroceryListActions'
+import ProductModel from '../models/ProductModel';
 
-const AddToGroceryListModal = ({id, setModalVisible, modalVisible, imageUrl, title, amountControl, aisle }) => {
+const AddToGroceryListModal = ({currentProduct, setModalVisible, modalVisible }) => {
     
     const dispatch = useDispatch();
     //Variables related to amount and unit of ingredient
-    const [amount, setAmount] = useState(amountControl.amountMain.toString())
-    const [selectedUnit, setSelectedUnit] = useState(amountControl.unitMain)
+    const [amount, setAmount] = useState(currentProduct.amountMain.toString())
+    const [selectedUnit, setSelectedUnit] = useState(currentProduct.unitMain)
 
     //Variables related to text input of amount
     const [keyboardIsDisplayed, setKeyboardIsDisplayed] = useState(false)
@@ -37,7 +38,12 @@ const AddToGroceryListModal = ({id, setModalVisible, modalVisible, imageUrl, tit
         const isValid = amount.match(/^-?\d*(\.\d+)?$/);
         if (isValid) {
             closeModalHandler();
-            dispatch(addProduct(id,title,amount,selectedUnit,imageUrl, aisle))
+            dispatch(addProduct(new ProductModel(currentProduct.id, currentProduct.title[0].toUpperCase() + currentProduct.title.slice(1, currentProduct.title.length), 
+            currentProduct.imageUrl,amount,
+            selectedUnit === currentProduct.unitMain ? currentProduct.amountSecondary : currentProduct.amountMain,
+            selectedUnit,
+            selectedUnit === currentProduct.unitMain ? currentProduct.unitSecondary : currentProduct.unitMain, 
+            currentProduct.aisle)))
         } else {
             Alert.alert("Invalid Amount", "You can only enter numbers")
         }
@@ -55,9 +61,9 @@ const AddToGroceryListModal = ({id, setModalVisible, modalVisible, imageUrl, tit
 
     const modalShowHandler = () => {
         //What should be set when modal in opening
-        setAmount(amountControl.amountMain.toString())
+        setAmount(currentProduct.amountMain.toString())
         textInputRef.current.focus();
-        setSelectedUnit(amountControl.unitMain)
+        setSelectedUnit(currentProduct.unitMain)
     }
 
     return (
@@ -79,19 +85,19 @@ const AddToGroceryListModal = ({id, setModalVisible, modalVisible, imageUrl, tit
                                 </View>
                                 <View style={styles.imageContainer}>
                                     <View style={styles.imageRoundWrapper}>
-                                        <Image source={{ uri: imageUrl }} style={styles.image} />
+                                        <Image source={{ uri: currentProduct.imageUrl }} style={styles.image} />
                                     </View>
 
                                 </View>
                                 <View style={styles.titleContainer}>
-                                    <DefaultText style={styles.title}>{title[0].toUpperCase() + title.slice(1, title.length)}</DefaultText>
+                                    <DefaultText style={styles.title}>{currentProduct.title[0].toUpperCase() + currentProduct.title.slice(1, currentProduct.title.length)}</DefaultText>
                                 </View>
                                 <View style={styles.additionalInfoContainer}>
                                     <DefaultText style={{ textAlign: 'center', color: Colors.red }}>This item is not on your list</DefaultText>
                                 </View>
                             </View>
                             <AmountOfGroceriesManager closeModal={closeModalHandler} textInputRef={textInputRef} amount={amount} setAmount={setAmount} 
-                            selectedUnit={selectedUnit} setSelectedUnit={setSelectedUnit} amountControl={amountControl} addToGroceryList={addToGroceryList} />
+                            selectedUnit={selectedUnit} setSelectedUnit={setSelectedUnit} currentProduct={currentProduct} addToGroceryList={addToGroceryList} />
                         </TouchableOpacity>
 
                     </View>

@@ -16,6 +16,7 @@ import Colors from '../constants/Colors';
 import { ERROR_WHILE_FETCHING, fetchMealDetailsFromServer, MAXIMUM_NUMERS_OF_CALLS_REACHED, SUCCESS } from '../methods/fetchFromServer';
 import { normalizeIconSize, normalizePaddingSize } from '../methods/normalizeSizes';
 import { removeSavedRecipe, saveRecipe } from '../store/actions/SavedRecipesActions';
+import ProductModel from '../models/ProductModel';
 
 
 const SCROLLING_TAB_BORDER_RADIUS = 30
@@ -33,19 +34,8 @@ const MealDetailsScreen = (props) => {
 
     const [isMealSaved, setIsMealSaved] = useState(savedRecipesList.find(item => item.id === id) === undefined ? false : true)
 
-    const [modalControl, setModalControl] = useState({
-        modalVisible: false,
-        id:'',
-        title: 'Title',
-        imageUrl: '',
-        amountControl: {
-            amountMain: 0,
-            amountSecondary: 0,
-            unitMain: '',
-            unitSecondary: ''
-        },
-        aisle:''
-    })
+    const [modalVisible, setModalVisible] = useState(false)
+    const [currentProduct, setCurrentProduct] = useState(new ProductModel('1','Product','','','','','',''))
 
     //let scrollVelocity = useRef(0).current
 
@@ -54,15 +44,13 @@ const MealDetailsScreen = (props) => {
 
     //Setters
     const setModalVisiblilty = (shouldBeVisible) => {
-        setModalControl(prev => {
-            return { ...prev, modalVisible: shouldBeVisible };
-
-        })
+        setModalVisible(shouldBeVisible)
     }
 
     const setInfoForModal = useCallback((info) => {
-        setModalControl(info)
-    },[setModalControl])
+        setCurrentProduct(info)
+        setModalVisible(true);
+    },[setCurrentProduct, setModalVisible])
 
     const setScrolling = useCallback((canScroll) => {
         //setScrollable(canScroll);
@@ -216,9 +204,7 @@ const MealDetailsScreen = (props) => {
                 </View>
             </ScrollView>}
             {loading && <View style={styles.loadingContainer} ><ActivityIndicator size='large' color={color} /></View>}
-            <AddToGroceryListModal modalVisible={modalControl.modalVisible} setModalVisible={setModalVisiblilty}
-                title={modalControl.title} imageUrl={modalControl.imageUrl} aisle={modalControl.aisle}
-                amountControl={modalControl.amountControl} id={modalControl.id} />
+            <AddToGroceryListModal modalVisible={modalVisible} setModalVisible={setModalVisiblilty} currentProduct={currentProduct}/>
 
         </View>
     )

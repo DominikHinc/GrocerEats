@@ -4,6 +4,7 @@ import { Animated, Dimensions, Image, PanResponder, StyleSheet, View } from 'rea
 import Colors from '../constants/Colors';
 import { normalizeIconSize, normalizeMarginSize, normalizePaddingSize } from '../methods/normalizeSizes';
 import DefaultText from './DefaultText';
+import ProductModel from '../models/ProductModel';
 
 
 const SwipableCard = React.memo(({ item, setScrolling, setInfoForModal }) => {
@@ -30,19 +31,8 @@ const SwipableCard = React.memo(({ item, setScrolling, setInfoForModal }) => {
     }
 
     const modalShouldAppear = () => {
-        setInfoForModal({
-            modalVisible: true,
-            id:item.id,
-            title: item.name,
-            imageUrl: `https://spoonacular.com/cdn/ingredients_100x100/${item.image}`,
-            amountControl: {
-                amountMain: rounderdAmountMain,
-                amountSecondary: rounderdAmountSecondary,
-                unitMain: unitMain,
-                unitSecondary: unitSecondary
-            },
-            aisle:item.aisle
-        })
+        setInfoForModal(new ProductModel(item.id, item.name, `https://spoonacular.com/cdn/ingredients_100x100/${item.image}`,rounderdAmountMain,rounderdAmountSecondary,
+        unitMain,unitSecondary,item.aisle))
     }
 
     const panResponder = React.useMemo(() => PanResponder.create({
