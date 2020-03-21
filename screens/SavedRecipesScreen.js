@@ -49,7 +49,7 @@ const SavedRecipesScreen = (props) => {
     return (
         <View style={styles.screen}>
             <Logo color={Colors.red} shouldLogoBeShown={true} />
-            {listOfSavedIds.length < 1 && !loading && <View style={styles.zeroSavedRecipesMessageContainer}><DefaultText>You haven't saved any recipes</DefaultText></View>}
+            {listOfSavedIds.length < 1 && !loading && recipesList.length < 1 && <View style={styles.zeroSavedRecipesMessageContainer}><DefaultText>You haven't saved any recipes</DefaultText></View>}
             {recipesList.length > 0 && !loading && <MealPreviewList data={recipesList} onEndReached={() => { }} noMoreDataToDisplay={true}
                 navigationProp={props.navigation} endOfListText={"That's all recipes you saved. Go and add more."} />}
                 {loading && <View style={{flex:1, justifyContent:'center', alignItems:'center'}} ><ActivityIndicator size='large' color={Colors.red} /></View>}

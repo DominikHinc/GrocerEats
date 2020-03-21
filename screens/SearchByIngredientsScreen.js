@@ -102,7 +102,7 @@ const SearchByIngredientsScreen = (props) => {
             <Logo color={Colors.yellow} shouldLogoBeShown={shouldLogoBeShown} />
             <View style={styles.restOfTheScreenContainer}>
                 <SearchBar searchBarTextInputValue={addBarTextInputValue} searchBarTextChangedHandler={setAddBarText} onSearchPress={addIngredient}
-                    backgroundColor={Colors.yellow} useAddBarPreset={true} placeholder="Add Ingredient" hintText="Search Recipes By Ingradients"
+                    backgroundColor={Colors.yellow} useAddBarPreset={true} placeholder="Add Ingredient" hintText="Search Recipes By Ingredients"
                     onFocus={() => { setIsKeyboardDisplayed(true) }} onBlur={() => { setIsKeyboardDisplayed(false) }} />
                 {ingredientsList.length > 0 && <IngredientsList ingredientsList={ingredientsList} removeIngredient={removeIngredient} />}
 
