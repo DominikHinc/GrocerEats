@@ -1,15 +1,50 @@
-import { Ionicons, Entypo } from '@expo/vector-icons'
-import React, { useRef, useState } from 'react'
+import { Ionicons, Entypo, Feather } from '@expo/vector-icons'
+import React, { useRef, useState, useEffect } from 'react'
 import { Animated, Easing, StyleSheet, TextInput, TouchableOpacity, View, Dimensions } from 'react-native'
 import Colors from '../constants/Colors'
 import { normalizeBorderRadiusSize, normalizeFontSize, normalizeIconSize, normalizePaddingSize } from '../methods/normalizeSizes'
 import DefaultText from './DefaultText'
 
-const SearchBar = ({searchBarTextInputValue, searchBarTextChangedHandler, onSearchPress, backgroundColor, useAddBarPreset, placeholder, hintText,onBlur, onFocus}) => {
-    const textInputRef = useRef()
-
+const SearchBar = ({ onSearchPress, backgroundColor, useAddBarPreset, placeholder, hintText, onBlur, onFocus,
+    forceClear, setBufferedText }) => {
+    //Animation Related Variables
     const distanceFromTopAnimationValue = new Animated.Value(1);
     const [animationCompleted, setAnimationCompleted] = useState(false)
+    //Text Related Variables
+    const textInputRef = useRef()
+    const [textInputText, setTextInputText] = useState("")
+    const [shouldXIconBeShown, setShouldXIconBeShown] = useState(false)
+
+
+    useEffect(() => {
+        if (forceClear === true) {
+            setTextInputText("")
+        }
+    }, [forceClear])
+
+    const xIconPress = () => {
+        textInputRef.current.focus();
+        setShouldXIconBeShown(false)
+        setTextInputText("")
+    }
+
+    const submitInputHandler = () => {
+        setShouldXIconBeShown(true)
+        onSearchPress(textInputText)
+        if (useAddBarPreset) {
+            setTextInputText("")
+        }
+    }
+
+    const textInputTextChangeHandler = (text) => {
+        if (text.match(/^[a-zA-Z][a-zA-Z\s]*$/) || text.length === 0) {
+            setTextInputText(text)
+            setShouldXIconBeShown(false)
+            if (setBufferedText !== undefined) {
+                setBufferedText(text)
+            }
+        }
+    }
 
     //Animation Related Functions and Interpolated Variables
     const startAnimationAfterRealase = () => {
@@ -26,24 +61,33 @@ const SearchBar = ({searchBarTextInputValue, searchBarTextChangedHandler, onSear
 
     const searchBarDistanceFromTop = distanceFromTopAnimationValue.interpolate({
         inputRange: [0, 1],
-        outputRange: [0, Dimensions.get('window').height/2.5]
+        outputRange: [0, Dimensions.get('window').height / 2.5]
     })
+
+
+
+
+    const getCurrentIcon = () => {
+        if (useAddBarPreset) {
+            return <Entypo style={{ paddingRight: normalizePaddingSize(15) }} name="plus" size={normalizeIconSize(23)} onPress={animationCompleted ? submitInputHandler : null} />
+        } else if (shouldXIconBeShown) {
+            return <Feather style={{ paddingRight: normalizePaddingSize(15) }} name="x" size={normalizeIconSize(23)} onPress={animationCompleted ? xIconPress : null} />
+        } else {
+            return <Ionicons style={{ paddingRight: normalizePaddingSize(15) }} name="ios-search" size={normalizeIconSize(21)} onPress={animationCompleted ? submitInputHandler : null} />
+        }
+    }
 
     return (
         <Animated.View style={[styles.searchTextInputAnimatedContainer, { marginTop: searchBarDistanceFromTop }]}>
-            {animationCompleted === false &&<DefaultText style={styles.hintLabel}>{hintText}</DefaultText>}
+            {animationCompleted === false && <DefaultText style={styles.hintLabel}>{hintText}</DefaultText>}
             <TouchableOpacity style={{ width: '60%' }} activeOpacity={animationCompleted ? 1 : 0.5} onPressOut={animationCompleted ? null : startAnimationAfterRealase} >
-                <View style={{...styles.searchTextInputContainer, backgroundColor: backgroundColor === undefined ? Colors.blue : backgroundColor}}>
+                <View style={{ ...styles.searchTextInputContainer, backgroundColor: backgroundColor === undefined ? Colors.blue : backgroundColor }}>
                     <TextInput ref={textInputRef} style={styles.searchTextInput} placeholder={placeholder === undefined ? "Search" : placeholder}
                         placeholderTextColor={useAddBarPreset ? Colors.lighterGray : Colors.lightGray} editable={animationCompleted} maxLength={100}
-                        onSubmitEditing={onSearchPress} value={searchBarTextInputValue} onChangeText={searchBarTextChangedHandler} blurOnSubmit={useAddBarPreset ? false : true} 
-                        onBlur = {onBlur=== undefined ? null : onBlur} onFocus={onFocus === undefined ? null : onFocus}/>
-                        {useAddBarPreset ?
-                        <Entypo style={{ paddingRight: normalizePaddingSize(15) }} name="plus" size={normalizeIconSize(23)} onPress={animationCompleted ? onSearchPress : null} />
-                        :
-                        <Ionicons style={{ paddingRight: normalizePaddingSize(15) }} name="ios-search" size={normalizeIconSize(21)} onPress={animationCompleted ? onSearchPress : null} />  
-                        }
-                    
+                        onSubmitEditing={submitInputHandler} value={textInputText} onChangeText={textInputTextChangeHandler} blurOnSubmit={useAddBarPreset ? false : true}
+                        onBlur={onBlur === undefined ? null : onBlur} onFocus={onFocus === undefined ? null : onFocus} />
+                    {getCurrentIcon()}
+
                 </View>
             </TouchableOpacity>
         </Animated.View>
@@ -72,8 +116,8 @@ const styles = StyleSheet.create({
         fontSize: normalizeFontSize(18),
         paddingVertical: normalizePaddingSize(3)
     },
-    hintLabel:{
-        color:Colors.gray
+    hintLabel: {
+        color: Colors.gray
     }
 })
 

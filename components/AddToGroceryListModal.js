@@ -2,7 +2,7 @@ import { Feather } from '@expo/vector-icons';
 import React, { useEffect, useRef, useState } from 'react';
 import { Alert, Dimensions, Image, Keyboard, Modal, StyleSheet, TouchableOpacity, View } from 'react-native';
 import Colors from '../constants/Colors';
-import { normalizeBorderRadiusSize, normalizeIconSize, normalizePaddingSize } from '../methods/normalizeSizes';
+import { normalizeBorderRadiusSize, normalizeIconSize, normalizePaddingSize, normalizeMarginSize } from '../methods/normalizeSizes';
 import AmountOfGroceriesManager from './AmountOfIngradientManager';
 import DefaultText from './DefaultText';
 import { useDispatch, useSelector } from 'react-redux';
@@ -107,7 +107,9 @@ const AddToGroceryListModal = ({currentProduct, setModalVisible, modalVisible })
                                 </View>
                                 <View style={styles.additionalInfoContainer}>
                                     <DefaultText style={{ textAlign: 'center', color:productAlreadyOnGroceryList === undefined ? Colors.red : Colors.green }}>
-                                        {productAlreadyOnGroceryList === undefined ? "This product is not on your list" : "This product is already on your grocery list"}
+                                        {productAlreadyOnGroceryList === undefined ? "This product is not on your grocery list" 
+                                        :
+                                        "You have already " + productAlreadyOnGroceryList.amountMain + " (" + productAlreadyOnGroceryList.unitMain + ") of this product on your grocery list.\nDo you want to add more?"}
                                     </DefaultText>
                                 </View>
                             </View>
@@ -191,7 +193,8 @@ const styles = StyleSheet.create({
         fontSize: 21
     },
     additionalInfoContainer: {
-        paddingTop: '2%'
+        paddingTop: '2%',
+        marginHorizontal:normalizeMarginSize(20)
     },
     
 })

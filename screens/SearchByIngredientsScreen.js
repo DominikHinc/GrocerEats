@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import { ActivityIndicator, Alert, Keyboard, KeyboardAvoidingView, LayoutAnimation, StyleSheet, TouchableWithoutFeedback, View } from 'react-native'
 import DefaultText from '../components/DefaultText'
 import FloatingSearchIcon from '../components/FloatingSearchIcon'
@@ -12,21 +12,24 @@ import { ERROR_WHILE_FETCHING, fetchSearchByIngredientsFromServer, MAXIMUM_NUMER
 
 
 const SearchByIngredientsScreen = (props) => {
+    //This workaround is necessary for adding ingredient when search button is pressed
+    const [forceClearTextInput, setForceClearTextInput] = useState(false)
+    let ingradientTextBuffer = useRef("").current
+
     const [recipesList, setRecipesList] = useState([])
-
-    const [addBarTextInputValue, setAddBarTextInputValue] = useState('');
     const [ingredientsList, setIngredientsList] = useState([])
-
+    //Variables realated to fetching data from server
     const [shouldDataBeFetchedFromServer, setShouldDataBeFetchedFromServer] = useState(false)
     const [couldNotFindRecipe, setCouldNotFindRecipe] = useState(false)
     const [loading, setLoading] = useState(false)
     const perLoadAmount = 50;
 
+    //Variables used for animations
     const [shouldLogoBeShown, setShouldLogoBeShown] = useState(true)
-
     const [isKeyboardDisplayed, setIsKeyboardDisplayed] = useState(false)
 
     useEffect(() => {
+        setForceClearTextInput(false)
         if (shouldDataBeFetchedFromServer === true) {
             recipesList.length > 0 ? null : setLoading(true)
             setShouldDataBeFetchedFromServer(false);
@@ -49,13 +52,13 @@ const SearchByIngredientsScreen = (props) => {
                         }
                         //console.log(response.response[0])
                         let uniqueRecipes = {};
-                        response.response.forEach(item =>{
-                            if(uniqueRecipes[item.title] === undefined){
+                        response.response.forEach(item => {
+                            if (uniqueRecipes[item.title] === undefined) {
                                 uniqueRecipes[item.title] = item;
                             }
                         })
                         let uniqueRecipesArray = [];
-                        for(let uniqueRecipe in uniqueRecipes){
+                        for (let uniqueRecipe in uniqueRecipes) {
                             uniqueRecipesArray = [...uniqueRecipesArray, uniqueRecipes[uniqueRecipe]]
                         }
                         //console.log(uniqueRecipesArray)
@@ -69,13 +72,14 @@ const SearchByIngredientsScreen = (props) => {
         }
     }, [shouldDataBeFetchedFromServer])
 
+    
 
-    const addIngredient = () => {
-        if (ingredientsList.find(item => addBarTextInputValue === item) === undefined && addBarTextInputValue.includes("&") === false && addBarTextInputValue.length > 0) {
+    const addIngredient = (ingredinetName) => {
+        if (ingredientsList.find(item => ingredinetName === item) === undefined && ingredinetName.length > 0) {
             LayoutAnimation.configureNext(CustomLayoutSpring)
-            setIngredientsList(prev => [addBarTextInputValue, ...prev]);
+            setIngredientsList(prev => [ingredinetName, ...prev]);
         }
-        setAddBarTextInputValue("");
+        //setAddBarTextInputValue("");
     }
 
     const removeIngredient = (ingredientName) => {
@@ -83,28 +87,34 @@ const SearchByIngredientsScreen = (props) => {
         LayoutAnimation.configureNext(CustomLayoutSpring);
     }
 
-    const setAddBarText = (text) => {
-        setAddBarTextInputValue(text)
+    const removeAllIngredients = ()=>{
+        setIngredientsList([])
+        LayoutAnimation.configureNext(CustomLayoutSpring);
     }
+
 
     const searchHander = () => {
         console.log("Searching")
-        addIngredient();
+        setForceClearTextInput(true)
+        addIngredient(ingradientTextBuffer)
         setRecipesList([]);
         Keyboard.dismiss();
         setShouldDataBeFetchedFromServer(true);
         setShouldLogoBeShown(false)
     }
-
+    
+    const setBufferedText = (text)=>{
+            ingradientTextBuffer = text
+    }
 
     return (
         <View style={styles.screen}>
             <Logo color={Colors.yellow} shouldLogoBeShown={shouldLogoBeShown} />
             <View style={styles.restOfTheScreenContainer}>
-                <SearchBar searchBarTextInputValue={addBarTextInputValue} searchBarTextChangedHandler={setAddBarText} onSearchPress={addIngredient}
+                <SearchBar  onSearchPress={addIngredient} forceClear={forceClearTextInput} setBufferedText={setBufferedText}
                     backgroundColor={Colors.yellow} useAddBarPreset={true} placeholder="Add Ingredient" hintText="Search Recipes By Ingredients"
                     onFocus={() => { setIsKeyboardDisplayed(true) }} onBlur={() => { setIsKeyboardDisplayed(false) }} />
-                {ingredientsList.length > 0 && <IngredientsList ingredientsList={ingredientsList} removeIngredient={removeIngredient} />}
+                {ingredientsList.length > 0 && <IngredientsList removeAllIngredients={removeAllIngredients} ingredientsList={ingredientsList} removeIngredient={removeIngredient} />}
 
                 {recipesList.length > 0 && !couldNotFindRecipe && !loading && <MealPreviewList data={recipesList}
                     gotDetailedData={false} navigationProp={props.navigation} renderRecipeSearchedByIngredinets={true} />}
@@ -118,8 +128,8 @@ const SearchByIngredientsScreen = (props) => {
                 {couldNotFindRecipe && <View style={styles.loadingContainer}><DefaultText style={styles.errorText}>Could not find any recipes</DefaultText></View>}
 
             </View>
-            <KeyboardAvoidingView style={{ position:'absolute', height:"100%",width:"100%", backgroundColor:'transparent', zIndex:2 }} behavior='height' enabled={isKeyboardDisplayed}
-            pointerEvents="box-none" >
+            <KeyboardAvoidingView style={{ position: 'absolute', height: "100%", width: "100%", backgroundColor: 'transparent', zIndex: 2 }} behavior='height' enabled={isKeyboardDisplayed}
+                pointerEvents="box-none" >
                 {ingredientsList.length > 0 && <FloatingSearchIcon onPress={searchHander} />}
             </KeyboardAvoidingView>
 

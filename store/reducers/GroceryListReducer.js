@@ -1,4 +1,4 @@
-import { ADD_PRODUCT, REMOVE_PRODUCT, EDIT_PRODUCT, SETCHECKOFPRODUCT } from "../actions/GroceryListActions"
+import { ADD_PRODUCT, REMOVE_PRODUCT, EDIT_PRODUCT, SETCHECKOFPRODUCT, EDIT_PRODUCT_AMOUNT } from "../actions/GroceryListActions"
 
 
 
@@ -7,6 +7,7 @@ const initialState = {
 }
 
 export default (state = initialState, action) => {
+    let copyOfProductList;
     switch (action.type) {
         case ADD_PRODUCT:
             if (state.productsList.find(item => item.id === action.product.id) === undefined) {
@@ -17,11 +18,14 @@ export default (state = initialState, action) => {
                 console.log("Amount will be added")
                 let addedAmountProductIndex = state.productsList.findIndex(item => item.id === action.product.id);
                 let currentAmount = parseFloat(state.productsList[addedAmountProductIndex].amountMain);
+                if(currentAmount >= 999999){
+                    return state
+                }
                 let addedAmount = parseFloat(action.product.amountMain);
                 
                 currentAmount  += addedAmount;
                 
-                let copyOfProductList = state.productsList;
+                copyOfProductList = state.productsList;
                 copyOfProductList[addedAmountProductIndex].amountMain = currentAmount;
 
                 return {...state, productsList:[...copyOfProductList]}
@@ -32,9 +36,23 @@ export default (state = initialState, action) => {
             return { ...state, productsList: newProductsList }
         case EDIT_PRODUCT:
             return state
+        case EDIT_PRODUCT_AMOUNT:
+            console.log("Item will be edited")
+            const indexOfProductToEditAmount = state.productsList.findIndex(item => {return item.id === action.id})
+            if(indexOfProductToEditAmount < 0 ){
+                console.log("Item not found")
+                return state
+            }
+            copyOfProductList = state.productsList;
+            console.log(copyOfProductList[indexOfProductToEditAmount])
+            copyOfProductList[indexOfProductToEditAmount].amountMain = action.amountMain;
+            console.log(copyOfProductList[indexOfProductToEditAmount])
+
+            return {...state, productsList:[...copyOfProductList]}
+
         case SETCHECKOFPRODUCT:
             const indexOfProductToChengeCheck = state.productsList.findIndex(item => item.id === action.id)
-            const copyOfProductList = state.productsList;
+            copyOfProductList = state.productsList;
             copyOfProductList[indexOfProductToChengeCheck].isChecked = action.shouldProductBeChecked;
 
             return {...state, productsList:copyOfProductList};

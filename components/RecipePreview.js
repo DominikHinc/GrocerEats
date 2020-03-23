@@ -27,7 +27,7 @@ const RecipePreview = ({ title, id, image, readyInMinutes, servings, onPress, mi
         //console.log(isMealSaved)
         //setIsMealSaved(prev => prev === true ? false : true)
     }
-    console.log("Recipe Preview Rerendering")
+    //console.log("Recipe Preview Rerendering")
     //console.log(isMealSaved)
    
     return (

@@ -13,7 +13,7 @@ const FloatingHeartIcon = React.memo(({ active, id, alignLeft, small, onPress })
     const [isIconActive, setIsIconActive] = useState(active ? true : false)
     const [canIconBePressed, setCanIconBePressed] = useState(true)
 
-    console.log("Floating heart icon rerendering")
+    //console.log("Floating heart icon rerendering")
     useEffect(() => {
         if(active !== isIconActive){
             //startIconAnimation(active ? 1 : 0)

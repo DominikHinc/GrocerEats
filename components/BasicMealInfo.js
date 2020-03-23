@@ -7,7 +7,6 @@ import { calculateHearthColor, calculateServingsColor, calculateStarColor, calcu
 import { changeMinutesToHoursAndMinutes } from '../methods/mathHelper';
 import { normalizeFontSize, normalizePaddingSize } from '../methods/normalizeSizes';
 const BasicMealInfo = React.memo(({readyInMinutes, servings, likes, score}) => {
-    console.log("Rerendering Basic meal info")
     return (
         <View style={styles.simpleInfoContainer}>
             <View style={styles.simpleInfo}>

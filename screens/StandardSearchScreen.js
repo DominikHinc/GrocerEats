@@ -10,8 +10,8 @@ import { ERROR_WHILE_FETCHING, fetchStandardSearchFromServer, MAXIMUM_NUMERS_OF_
 
 const StandardSearchScreen = (props) => {
     //UI Related Vriables
-    const [searchBarTextInputValue, setSearchBarTextInputValue] = useState('')
-
+    //const [searchBarTextInputValue, setSearchBarTextInputValue] = useState('')
+    const [textToSearch, setTextToSearch] = useState("")
     //Fetching Data From Server Related Variables
     const [recipesList, setRecipesList] = useState([])
     const [couldNotFindRecipe, setCouldNotFindRecipe] = useState(false)
@@ -21,6 +21,7 @@ const StandardSearchScreen = (props) => {
     const [loading, setLoading] = useState(false)
     let firstSearchId = useRef().current;
     const perLoadAmount = 25;
+
     //Animation Realted Variables
     const [shouldLogoBeShown, setShouldLogoBeShown] = useState(true)
 
@@ -30,7 +31,8 @@ const StandardSearchScreen = (props) => {
             setShouldDataBeFetchedFromServer(false);
             recipesList.length > 0 ? null : setLoading(true)
             setCouldNotFindRecipe(false);
-            fetchStandardSearchFromServer(searchBarTextInputValue, recipesList.length, recipesFetchOffset, firstSearchId, perLoadAmount).then((response) => {
+            console.log("Searching " + textToSearch)
+            fetchStandardSearchFromServer(textToSearch, recipesList.length, recipesFetchOffset, firstSearchId, perLoadAmount).then((response) => {
                 switch (response.status) {
                     case RECIPE_COULD_NOT_BE_FOUND:
                         setCouldNotFindRecipe(true);
@@ -65,7 +67,8 @@ const StandardSearchScreen = (props) => {
 
     }
 
-    const searchHandler = () => {
+    const searchHandler = (searchedText) => {
+        setTextToSearch(searchedText)
         setRecipesList([]);
         Keyboard.dismiss();
         setShouldDataBeFetchedFromServer(true);
@@ -74,17 +77,11 @@ const StandardSearchScreen = (props) => {
         setShouldLogoBeShown(false)
     }
 
-    //UI Related Functions
-    const searchBarTextChangedHandler = (text) => {
-        setSearchBarTextInputValue(text)
-    }
-
     return (
         <View style={styles.screen} >
             <Logo shouldLogoBeShown={shouldLogoBeShown} color={Colors.blue} />
             <View style={styles.restOfTheScreenContainer}>
-                <SearchBar searchBarTextInputValue={searchBarTextInputValue} searchBarTextChangedHandler={searchBarTextChangedHandler} onSearchPress={searchHandler}
-                    hintText="Search Recipes By Name" />
+                <SearchBar onSearchPress={searchHandler} hintText="Search Recipes By Name"/>
                 {recipesList.length > 0 && !couldNotFindRecipe && !loading && <MealPreviewList data={recipesList} onEndReached={loadMore}
                     gotDetailedData={false} noMoreDataToDisplay={hasAllRecipesOfGivenSearchBeenFetched} navigationProp={props.navigation} />}
                 {loading && <View style={styles.loadingContainer}><ActivityIndicator size='large' color={Colors.blue} /></View>}

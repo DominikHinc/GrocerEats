@@ -2,6 +2,7 @@ export const ADD_PRODUCT = 'ADD_PRODUCT'
 export const REMOVE_PRODUCT = 'REMOVE_PRODUCT'
 export const EDIT_PRODUCT = 'EDIT_PRODUCT'
 export const SETCHECKOFPRODUCT = 'SET_CHECK_OF_PRODUCT'
+export const EDIT_PRODUCT_AMOUNT = "EDIT_PRODUCT_AMOUNT"
 
 
 export const addProduct = (product)=>{
@@ -22,6 +23,14 @@ export const editProduct = (product) =>{
     return {
         type:EDIT_PRODUCT,
         product
+    }
+}
+
+export const editProductAmount = (id,amountMain)=>{
+    return {
+        type:EDIT_PRODUCT_AMOUNT,
+        id,
+        amountMain
     }
 }
 

@@ -1,15 +1,15 @@
 import React, { useState } from 'react'
-import { View, Text, StyleSheet, Image, Dimensions, TouchableOpacity, LayoutAnimation } from 'react-native'
+import { View, Text, StyleSheet, Image, Dimensions, TouchableOpacity, LayoutAnimation, Animated, PanResponder } from 'react-native'
 import DefaultText from './DefaultText'
-import { Foundation, MaterialCommunityIcons } from '@expo/vector-icons'
+import { Foundation, MaterialCommunityIcons, Feather } from '@expo/vector-icons'
 import { normalizeIconSize, normalizePaddingSize, normalizeMarginSize, normalizeBorderRadiusSize, normalizeWidth } from '../methods/normalizeSizes'
 import Colors from '../constants/Colors'
 import { useDispatch, useSelector } from 'react-redux'
 import { removeProduct, setCheckOfProduct } from '../store/actions/GroceryListActions'
 import { CustomLayoutSpring, CustomLayoutScaleY } from '../constants/LayoutAnimations'
+import ProductAmountManager from './ProductAmountManager'
 
 const Product = ({ data }) => {
-
     const isChecked = useSelector(state => (state.groceryList.productsList.find(item=>item.id === data.id)).isChecked)
 
     const dispatch = useDispatch()
@@ -22,8 +22,10 @@ const Product = ({ data }) => {
         dispatch(removeProduct(data.id));
     }
 
+
+
     return (
-        <View style={[styles.mainProductContainer,]}>
+        <Animated.View style={[styles.mainProductContainer]}>
             <View style={styles.deleteIconContainer}>
                 <TouchableOpacity style={styles.iconTouchable} onPress={deleteIconPressHandler}>
                     <Foundation name="x" size={normalizeIconSize(20)} color={Colors.red} style={styles.deleteIcon} />
@@ -34,10 +36,7 @@ const Product = ({ data }) => {
             </View>
             <View style={styles.infoContainer}>
                 <DefaultText style={{ ...styles.titleLabel, textDecorationLine: isChecked ? 'line-through' : 'none' }}>{data.title}</DefaultText>
-                <View style={styles.amountConatiner}>
-                    <DefaultText style={styles.amountLabel}>{data.amountMain}</DefaultText>
-                    <DefaultText style={styles.amountLabel}>{data.unitMain}</DefaultText>
-                </View>
+                <ProductAmountManager id={data.id} amountMain={data.amountMain} unitMain={data.unitMain} />
             </View>
             <View style={styles.leftSideIconsContainer}>
                 <View style={styles.dragconContainer}>
@@ -52,7 +51,7 @@ const Product = ({ data }) => {
                 </View>
             </View>
 
-        </View>
+        </Animated.View>
     )
 }
 
@@ -99,13 +98,7 @@ const styles = StyleSheet.create({
         paddingTop: normalizePaddingSize(5),
         paddingLeft: normalizePaddingSize(5)
     },
-    amountLabel: {
-        marginHorizontal: normalizeMarginSize(5)
-    },
-
-    amountConatiner: {
-        flexDirection: 'row'
-    },
+    
     leftSideIconsContainer: {
         flexDirection: 'row',
         alignItems: 'center',

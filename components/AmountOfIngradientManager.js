@@ -68,11 +68,11 @@ const AmountOfGroceriesManager = ({ closeModal, textInputRef, amount, setAmount,
     return (
         <View style={styles.amountDetailsContainer}>
             <View style={styles.addButtonsContainer}>
-                <TouchableOpacity style={styles.addButtonTouchable} onPress={closeModal}>
+                {/* <TouchableOpacity style={styles.addButtonTouchable} onPress={closeModal}>
                     <View style={styles.insideOfButton}>
                         <DefaultText>Add Note</DefaultText>
                     </View>
-                </TouchableOpacity>
+                </TouchableOpacity> */}
                 <TouchableOpacity style={styles.addButtonTouchable} onPress={addToGroceryList}>
                     <View style={styles.insideOfButton}>
                         <DefaultText>Add</DefaultText>
@@ -127,7 +127,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
-        paddingBottom: normalizePaddingSize(17)
+        paddingBottom: normalizePaddingSize(8)
     },
     amountButtonLabel: {
         fontFamily: 'sofia-bold',
@@ -164,7 +164,7 @@ const styles = StyleSheet.create({
         elevation: 2,
     },
     amountLabelContainer: {
-        paddingBottom: normalizePaddingSize(10)
+        paddingBottom: normalizePaddingSize(5)
     },
     amountLabel: {
         textAlign: 'center',
