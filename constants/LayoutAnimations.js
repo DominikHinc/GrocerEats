@@ -37,3 +37,22 @@ export const CustomLayoutScaleY={
         springDamping:1
     }
 }
+
+export const CustomLayoutDelete={
+    duration:300,
+    create: {
+        type: LayoutAnimation.Types.easeInEaseOut,
+        property: LayoutAnimation.Properties.opacity,
+       
+    },
+    update: {
+        type: LayoutAnimation.Types.easeInEaseOut,
+        property: LayoutAnimation.Properties.scaleY,
+  
+    },
+    delete: {
+        type: LayoutAnimation.Types.easeInEaseOut,
+        property: LayoutAnimation.Properties.opacity,
+        
+    }
+}

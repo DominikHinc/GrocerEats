@@ -1,54 +1,52 @@
-import React, { useRef } from 'react'
-import { View, Text, StyleSheet, FlatList, ScrollView } from 'react-native'
-import Product from './Product'
+import React from 'react';
+import { ScrollView, StyleSheet, View } from 'react-native';
 import Aisle from './Aisle';
 
 
 const GroceryListList = ({ data }) => {
 
-    const aislesList = {};
+    const unorderedAislesList = {};
+    const orderedAislesList = {};
     data.forEach(item => {
-        if (aislesList["All"] === undefined) {
-            aislesList["All"] = [item]
+        if (unorderedAislesList["All"] === undefined) {
+            unorderedAislesList["All"] = [item]
         } else {
-            aislesList["All"] = [...aislesList["All"], item];
+            unorderedAislesList["All"] = [...unorderedAislesList["All"], item];
         }
         if (item.aisle.includes(';')) {
             const categoriesGroup = item.aisle.split(";");
-            categoriesGroup.forEach(category=>{
-                if(aislesList[category] === undefined){
-                    aislesList[category] = [item]
-                }else{
-                    aislesList[category] = [...aislesList[category],item]
+            categoriesGroup.forEach(category => {
+                if (unorderedAislesList[category] === undefined) {
+                    unorderedAislesList[category] = [item]
+                } else {
+                    unorderedAislesList[category] = [...unorderedAislesList[category], item]
                 }
             })
 
         } else {
-            if (aislesList[item.aisle] === undefined) {
-                aislesList[item.aisle] = [item]
+            if (unorderedAislesList[item.aisle] === undefined) {
+                unorderedAislesList[item.aisle] = [item]
             } else {
-                aislesList[item.aisle] = [...aislesList[item.aisle], item];
+                unorderedAislesList[item.aisle] = [...unorderedAislesList[item.aisle], item];
             }
         }
 
     })
-
-    // const renderAisle = ({ item, index }) => {
-    //     return <Aisle data={aislesList[item]} aisle={item} />
-    // }
+    Object.keys(unorderedAislesList).sort().forEach((key) => {
+        orderedAislesList[key] = unorderedAislesList[key];
+    });
 
     const renderAisle = () => {
-        return Object.keys(aislesList).map(item => {
+        return Object.keys(orderedAislesList).map(item => {
 
-            return <Aisle key={item} data={aislesList[item]} aisle={item} />
+            return <View key={item}>
+                <Aisle  data={orderedAislesList[item]} aisle={item} />
+            </View>
         })
     }
 
-    //console.log(aislesList)
-
     return (
         <View style={styles.mainListContainer}>
-            {/* <FlatList data={Object.keys(aislesList)} keyExtractor={item => aislesList[item].id} renderItem={renderAisle} /> */}
             {/* Using Scroll View, beacue with it animations are smoother */}
             <ScrollView style={styles.listScrollView} >
                 {renderAisle()}

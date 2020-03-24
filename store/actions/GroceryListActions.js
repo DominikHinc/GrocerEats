@@ -3,7 +3,7 @@ export const REMOVE_PRODUCT = 'REMOVE_PRODUCT'
 export const EDIT_PRODUCT = 'EDIT_PRODUCT'
 export const SETCHECKOFPRODUCT = 'SET_CHECK_OF_PRODUCT'
 export const EDIT_PRODUCT_AMOUNT = "EDIT_PRODUCT_AMOUNT"
-
+export const SET_NEW_PRODUCTS_LIST = "SET_NEW_PRODUCTS_LIST"
 
 export const addProduct = (product)=>{
     return {
@@ -23,6 +23,13 @@ export const editProduct = (product) =>{
     return {
         type:EDIT_PRODUCT,
         product
+    }
+}
+
+export const setNewProductsList = (productsList) =>{
+    return{
+        type:SET_NEW_PRODUCTS_LIST,
+        productsList
     }
 }
 

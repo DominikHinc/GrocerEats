@@ -1,22 +1,31 @@
-import React, { useState } from 'react'
-import { View, Text, StyleSheet, Animated, LayoutAnimation } from 'react-native'
+import React, { useState, useRef, useEffect } from 'react'
+import { View, Text, StyleSheet, Animated, LayoutAnimation, Dimensions } from 'react-native'
 import DefaultText from './DefaultText'
 import Product from './Product'
 import { normalizePaddingSize, normalizeBorderRadiusSize, normalizeIconSize } from '../methods/normalizeSizes'
 import Colors from '../constants/Colors'
 import { Ionicons } from '@expo/vector-icons'
-import { CustomLayoutScaleY } from '../constants/LayoutAnimations'
-
+import { CustomLayoutScaleY, CustomLayoutSpring } from '../constants/LayoutAnimations'
+import { useFocusEffect } from '@react-navigation/native';
+import { useDispatch } from 'react-redux'
+import { setNewProductsList } from '../store/actions/GroceryListActions'
 
 const Aisle = ({ aisle, data }) => {
 
     const [aisleVivible, setAisleVivible] = useState(aisle === "All" ? true : false)
     const [iconAnimatiedValue, setIconAnimatiedValue] = useState(new Animated.Value(aisle === "All" ? 0 : 1))
+    const [canMove, setCanMove] = useState(true)
+    
+    const dispatch = useDispatch()
+
+    
 
     const renderAisleProducts = () => {
-        return data.map(item => {
-            //console.log(item)
-            return <Product key={item.id} data={item} />
+
+        return data.map((item, index) => {
+
+            return <Product key={item.id} data={item} index={index} aisleLength={data.length} enableMoving={aisle === "All"}
+                moveProductOneIndexDown={moveProductOneIndexDown} moveProductOneIndexUp={moveProductOneIndexUp} />
         })
     }
 
@@ -42,6 +51,34 @@ const Aisle = ({ aisle, data }) => {
             })
         }]
     }
+    const moveProductOneIndexUp = (index) => {
+        console.log(canMove)
+        if (canMove === true) {
+            console.log("Moving " + index + " One up")
+            const currnetArrayCopy = data;
+            const movedItemCopy = currnetArrayCopy[index]
+            currnetArrayCopy[index] = currnetArrayCopy[index - 1]
+            currnetArrayCopy[index - 1] = movedItemCopy;
+            setCanMove(false)
+            LayoutAnimation.configureNext(CustomLayoutSpring,()=>{setCanMove(true)});
+            dispatch(setNewProductsList(currnetArrayCopy))
+        }
+
+    }
+    const moveProductOneIndexDown = (index) => {
+        console.log(canMove)
+        if (canMove === true) {
+            console.log("Moving " + index + " One down")
+            const currnetArrayCopy = data;
+            const movedItemCopy = currnetArrayCopy[index]
+            currnetArrayCopy[index] = currnetArrayCopy[index + 1]
+            currnetArrayCopy[index + 1] = movedItemCopy;
+            setCanMove(false)
+            LayoutAnimation.configureNext(CustomLayoutSpring,()=>{setCanMove(true)});
+            dispatch(setNewProductsList(currnetArrayCopy))
+        }
+
+    }
 
     return (
         <View style={styles.mainContainer}>
@@ -56,7 +93,6 @@ const Aisle = ({ aisle, data }) => {
             {aisleVivible && <View style={styles.productsListContainer}>
                 {renderAisleProducts()}
             </View>}
-            
         </View>
     )
 }
@@ -69,7 +105,7 @@ const styles = StyleSheet.create({
         width: '100%',
         flexDirection: 'row',
         justifyContent: 'center',
-        
+
 
     },
     aisleBackgroundColorWrapper: {
@@ -90,14 +126,15 @@ const styles = StyleSheet.create({
     showMoreIconContainer: {
         position: 'absolute',
         right: '5%',
-        
+
     },
     showMoreIcon: {
 
     },
-    productsListContainer:{
+    productsListContainer: {
 
-    }
+    },
+
 
 })
 

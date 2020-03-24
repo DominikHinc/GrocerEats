@@ -1,31 +1,33 @@
-import React, { useState } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import { View, Text, StyleSheet, Image, Dimensions, TouchableOpacity, LayoutAnimation, Animated, PanResponder } from 'react-native'
 import DefaultText from './DefaultText'
-import { Foundation, MaterialCommunityIcons, Feather } from '@expo/vector-icons'
+import { Foundation, MaterialCommunityIcons, Feather, Ionicons } from '@expo/vector-icons'
 import { normalizeIconSize, normalizePaddingSize, normalizeMarginSize, normalizeBorderRadiusSize, normalizeWidth } from '../methods/normalizeSizes'
 import Colors from '../constants/Colors'
 import { useDispatch, useSelector } from 'react-redux'
 import { removeProduct, setCheckOfProduct } from '../store/actions/GroceryListActions'
-import { CustomLayoutSpring, CustomLayoutScaleY } from '../constants/LayoutAnimations'
+import { CustomLayoutSpring, CustomLayoutDelete, CustomLayoutScaleY } from '../constants/LayoutAnimations'
 import ProductAmountManager from './ProductAmountManager'
 
-const Product = ({ data }) => {
-    const isChecked = useSelector(state => (state.groceryList.productsList.find(item=>item.id === data.id)).isChecked)
-
+const Product = ({ data, moveProductOneIndexUp, moveProductOneIndexDown, index, aisleLength, enableMoving }) => {
     const dispatch = useDispatch()
+    const [currentIndex, setCurrentIndex] = useState(index)
+
+    useEffect(()=>{
+        setCurrentIndex(index)
+    },[index])
 
     const checkboxPressHandler = () => {
-        dispatch(setCheckOfProduct(data.id, !isChecked))
+        dispatch(setCheckOfProduct(data.id, !data.isChecked))
     }
     const deleteIconPressHandler = () => {
-        LayoutAnimation.configureNext(CustomLayoutScaleY)
+        //LayoutAnimation.configureNext(CustomLayoutScaleY)
         dispatch(removeProduct(data.id));
     }
-
-
+  
 
     return (
-        <Animated.View style={[styles.mainProductContainer]}>
+        <View style={[styles.mainProductContainer]}>
             <View style={styles.deleteIconContainer}>
                 <TouchableOpacity style={styles.iconTouchable} onPress={deleteIconPressHandler}>
                     <Foundation name="x" size={normalizeIconSize(20)} color={Colors.red} style={styles.deleteIcon} />
@@ -35,23 +37,34 @@ const Product = ({ data }) => {
                 <Image source={{ uri: data.imageUrl }} style={styles.image} />
             </View>
             <View style={styles.infoContainer}>
-                <DefaultText style={{ ...styles.titleLabel, textDecorationLine: isChecked ? 'line-through' : 'none' }}>{data.title}</DefaultText>
+                <DefaultText style={{ ...styles.titleLabel, textDecorationLine: data.isChecked ? 'line-through' : 'none' }}>{data.title}</DefaultText>
                 <ProductAmountManager id={data.id} amountMain={data.amountMain} unitMain={data.unitMain} />
             </View>
             <View style={styles.leftSideIconsContainer}>
-                <View style={styles.dragconContainer}>
-                    <MaterialCommunityIcons name='unfold-more-horizontal' size={normalizeIconSize(28)} style={styles.dragIcon} />
+                <View style={styles.indexIconsContainer}   >
+                    {/* <MaterialCommunityIcons name='unfold-more-horizontal' size={normalizeIconSize(28)} style={styles.dragIcon} /> */}
+                    <View style={styles.singleIconWrapper}>
+                        {currentIndex > 0 && enableMoving===true && <TouchableOpacity style={styles.singleIconTouchable} onPress={() => moveProductOneIndexUp(index)}>
+                            <Ionicons name='ios-arrow-up' size={normalizeIconSize(20)} style={styles.indexIcon} />
+                        </TouchableOpacity>}
+                    </View>
+                    <View style={styles.singleIconWrapper}>
+                        {currentIndex < aisleLength-1 && enableMoving===true && <TouchableOpacity style={styles.singleIconTouchable} onPress={() => moveProductOneIndexDown(index)}>
+                            <Ionicons name='ios-arrow-down' size={normalizeIconSize(20)} style={styles.indexIcon}  />
+                        </TouchableOpacity>}
+                    </View>
+
                 </View>
 
                 <View style={styles.checkboxBox}>
                     <TouchableOpacity style={styles.iconTouchable} onPress={checkboxPressHandler}>
-                        <Foundation name="check" size={normalizeIconSize(20)} color={Colors.green} style={[styles.checkIcon, { opacity: isChecked ? 1 : 0 }]} />
+                        <Foundation name="check" size={normalizeIconSize(20)} color={Colors.green} style={[styles.checkIcon, { opacity: data.isChecked ? 1 : 0 }]} />
                     </TouchableOpacity>
 
                 </View>
             </View>
 
-        </Animated.View>
+        </View>
     )
 }
 
@@ -67,8 +80,8 @@ const styles = StyleSheet.create({
         width: '100%',
         height: '100%',
         padding: normalizePaddingSize(5),
-        justifyContent:'center',
-        alignItems:'center'
+        justifyContent: 'center',
+        alignItems: 'center'
     },
     deleteIconContainer: {
         paddingHorizontal: normalizePaddingSize(10)
@@ -98,7 +111,7 @@ const styles = StyleSheet.create({
         paddingTop: normalizePaddingSize(5),
         paddingLeft: normalizePaddingSize(5)
     },
-    
+
     leftSideIconsContainer: {
         flexDirection: 'row',
         alignItems: 'center',
@@ -106,7 +119,7 @@ const styles = StyleSheet.create({
         flex: 1,
         marginRight: '5%'
     },
-    dragconContainer: {
+    indexIconsContainer: {
         marginRight: normalizeMarginSize(10)
     },
     checkboxBox: {
@@ -117,7 +130,16 @@ const styles = StyleSheet.create({
         borderRadius: normalizeBorderRadiusSize(8),
         overflow: 'hidden'
     },
-    
+    singleIconWrapper: {
+        height: Dimensions.get('window').width / 15,
+        paddingHorizontal: normalizePaddingSize(15),
+        //borderWidth: 1
+    },
+    singleIconTouchable: {
+        justifyContent: 'center',
+        flex: 1
+    }
+
 
 })
 

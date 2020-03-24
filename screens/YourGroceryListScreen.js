@@ -8,7 +8,7 @@ import GroceryListList from '../components/GroceryListList'
 
 const YourGroceryListScreen = (props) => {
     const groceryList = useSelector(state => state.groceryList.productsList);
-    console.log(groceryList)
+    //console.log(groceryList)
     return (
         <View style={styles.screen}>
             <Logo color={Colors.green}  />
