@@ -73,7 +73,7 @@ const styles = StyleSheet.create({
 
     },
     amountTextInput: {
-        fontFamily: 'sofia',
+        fontFamily: 'sofia-med',
         fontSize: normalizeFontSize(17),
         textAlign: 'center',
 

@@ -12,7 +12,7 @@ import ProductAmountManager from './ProductAmountManager'
 const Product = ({ data, moveProductOneIndexUp, moveProductOneIndexDown, index, aisleLength, enableMoving }) => {
     const dispatch = useDispatch()
     const [currentIndex, setCurrentIndex] = useState(index)
-
+    // LayoutAnimation.configureNext(CustomLayoutScaleY)
     useEffect(()=>{
         setCurrentIndex(index)
     },[index])
@@ -30,7 +30,7 @@ const Product = ({ data, moveProductOneIndexUp, moveProductOneIndexDown, index, 
         <View style={[styles.mainProductContainer]}>
             <View style={styles.deleteIconContainer}>
                 <TouchableOpacity style={styles.iconTouchable} onPress={deleteIconPressHandler}>
-                    <Foundation name="x" size={normalizeIconSize(20)} color={Colors.red} style={styles.deleteIcon} />
+                    <Foundation name="x" size={normalizeIconSize(20)} color={Colors.darkRed} style={styles.deleteIcon} />
                 </TouchableOpacity>
             </View>
             <View style={styles.imageContainer}>
@@ -109,7 +109,9 @@ const styles = StyleSheet.create({
     },
     infoContainer: {
         paddingTop: normalizePaddingSize(5),
-        paddingLeft: normalizePaddingSize(5)
+        paddingLeft: normalizePaddingSize(5),
+        width:'60%',
+        //borderWidth:1
     },
 
     leftSideIconsContainer: {
@@ -133,7 +135,8 @@ const styles = StyleSheet.create({
     singleIconWrapper: {
         height: Dimensions.get('window').width / 15,
         paddingHorizontal: normalizePaddingSize(15),
-        //borderWidth: 1
+        borderWidth: 1,
+        borderColor:'white'
     },
     singleIconTouchable: {
         justifyContent: 'center',

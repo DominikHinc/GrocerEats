@@ -140,7 +140,8 @@ const styles = StyleSheet.create({
     },
     ingredientInfoContainer: {
         flex: 0.8,
-        paddingLeft: normalizePaddingSize(10)
+        paddingLeft: normalizePaddingSize(10),
+        
     },
     draggableArrowContainer: {
         flex: 0.2,

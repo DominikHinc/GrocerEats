@@ -121,7 +121,9 @@ const styles = StyleSheet.create({
         flexDirection: 'column-reverse',
         flex: 1,
         width: '100%',
-        paddingBottom: normalizePaddingSize(15)
+        paddingBottom: normalizePaddingSize(15),
+        backgroundColor:'white',
+        
     },
     amountButtonsContainer: {
         flexDirection: 'row',
@@ -164,7 +166,8 @@ const styles = StyleSheet.create({
         elevation: 2,
     },
     amountLabelContainer: {
-        paddingBottom: normalizePaddingSize(5)
+        paddingBottom: normalizePaddingSize(5),
+        backgroundColor:'white'
     },
     amountLabel: {
         textAlign: 'center',

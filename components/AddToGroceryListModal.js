@@ -103,7 +103,7 @@ const AddToGroceryListModal = ({currentProduct, setModalVisible, modalVisible })
 
                                 </View>
                                 <View style={styles.titleContainer}>
-                                    <DefaultText style={styles.title}>{currentProduct.title[0].toUpperCase() + currentProduct.title.slice(1, currentProduct.title.length)}</DefaultText>
+                                    <DefaultText style={styles.title} numberOfLines={1} >{currentProduct.title[0].toUpperCase() + currentProduct.title.slice(1, currentProduct.title.length)}</DefaultText>
                                 </View>
                                 <View style={styles.additionalInfoContainer}>
                                     <DefaultText style={{ textAlign: 'center', color:productAlreadyOnGroceryList === undefined ? Colors.red : Colors.green }}>
@@ -186,7 +186,8 @@ const styles = StyleSheet.create({
     },
     titleContainer: {
         justifyContent: 'center',
-        alignItems: 'center'
+        alignItems: 'center',
+        marginHorizontal:normalizeMarginSize(20)
     },
     title: {
         fontFamily: 'sofia-bold',

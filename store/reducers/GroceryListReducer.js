@@ -1,4 +1,4 @@
-import { ADD_PRODUCT, REMOVE_PRODUCT, EDIT_PRODUCT, SETCHECKOFPRODUCT, EDIT_PRODUCT_AMOUNT, SET_NEW_PRODUCTS_LIST } from "../actions/GroceryListActions"
+import { ADD_PRODUCT, REMOVE_PRODUCT, EDIT_PRODUCT, SETCHECKOFPRODUCT, EDIT_PRODUCT_AMOUNT, SET_NEW_PRODUCTS_LIST, REMOVE_MULTIPLE_PRODUCTS, SET_CHECK_OF_MULTIPLE_PRODUCTS } from "../actions/GroceryListActions"
 
 
 
@@ -35,6 +35,17 @@ export default (state = initialState, action) => {
             const newProductsList = state.productsList.filter(item => item.id !== action.id);
             
             return { ...state, productsList: [...newProductsList] }
+        case REMOVE_MULTIPLE_PRODUCTS:
+            if(action.idsArray.length > 0){
+               copyOfProductList = state.productsList.filter(item=>{
+                return action.idsArray.find(id =>{
+                    return id === item.id;
+                }) === undefined
+            })
+            return{...state, productsList:[...copyOfProductList]} 
+            }
+            return state
+            
         case EDIT_PRODUCT:
             return state
         case EDIT_PRODUCT_AMOUNT:
@@ -57,6 +68,15 @@ export default (state = initialState, action) => {
             copyOfProductList[indexOfProductToChengeCheck].isChecked = action.shouldProductBeChecked;
 
             return {...state, productsList:[...copyOfProductList]};
+        case SET_CHECK_OF_MULTIPLE_PRODUCTS:
+            if(action.idsArray.length > 0){
+                copyOfProductList = state.productsList.map(item=>{
+                    item = {...item, isChecked:action.shouldAllBeChecked}
+                    return item
+                });
+             return{...state, productsList:[...copyOfProductList]} 
+             }
+             return state
         case SET_NEW_PRODUCTS_LIST:
             return {...state,productsList:[...action.productsList]}
         default:
