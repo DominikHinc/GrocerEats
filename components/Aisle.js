@@ -10,7 +10,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import { useDispatch } from 'react-redux'
 import { setNewProductsList, removeProduct, removeMultipleProduct, setCheckOfProduct, setCheckOfMultipleProducts } from '../store/actions/GroceryListActions'
 
-const Aisle = ({ aisle, data, allowAnimation }) => {
+const Aisle = ({ aisle, data, setVisibility }) => {
 
     const [aisleVivible, setAisleVivible] = useState(aisle === "All" ? true : false)
     const [iconAnimatiedValue, setIconAnimatiedValue] = useState(new Animated.Value(aisle === "All" ? 0 : 1))
@@ -19,30 +19,30 @@ const Aisle = ({ aisle, data, allowAnimation }) => {
     const dispatch = useDispatch()
 
     const [localData, setLocalData] = useState(data)
-    // LayoutAnimation.configureNext(CustomLayoutScaleY)
+    // // LayoutAnimation.configureNext(CustomLayoutScaleY)
     useEffect(() => {
         //This workaround is used because LayoutAnimation Buggs when applied before redux state change
         //Animations Bugg whole list 
         // if (data.length === localData.length - 1 && aisleVivible === true) {
         //     LayoutAnimation.configureNext(CustomLayoutScaleY)
         // }
-        console.log("Allow Animation for " + aisle + " " + allowAnimation)
+        //console.log("Allow Animation for " + aisle + " " + allowAnimation)
         
-        if (aisle === "All") {
-            LayoutAnimation.configureNext(CustomLayoutScaleY)
-        }
-
+        // if (aisle === "All") {
+        //     
+        // }
+        //LayoutAnimation.configureNext(CustomLayoutScaleY)
         setLocalData(data)
     }, [data])
 
-    const renderAisleProducts = () => {
+    // const renderAisleProducts = () => {
 
-        return localData.map((item, index) => {
+    //     return localData.map((item, index) => {
 
-            return <Product key={item.id} data={item} index={index} aisleLength={localData.length} enableMoving={aisle === "All"}
-                moveProductOneIndexDown={moveProductOneIndexDown} moveProductOneIndexUp={moveProductOneIndexUp} />
-        })
-    }
+    //         return <Product key={item.id} data={item} index={index} aisleLength={localData.length} enableMoving={aisle === "All"}
+    //             moveProductOneIndexDown={moveProductOneIndexDown} moveProductOneIndexUp={moveProductOneIndexUp} />
+    //     })
+    // }
 
     const startIconAnimation = () => {
         Animated.spring(iconAnimatiedValue, {
@@ -53,7 +53,8 @@ const Aisle = ({ aisle, data, allowAnimation }) => {
     }
 
     const showMoreIconHandler = () => {
-        LayoutAnimation.configureNext(CustomLayoutScaleY);
+        //LayoutAnimation.configureNext(CustomLayoutScaleY);
+        setVisibility(aisle,!aisleVivible)
         setAisleVivible(prev => !prev)
         startIconAnimation();
     }
@@ -66,34 +67,34 @@ const Aisle = ({ aisle, data, allowAnimation }) => {
             })
         }]
     }
-    const moveProductOneIndexUp = (index) => {
-        console.log(canMove)
-        if (canMove === true) {
-            console.log("Moving " + index + " One up")
-            const currnetArrayCopy = localData;
-            const movedItemCopy = currnetArrayCopy[index]
-            currnetArrayCopy[index] = currnetArrayCopy[index - 1]
-            currnetArrayCopy[index - 1] = movedItemCopy;
-            setCanMove(false)
-            LayoutAnimation.configureNext(CustomLayoutSpring, () => { setCanMove(true) });
-            dispatch(setNewProductsList(currnetArrayCopy))
-        }
+    // const moveProductOneIndexUp = (index) => {
+    //     console.log(canMove)
+    //     if (canMove === true) {
+    //         console.log("Moving " + index + " One up")
+    //         const currnetArrayCopy = localData;
+    //         const movedItemCopy = currnetArrayCopy[index]
+    //         currnetArrayCopy[index] = currnetArrayCopy[index - 1]
+    //         currnetArrayCopy[index - 1] = movedItemCopy;
+    //         setCanMove(false)
+    //         LayoutAnimation.configureNext(CustomLayoutSpring, () => { setCanMove(true) });
+    //         dispatch(setNewProductsList(currnetArrayCopy))
+    //     }
 
-    }
-    const moveProductOneIndexDown = (index) => {
-        console.log(canMove)
-        if (canMove === true) {
-            console.log("Moving " + index + " One down")
-            const currnetArrayCopy = localData;
-            const movedItemCopy = currnetArrayCopy[index]
-            currnetArrayCopy[index] = currnetArrayCopy[index + 1]
-            currnetArrayCopy[index + 1] = movedItemCopy;
-            setCanMove(false)
-            LayoutAnimation.configureNext(CustomLayoutSpring, () => { setCanMove(true) });
-            dispatch(setNewProductsList(currnetArrayCopy))
-        }
+    // }
+    // const moveProductOneIndexDown = (index) => {
+    //     console.log(canMove)
+    //     if (canMove === true) {
+    //         console.log("Moving " + index + " One down")
+    //         const currnetArrayCopy = localData;
+    //         const movedItemCopy = currnetArrayCopy[index]
+    //         currnetArrayCopy[index] = currnetArrayCopy[index + 1]
+    //         currnetArrayCopy[index + 1] = movedItemCopy;
+    //         setCanMove(false)
+    //         LayoutAnimation.configureNext(CustomLayoutSpring, () => { setCanMove(true) });
+    //         dispatch(setNewProductsList(currnetArrayCopy))
+    //     }
 
-    }
+    // }
 
     const deleteAllAisleProducts = () => {
         const idsArray = localData.map(item => {
@@ -158,9 +159,9 @@ const Aisle = ({ aisle, data, allowAnimation }) => {
                     </TouchableOpacity>
                 </View>
             </View>}
-            {aisleVivible && <View style={styles.productsListContainer}>
+            {/* {aisleVivible && <View style={styles.productsListContainer}>
                 {renderAisleProducts()}
-            </View>}
+            </View>} */}
         </View>
     )
 }
@@ -218,7 +219,7 @@ const styles = StyleSheet.create({
     aisleEditOptionsContainer: {
         flexDirection: 'row',
         justifyContent: 'space-evenly',
-
+        backgroundColor:'white'
     },
     editOptionTouchable: {
         flex: 1,

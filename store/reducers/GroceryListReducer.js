@@ -3,7 +3,96 @@ import { ADD_PRODUCT, REMOVE_PRODUCT, EDIT_PRODUCT, SETCHECKOFPRODUCT, EDIT_PROD
 
 
 const initialState = {
-    productsList: []
+    productsList: [
+         {
+          "aisle": "Baking",
+          "amountMain": "2",
+          "amountSecondary": 473,
+          "id": 10020081,
+          "imageUrl": "https://spoonacular.com/cdn/ingredients_100x100/flour.png",
+          "isChecked": undefined,
+          "title": "Unbleached flour",
+          "unitMain": "cups",
+          "unitSecondary": "ml",
+        },
+         {
+          "aisle": "Oil, Vinegar, Salad Dressing",
+          "amountMain": "2",
+          "amountSecondary": 2,
+          "id": 4053,
+          "imageUrl": "https://spoonacular.com/cdn/ingredients_100x100/olive-oil.jpg",
+          "isChecked": undefined,
+          "title": "Olive oil",
+          "unitMain": "tablespoons",
+          "unitSecondary": "Tbsps",
+        },
+         {
+          "aisle": "Beverages",
+          "amountMain": "6",
+          "amountSecondary": 6,
+          "id": 14412,
+          "imageUrl": "https://spoonacular.com/cdn/ingredients_100x100/water.png",
+          "isChecked": undefined,
+          "title": "Water",
+          "unitMain": "tablespoons",
+          "unitSecondary": "Tbsps",
+        },
+         {
+          "aisle": "Baking",
+          "amountMain": "0.5",
+          "amountSecondary": 118,
+          "id": 20081,
+          "imageUrl": "https://spoonacular.com/cdn/ingredients_100x100/flour.png",
+          "isChecked": undefined,
+          "title": "Flour",
+          "unitMain": "cup",
+          "unitSecondary": "ml",
+        },
+         {
+          "aisle": "Pasta and Rice",
+          "amountMain": "0.67",
+          "amountSecondary": 158,
+          "id": 11549,
+          "imageUrl": "https://spoonacular.com/cdn/ingredients_100x100/tomato-sauce-or-pasta-sauce.jpg",
+          "isChecked": undefined,
+          "title": "Pizza sauce",
+          "unitMain": "cup",
+          "unitSecondary": "ml",
+        },
+         {
+          "aisle": "Cheese",
+          "amountMain": "1",
+          "amountSecondary": 237,
+          "id": 1031009,
+          "imageUrl": "https://spoonacular.com/cdn/ingredients_100x100/cheddar-cheese.png",
+          "isChecked": undefined,
+          "title": "Sharp cheddar cheese",
+          "unitMain": "cup",
+          "unitSecondary": "ml",
+        },
+         {
+          "aisle": "Cheese",
+          "amountMain": "0.5",
+          "amountSecondary": 118,
+          "id": 1001026,
+          "imageUrl": "https://spoonacular.com/cdn/ingredients_100x100/shredded-cheese-white.jpg",
+          "isChecked": undefined,
+          "title": "Shredded mozzarella cheese",
+          "unitMain": "cup",
+          "unitSecondary": "ml",
+        },
+         {
+          "aisle": "Cheese",
+          "amountMain": "0.5",
+          "amountSecondary": 118,
+          "id": 1040,
+          "imageUrl": "https://spoonacular.com/cdn/ingredients_100x100/Swiss-cheese.jpg",
+          "isChecked": undefined,
+          "title": "Swiss cheese",
+          "unitMain": "cup",
+          "unitSecondary": "ml",
+        },
+      ]
 }
 
 export default (state = initialState, action) => {
@@ -13,6 +102,7 @@ export default (state = initialState, action) => {
             if (state.productsList.find(item => item.id === action.product.id) === undefined) {
                 const newProduct = action.product;
                 console.log(newProduct)
+                console.log(state.productsList)
                 return { ...state, productsList: [...state.productsList, newProduct] }
             } else {
                 console.log("Amount will be added")
@@ -27,7 +117,7 @@ export default (state = initialState, action) => {
                 
                 copyOfProductList = state.productsList;
                 copyOfProductList[addedAmountProductIndex].amountMain = currentAmount;
-
+              
                 return {...state, productsList:[...copyOfProductList]}
             }
 

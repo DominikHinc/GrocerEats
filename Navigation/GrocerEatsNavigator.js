@@ -70,7 +70,7 @@ const yourGroceryListStackNavigator = () => {
 
 const mainTabNavigator = () => {
     return (
-        <BottomTabNavigator.Navigator labeled={true} backBehavior='history' keyboardHidesNavigationBar={false} sceneAnimationEnabled={false}  >
+        <BottomTabNavigator.Navigator labeled={true} backBehavior='history' keyboardHidesNavigationBar={false} sceneAnimationEnabled={false} lazy={true}  >
             <BottomTabNavigator.Screen name="StandardSearch" component={searchStackNavigator} options={{
                 tabBarLabel: 'Search',
                 tabBarColor: Colors.blue,
