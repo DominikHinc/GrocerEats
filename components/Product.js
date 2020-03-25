@@ -110,7 +110,7 @@ const styles = StyleSheet.create({
     infoContainer: {
         paddingTop: normalizePaddingSize(5),
         paddingLeft: normalizePaddingSize(5),
-        width:'60%',
+        width:'55%',
         //borderWidth:1
     },
 

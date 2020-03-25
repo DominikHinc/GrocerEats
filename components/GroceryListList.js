@@ -9,22 +9,17 @@ import { setNewProductsList } from '../store/actions/GroceryListActions';
 import { useFocusEffect } from '@react-navigation/native';
 
 const GroceryListList = ({ data }) => {
-    // LayoutAnimation.configureNext(CustomLayoutScaleY)
     const [localOrderedAislesList, setLocalOrderedAislesList] = useState([])
-    const [allowAnimation, setAllowAnimation] = useState(false)
     const [visibilityOfAisles, setVisibilityOfAisles] = useState([{ aisle: "All", visible: true }])
     const [canMove, setCanMove] = useState(true)
     const dispatch = useDispatch();
 
-    // LayoutAnimation.configureNext(CustomLayoutScaleY)
 
     const unorderedAislesList = {};
     let orderedAislesList = [];
 
 
     useEffect(() => {
-        //setCanMove(true)
-        // LayoutAnimation.configureNext(CustomLayoutDelete, () => { setCanMove(true) })
         data.forEach(item => {
             if (unorderedAislesList["All"] === undefined) {
                 unorderedAislesList["All"] = [item]
@@ -53,20 +48,9 @@ const GroceryListList = ({ data }) => {
         })
         orderedAislesList = [];
         Object.keys(unorderedAislesList).sort().forEach((key) => {
-            // orderedAislesList[key] = unorderedAislesList[key];
             console.log(key)
             orderedAislesList = [...orderedAislesList, { title: key, data: unorderedAislesList[key] }]
-            // if(Object.keys(visibilityOfAisles).find(key) === undefined){
-            //     setVisibilityOfAisles(prev=>{
-            //         prev[key] = false
-            //         return prev;
-            //     })
-            // }
         });
-
-        // if (localOrderedAislesList.length === orderedAislesList.length || localOrderedAislesList.length - 1 === orderedAislesList.length) {
-        //     LayoutAnimation.configureNext(CustomLayoutDelete, () => { setCanMove(true) })
-        // }
 
         setLocalOrderedAislesList(orderedAislesList);
     }, [data, visibilityOfAisles])
@@ -86,20 +70,9 @@ const GroceryListList = ({ data }) => {
     }
 
 
-
-
-    // const renderAisle = () => {
-    //     return Object.keys(localOrderedAislesList).map(item => {
-
-    //         return <View key={item}>
-    //             <Aisle data={localOrderedAislesList[item]} aisle={item} allowAnimation={allowAnimation} />
-    //         </View>
-    //     })
-    // }
-
     const moveProductOneIndexUp = (index) => {
         console.log(canMove)
-        if (canMove === true) {
+        // if (canMove === true) {
             console.log("Moving " + index + " One up")
             const currnetArrayCopy = data;
             const movedItemCopy = currnetArrayCopy[index]
@@ -107,12 +80,12 @@ const GroceryListList = ({ data }) => {
             currnetArrayCopy[index - 1] = movedItemCopy;
             setCanMove(false)
             dispatch(setNewProductsList(currnetArrayCopy))
-        }
+        // }
 
     }
     const moveProductOneIndexDown = (index) => {
         console.log(canMove)
-        if (canMove === true) {
+        // if (canMove === true) {
             console.log("Moving " + index + " One down")
             const currnetArrayCopy = data;
             const movedItemCopy = currnetArrayCopy[index]
@@ -120,7 +93,7 @@ const GroceryListList = ({ data }) => {
             currnetArrayCopy[index + 1] = movedItemCopy;
             setCanMove(false)
             dispatch(setNewProductsList(currnetArrayCopy))
-        }
+        // }
 
     }
 
@@ -129,8 +102,6 @@ const GroceryListList = ({ data }) => {
     }
 
     const renderListItem = ({ item, index, section }) => {
-        //console.log(visibilityOfAisles[section.title])
-        // console.log(section)
         const visIndex = visibilityOfAisles.findIndex(visItem => visItem.aisle === section.title)
 
         if (visIndex >= 0) {
@@ -153,17 +124,11 @@ const GroceryListList = ({ data }) => {
 
     return (
         <View style={styles.mainListContainer}>
-            {/* Using Scroll View, beacue with it animations are smoother */}
-            {/* <ScrollView style={styles.listScrollView} >
-                {renderAisle()}
-            </ScrollView> */}
             <SectionList
                 sections={localOrderedAislesList}
                 renderItem={renderListItem}
                 renderSectionHeader={renderListHeader}
                 keyExtractor={item => item.id}
-
-
             />
 
         </View>
