@@ -1,5 +1,5 @@
 export default class ProductModel{
-    constructor(id, title, imageUrl, amountMain, amountSecondary, unitMain, unitSecondary, aisle, isChecked){
+    constructor(id, title, imageUrl, amountMain, amountSecondary, unitMain, unitSecondary, aisle, isChecked, willBeDeleted){
         this.id = id
         this.title = title
         this.imageUrl = imageUrl
@@ -9,5 +9,6 @@ export default class ProductModel{
         this.unitSecondary = unitSecondary
         this.aisle = aisle
         this.isChecked = isChecked
+        this.willBeDeleted = willBeDeleted
     }
 }

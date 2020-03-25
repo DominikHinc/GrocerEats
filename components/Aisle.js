@@ -14,7 +14,6 @@ const Aisle = ({ aisle, data, setVisibility }) => {
 
     const [aisleVivible, setAisleVivible] = useState(aisle === "All" ? true : false)
     const [iconAnimatiedValue, setIconAnimatiedValue] = useState(new Animated.Value(aisle === "All" ? 0 : 1))
-    const [canMove, setCanMove] = useState(true)
 
     const dispatch = useDispatch()
 
@@ -97,7 +96,7 @@ const Aisle = ({ aisle, data, setVisibility }) => {
     // }
 
     const deleteAllAisleProducts = () => {
-        const idsArray = localData.map(item => {
+        const idsArray = data.map(item => {
             return item.id
         })
         dispatch(removeMultipleProduct(idsArray))
@@ -105,7 +104,7 @@ const Aisle = ({ aisle, data, setVisibility }) => {
 
     const checkAllAisleProducts = () => {
         let shouldCheckAll = false;
-        const idsArray = localData.map(item => {
+        const idsArray = data.map(item => {
             if (item.isChecked === false) {
                 shouldCheckAll = true
             }
@@ -115,7 +114,7 @@ const Aisle = ({ aisle, data, setVisibility }) => {
     }
     const removeCheckedProducts = () => {
         let idsArray = [];
-        localData.forEach(item => {
+        data.forEach(item => {
             if (item.isChecked === true) {
                 idsArray = [...idsArray, item.id]
             }

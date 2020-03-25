@@ -1,4 +1,4 @@
-import { ADD_PRODUCT, REMOVE_PRODUCT, EDIT_PRODUCT, SETCHECKOFPRODUCT, EDIT_PRODUCT_AMOUNT, SET_NEW_PRODUCTS_LIST, REMOVE_MULTIPLE_PRODUCTS, SET_CHECK_OF_MULTIPLE_PRODUCTS } from "../actions/GroceryListActions"
+import { ADD_PRODUCT, REMOVE_PRODUCT, EDIT_PRODUCT, SETCHECKOFPRODUCT, EDIT_PRODUCT_AMOUNT, SET_NEW_PRODUCTS_LIST, REMOVE_MULTIPLE_PRODUCTS, SET_CHECK_OF_MULTIPLE_PRODUCTS, DELETE_ALL_PRODUCTS_MENT_TO_BE_REMOVED } from "../actions/GroceryListActions"
 
 
 
@@ -92,7 +92,8 @@ const initialState = {
           "unitMain": "cup",
           "unitSecondary": "ml",
         },
-      ]
+      ],
+    idOfProductsToDelete:[]
 }
 
 export default (state = initialState, action) => {
@@ -122,20 +123,24 @@ export default (state = initialState, action) => {
             }
 
         case REMOVE_PRODUCT:
-            const newProductsList = state.productsList.filter(item => item.id !== action.id);
+            // const newProductsList = state.productsList.filter(item => item.id !== action.id);
             
-            return { ...state, productsList: [...newProductsList] }
+            return { ...state, idOfProductsToDelete:[...state.idOfProductsToDelete, action.id] }
         case REMOVE_MULTIPLE_PRODUCTS:
-            if(action.idsArray.length > 0){
-               copyOfProductList = state.productsList.filter(item=>{
-                return action.idsArray.find(id =>{
-                    return id === item.id;
-                }) === undefined
+            // if(action.idsArray.length > 0){
+            //    copyOfProductList = state.productsList.filter(item=>{
+            //     return action.idsArray.find(id =>{
+            //         return id === item.id;
+            //     }) === undefined
+            // })
+            // return{...state, productsList:[...copyOfProductList]} 
+            // }
+            return { ...state, idOfProductsToDelete:[...state.idOfProductsToDelete, ...action.idsArray] }
+        case DELETE_ALL_PRODUCTS_MENT_TO_BE_REMOVED:
+            copyOfProductList = state.productsList.filter(item=>{
+                return state.idOfProductsToDelete.find(id => id === item.id) === undefined
             })
-            return{...state, productsList:[...copyOfProductList]} 
-            }
-            return state
-            
+            return{...state, productsList:[...copyOfProductList], idOfProductsToDelete:[]} 
         case EDIT_PRODUCT:
             return state
         case EDIT_PRODUCT_AMOUNT:

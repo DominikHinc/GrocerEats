@@ -6,6 +6,7 @@ export const SETCHECKOFPRODUCT = 'SET_CHECK_OF_PRODUCT'
 export const EDIT_PRODUCT_AMOUNT = "EDIT_PRODUCT_AMOUNT"
 export const SET_NEW_PRODUCTS_LIST = "SET_NEW_PRODUCTS_LIST"
 export const SET_CHECK_OF_MULTIPLE_PRODUCTS="SET_CHECK_OF_MULTIPLE_PRODUCTS"
+export const DELETE_ALL_PRODUCTS_MENT_TO_BE_REMOVED = "DELETE_ALL_PRODUCTS_MENT_TO_BE_REMOVED"
 
 export const addProduct = (product)=>{
     return {
@@ -24,6 +25,11 @@ export const removeMultipleProduct = (idsArray)=>{
     return {
         type:REMOVE_MULTIPLE_PRODUCTS,
         idsArray
+    }
+}
+export const deleteAllProductsMentToBeRemoved = ()=>{
+    return {
+        type:DELETE_ALL_PRODUCTS_MENT_TO_BE_REMOVED
     }
 }
 

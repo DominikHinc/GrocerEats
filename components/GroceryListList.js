@@ -10,7 +10,7 @@ import { useFocusEffect } from '@react-navigation/native';
 
 const GroceryListList = ({ data }) => {
     const [localOrderedAislesList, setLocalOrderedAislesList] = useState([])
-    const [visibilityOfAisles, setVisibilityOfAisles] = useState([{ aisle: "All", visible: true }])
+    const [visibilityOfAisles, setVisibilityOfAisles] = useState({ All: true })
     const [canMove, setCanMove] = useState(true)
     const dispatch = useDispatch();
 
@@ -48,24 +48,28 @@ const GroceryListList = ({ data }) => {
         })
         orderedAislesList = [];
         Object.keys(unorderedAislesList).sort().forEach((key) => {
-            console.log(key)
+            //console.log(key)
             orderedAislesList = [...orderedAislesList, { title: key, data: unorderedAislesList[key] }]
         });
 
         setLocalOrderedAislesList(orderedAislesList);
-    }, [data, visibilityOfAisles])
+    }, [data])
 
     const setAisleVisiblility = (aisle, isVisible) => {
-        const index = visibilityOfAisles.findIndex(item => item.aisle === aisle)
         setVisibilityOfAisles(prev => {
-            if (index >= 0) {
-                const copyOfVisibiltyArray = prev;
-                copyOfVisibiltyArray[index] = { aisle: aisle, visible: isVisible };
-                return ([...copyOfVisibiltyArray])
-            } else {
-                return [...prev, { aisle: aisle, visible: isVisible }]
-            }
+            prev[aisle] = isVisible;
+            return { ...prev };
         })
+        // const index = visibilityOfAisles.findIndex(item => item.aisle === aisle)
+        // setVisibilityOfAisles(prev => {
+        //     if (index >= 0) {
+        //         const copyOfVisibiltyArray = prev;
+        //         copyOfVisibiltyArray[index] = { aisle: aisle, visible: isVisible };
+        //         return ([...copyOfVisibiltyArray])
+        //     } else {
+        //         return [...prev, { aisle: aisle, visible: isVisible }]
+        //     }
+        // })
 
     }
 
@@ -73,26 +77,26 @@ const GroceryListList = ({ data }) => {
     const moveProductOneIndexUp = (index) => {
         console.log(canMove)
         // if (canMove === true) {
-            console.log("Moving " + index + " One up")
-            const currnetArrayCopy = data;
-            const movedItemCopy = currnetArrayCopy[index]
-            currnetArrayCopy[index] = currnetArrayCopy[index - 1]
-            currnetArrayCopy[index - 1] = movedItemCopy;
-            setCanMove(false)
-            dispatch(setNewProductsList(currnetArrayCopy))
+        console.log("Moving " + index + " One up")
+        const currnetArrayCopy = data;
+        const movedItemCopy = currnetArrayCopy[index]
+        currnetArrayCopy[index] = currnetArrayCopy[index - 1]
+        currnetArrayCopy[index - 1] = movedItemCopy;
+        setCanMove(false)
+        dispatch(setNewProductsList(currnetArrayCopy))
         // }
 
     }
     const moveProductOneIndexDown = (index) => {
         console.log(canMove)
         // if (canMove === true) {
-            console.log("Moving " + index + " One down")
-            const currnetArrayCopy = data;
-            const movedItemCopy = currnetArrayCopy[index]
-            currnetArrayCopy[index] = currnetArrayCopy[index + 1]
-            currnetArrayCopy[index + 1] = movedItemCopy;
-            setCanMove(false)
-            dispatch(setNewProductsList(currnetArrayCopy))
+        console.log("Moving " + index + " One down")
+        const currnetArrayCopy = data;
+        const movedItemCopy = currnetArrayCopy[index]
+        currnetArrayCopy[index] = currnetArrayCopy[index + 1]
+        currnetArrayCopy[index + 1] = movedItemCopy;
+        setCanMove(false)
+        dispatch(setNewProductsList(currnetArrayCopy))
         // }
 
     }
@@ -102,23 +106,34 @@ const GroceryListList = ({ data }) => {
     }
 
     const renderListItem = ({ item, index, section }) => {
-        const visIndex = visibilityOfAisles.findIndex(visItem => visItem.aisle === section.title)
+        // const visIndex = visibilityOfAisles.findIndex(visItem => visItem.aisle === section.title)
 
-        if (visIndex >= 0) {
-            if (visibilityOfAisles[visIndex].visible === true) {
-                if (section.title === "All") {
-                    return <View><Product data={item} index={index} aisleLength={section.data.length} enableMoving={true}
-                        moveProductOneIndexUp={moveProductOneIndexUp} moveProductOneIndexDown={moveProductOneIndexDown} /></View>
-                } else {
-                    return <View><Product data={item} index={index} /></View>
-                }
+        if (visibilityOfAisles[section.title] === true) {
+            if (section.title === "All") {
+                return <View><Product data={item} index={index} aisleLength={section.data.length} enableMoving={true}
+                    moveProductOneIndexUp={moveProductOneIndexUp} moveProductOneIndexDown={moveProductOneIndexDown} /></View>
             } else {
-                return null
+                return <View><Product data={item} index={index} /></View>
             }
-
-        } else {
+        }else{
             return null
         }
+
+        // if (visIndex >= 0) {
+        //     if (visibilityOfAisles[visIndex].visible === true) {
+        //         if (section.title === "All") {
+        //             return <View><Product data={item} index={index} aisleLength={section.data.length} enableMoving={true}
+        //                 moveProductOneIndexUp={moveProductOneIndexUp} moveProductOneIndexDown={moveProductOneIndexDown} /></View>
+        //         } else {
+        //             return <View><Product data={item} index={index} /></View>
+        //         }
+        //     } else {
+        //         return null
+        //     }
+
+        // } else {
+        //     return null
+        // }
 
     }
 
