@@ -1,29 +1,28 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { ScrollView, StyleSheet, View, LayoutAnimation, SectionList } from 'react-native';
-import Aisle from './Aisle';
-import { CustomLayoutScaleY, CustomLayoutSpring, CustomLayoutDelete, CustomLayoutMove } from '../constants/LayoutAnimations';
-import DefaultText from './DefaultText';
-import Product from './Product';
+import React, { useCallback, useEffect, useState } from 'react';
+import { LayoutAnimation, SectionList, StyleSheet, View } from 'react-native';
 import { useDispatch } from 'react-redux';
+import { CustomLayoutMove } from '../constants/LayoutAnimations';
 import { setNewProductsList } from '../store/actions/GroceryListActions';
-import { useFocusEffect } from '@react-navigation/native';
+import Aisle from './Aisle';
+import Product from './Product';
 
 const GroceryListList = ({ data }) => {
+
     const [localOrderedAislesList, setLocalOrderedAislesList] = useState([])
     const [visibilityOfAisles, setVisibilityOfAisles] = useState({ All: true })
     const [canMove, setCanMove] = useState(true)
-    const dispatch = useDispatch();
-
 
     const unorderedAislesList = {};
     let orderedAislesList = [];
 
+    const dispatch = useDispatch();
 
     useEffect(() => {
+        //If can move if false, then that means that this effect was called because the order of products changed
         if(canMove === false){
             LayoutAnimation.configureNext(CustomLayoutMove, ()=>setCanMove(true))
         }
-        
+        //Here is created data list that can be interperted by Section List
         data.forEach(item => {
             if (unorderedAislesList["All"] === undefined) {
                 unorderedAislesList["All"] = [item]
@@ -51,20 +50,13 @@ const GroceryListList = ({ data }) => {
             }
         })
         orderedAislesList = [];
+        //Because I don't want the Aisles order to be dependent on index of products I sort it alphabetically
         Object.keys(unorderedAislesList).sort().forEach((key) => {
-            //console.log(key)
             orderedAislesList = [...orderedAislesList, { title: key, data: unorderedAislesList[key] }]
         });
 
         setLocalOrderedAislesList(orderedAislesList);
     }, [data])
-
-    const setAisleVisiblility = useCallback((aisle, isVisible) => {
-        setVisibilityOfAisles(prev => {
-            prev[aisle] = isVisible;
-            return { ...prev };
-        })
-    },[setVisibilityOfAisles])
 
     const switchAisleVisibility = useCallback((aisle)=>{
         setVisibilityOfAisles(prev => {
@@ -87,6 +79,7 @@ const GroceryListList = ({ data }) => {
         }
 
     },[canMove,dispatch,setCanMove,data])
+
     const moveProductOneIndexDown = useCallback((index) => {
         console.log(canMove)
         if (canMove === true) {
@@ -102,7 +95,7 @@ const GroceryListList = ({ data }) => {
     },[canMove,dispatch,setCanMove,data])
 
     const renderListHeader = ({ section }) => {
-        return <View key={section.title}><Aisle aisle={section.title} data={section.data} setVisibility={setAisleVisiblility} 
+        return <View key={section.title}><Aisle aisle={section.title} data={section.data}
         switchAisleVisibility={switchAisleVisibility} isVisible={visibilityOfAisles[section.title] === true} /></View>
     }
 
@@ -130,7 +123,7 @@ const GroceryListList = ({ data }) => {
                 renderSectionHeader={renderListHeader}
                 keyExtractor={item => item.id}
             />
-
+            
         </View>
     )
 }

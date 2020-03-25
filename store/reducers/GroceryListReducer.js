@@ -123,18 +123,8 @@ export default (state = initialState, action) => {
             }
 
         case REMOVE_PRODUCT:
-            // const newProductsList = state.productsList.filter(item => item.id !== action.id);
-            
             return { ...state, idOfProductsToDelete:[...state.idOfProductsToDelete, action.id] }
         case REMOVE_MULTIPLE_PRODUCTS:
-            // if(action.idsArray.length > 0){
-            //    copyOfProductList = state.productsList.filter(item=>{
-            //     return action.idsArray.find(id =>{
-            //         return id === item.id;
-            //     }) === undefined
-            // })
-            // return{...state, productsList:[...copyOfProductList]} 
-            // }
             return { ...state, idOfProductsToDelete:[...state.idOfProductsToDelete, ...action.idsArray] }
         case DELETE_ALL_PRODUCTS_MENT_TO_BE_REMOVED:
             copyOfProductList = state.productsList.filter(item=>{

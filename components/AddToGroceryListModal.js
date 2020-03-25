@@ -1,6 +1,6 @@
 import { Feather } from '@expo/vector-icons';
 import React, { useEffect, useRef, useState } from 'react';
-import { Alert, Dimensions, Image, Keyboard, Modal, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Alert, Dimensions, Image, Keyboard, StyleSheet, TouchableOpacity, View, Modal } from 'react-native';
 import Colors from '../constants/Colors';
 import { normalizeBorderRadiusSize, normalizeIconSize, normalizePaddingSize, normalizeMarginSize } from '../methods/normalizeSizes';
 import AmountOfGroceriesManager from './AmountOfIngradientManager';
@@ -8,6 +8,8 @@ import DefaultText from './DefaultText';
 import { useDispatch, useSelector } from 'react-redux';
 import {addProduct} from '../store/actions/GroceryListActions'
 import ProductModel from '../models/ProductModel';
+
+
 
 const AddToGroceryListModal = ({currentProduct, setModalVisible, modalVisible }) => {
     

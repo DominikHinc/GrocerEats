@@ -1,16 +1,15 @@
-import React, { useState, useRef, useEffect } from 'react'
-import { View, Text, StyleSheet, Image, Dimensions, TouchableOpacity } from 'react-native'
-import DefaultText from './DefaultText'
-import { Foundation, MaterialCommunityIcons, Feather, Ionicons } from '@expo/vector-icons'
-import { normalizeIconSize, normalizePaddingSize, normalizeMarginSize, normalizeBorderRadiusSize, normalizeWidth } from '../methods/normalizeSizes'
-import Colors from '../constants/Colors'
+import { Foundation, Ionicons } from '@expo/vector-icons'
+import React, { useEffect, useState } from 'react'
+import { Dimensions, Image, StyleSheet, TouchableOpacity, View } from 'react-native'
+import Animated, { Easing } from 'react-native-reanimated'
 import { useDispatch, useSelector } from 'react-redux'
-import { removeProduct, setCheckOfProduct, deleteAllProductsMentToBeRemoved } from '../store/actions/GroceryListActions'
-import { CustomLayoutSpring, CustomLayoutDelete, CustomLayoutScaleY } from '../constants/LayoutAnimations'
+import Colors from '../constants/Colors'
+import { normalizeBorderRadiusSize, normalizeIconSize, normalizeMarginSize, normalizePaddingSize, normalizeWidth } from '../methods/normalizeSizes'
+import { deleteAllProductsMentToBeRemoved, removeProduct, setCheckOfProduct } from '../store/actions/GroceryListActions'
+import DefaultText from './DefaultText'
 import ProductAmountManager from './ProductAmountManager'
-import Animated, { Easing } from 'react-native-reanimated';
 
-const Product = React.memo(({  id, title, imageUrl, amountMain, unitMain, isChecked, moveProductOneIndexUp, moveProductOneIndexDown, index, aisleLength, enableMoving }) => {
+const Product = React.memo(({ id, title, imageUrl, amountMain, unitMain, isChecked, moveProductOneIndexUp, moveProductOneIndexDown, index, aisleLength, enableMoving }) => {
     const {
         set,
         cond,
@@ -20,21 +19,48 @@ const Product = React.memo(({  id, title, imageUrl, amountMain, unitMain, isChec
         block,
         timing,
         call,
-        debug,
         Value,
         Clock,
         interpolate
     } = Animated;
-    // console.log("Rerendering Product " + title + "And aisle legth " + aisleLength)
-   
+
     const [currentIndex, setCurrentIndex] = useState(index)
     const shouldProductBeRemoved = useSelector(state => state.groceryList.idOfProductsToDelete.find(item => item === id))
 
     const [reanimatedValue, setReanimatedValue] = useState(new Value(1))
     const [productInitialHeight, setProductInitialHeight] = useState(0)
+
     const dispatch = useDispatch()
 
-    function runTiming(clock, value, dest) {
+    useEffect(() => {
+        //Because using just index passed by parent seems to sometimes bug everything, it was necessary to use local state
+        setCurrentIndex(index)
+    }, [index])
+
+    useEffect(() => {
+        if (shouldProductBeRemoved !== undefined) {
+            startRemoveAnimation();
+        }
+    }, [shouldProductBeRemoved])
+
+
+    const measureInitialProductHeight = (e) => {
+        //Because Products may vary in height, it must be measured at the start
+        if (e.nativeEvent.layout.height > productInitialHeight) {
+            setProductInitialHeight(e.nativeEvent.layout.height)
+        }
+    }
+
+    const checkboxPressHandler = () => {
+        dispatch(setCheckOfProduct(id, !isChecked))
+    }
+    const deleteIconPressHandler = () => {
+        dispatch(removeProduct(id));
+    }
+
+    //Animation Related Functions and Interpolated Variables
+
+    const runTiming = (clock, value, dest) => {
         const state = {
             finished: new Value(0),
             position: value,
@@ -65,33 +91,8 @@ const Product = React.memo(({  id, title, imageUrl, amountMain, unitMain, isChec
         ]);
     }
 
-
-    useEffect(() => {
-        setCurrentIndex(index)
-    }, [index])
-
-
-    const measureInitialProductHeight = (e) => {
-        if (e.nativeEvent.layout.height > productInitialHeight) {
-            setProductInitialHeight(e.nativeEvent.layout.height)
-        }
-    }
-
-    useEffect(() => {
-        if (shouldProductBeRemoved !== undefined) {
-            startRemoveAnimation();
-        }
-    }, [shouldProductBeRemoved])
-
     const startRemoveAnimation = () => {
         setReanimatedValue(runTiming(new Clock(), new Value(1), new Value(0)))
-    }
-
-    const checkboxPressHandler = () => {
-        dispatch(setCheckOfProduct(id, !isChecked))
-    }
-    const deleteIconPressHandler = () => {
-        dispatch(removeProduct(id));
     }
 
     const productHeight = interpolate(reanimatedValue, {
@@ -115,7 +116,7 @@ const Product = React.memo(({  id, title, imageUrl, amountMain, unitMain, isChec
                     </TouchableOpacity>
                 </View>
                 <View style={styles.imageContainer}>
-                    <Image source={{ uri: imageUrl }} style={styles.image} />
+                    <Image source={{ uri: imageUrl }} defaultSource={require('../assets/Images/No_Internet_Connection.png')} style={styles.image} />
                 </View>
                 <View style={styles.infoContainer}>
                     <DefaultText style={{ ...styles.titleLabel, textDecorationLine: isChecked ? 'line-through' : 'none' }}>{title}</DefaultText>
@@ -123,7 +124,6 @@ const Product = React.memo(({  id, title, imageUrl, amountMain, unitMain, isChec
                 </View>
                 <View style={styles.leftSideIconsContainer}>
                     <View style={styles.indexIconsContainer}   >
-                        {/* <MaterialCommunityIcons name='unfold-more-horizontal' size={normalizeIconSize(28)} style={styles.dragIcon} /> */}
                         <View style={styles.singleIconWrapper}>
                             {currentIndex > 0 && enableMoving === true && <TouchableOpacity style={styles.singleIconTouchable} onPress={() => moveProductOneIndexUp(index)}>
                                 <Ionicons name='ios-arrow-up' size={normalizeIconSize(20)} style={styles.indexIcon} />
@@ -136,7 +136,7 @@ const Product = React.memo(({  id, title, imageUrl, amountMain, unitMain, isChec
                         </View>
 
                     </View>
-                    <View style={{paddingRight:normalizePaddingSize(7)}}>
+                    <View style={{ paddingRight: normalizePaddingSize(7) }}>
                         <TouchableOpacity style={styles.iconTouchable} onPress={checkboxPressHandler}>
                             <View style={styles.checkboxBox}>
                                 <Foundation name="check" size={normalizeIconSize(20)} color={Colors.green} style={[styles.checkIcon, { opacity: isChecked ? 1 : 0 }]} />
@@ -154,7 +154,6 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         width: '100%',
         alignItems: 'center',
-        // paddingVertical: normalizePaddingSize(10)
     },
     innerPaddingContainer: {
         flexDirection: 'row',
@@ -164,7 +163,7 @@ const styles = StyleSheet.create({
     },
 
     deleteIconContainer: {
-        paddingHorizontal: normalizePaddingSize(10)
+        paddingHorizontal: normalizePaddingSize(10),
     },
     deleteIcon: {
 
@@ -184,14 +183,11 @@ const styles = StyleSheet.create({
     titleLabel: {
         fontSize: 19,
         fontFamily: 'sofia-med',
-
-
     },
     infoContainer: {
         paddingTop: normalizePaddingSize(5),
         paddingLeft: normalizePaddingSize(5),
         width: '55%',
-        //borderWidth:1
     },
 
     leftSideIconsContainer: {
@@ -210,8 +206,6 @@ const styles = StyleSheet.create({
         height: '100%',
         justifyContent: 'center',
         alignItems: 'center',
-        
-    
     },
     checkboxBox: {
         borderWidth: normalizeWidth(3.5),
