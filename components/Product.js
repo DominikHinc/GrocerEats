@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react'
-import { View, Text, StyleSheet, Image, Dimensions, TouchableOpacity, LayoutAnimation, Animated, PanResponder } from 'react-native'
+import { View, Text, StyleSheet, Image, Dimensions, TouchableOpacity } from 'react-native'
 import DefaultText from './DefaultText'
 import { Foundation, MaterialCommunityIcons, Feather, Ionicons } from '@expo/vector-icons'
 import { normalizeIconSize, normalizePaddingSize, normalizeMarginSize, normalizeBorderRadiusSize, normalizeWidth } from '../methods/normalizeSizes'
@@ -8,25 +8,72 @@ import { useDispatch, useSelector } from 'react-redux'
 import { removeProduct, setCheckOfProduct, deleteAllProductsMentToBeRemoved } from '../store/actions/GroceryListActions'
 import { CustomLayoutSpring, CustomLayoutDelete, CustomLayoutScaleY } from '../constants/LayoutAnimations'
 import ProductAmountManager from './ProductAmountManager'
-import { Easing } from 'react-native-reanimated'
+import Animated, { Easing } from 'react-native-reanimated';
 
-const Product = ({ data, moveProductOneIndexUp, moveProductOneIndexDown, index, aisleLength, enableMoving }) => {
-    const dispatch = useDispatch()
+const Product = React.memo(({ data, moveProductOneIndexUp, moveProductOneIndexDown, index, aisleLength, enableMoving }) => {
+    const {
+        set,
+        cond,
+        startClock,
+        stopClock,
+        clockRunning,
+        block,
+        timing,
+        call,
+        debug,
+        Value,
+        Clock,
+        interpolate
+    } = Animated;
+    // console.log("Rerendering Product " + data.title + "And aisle legth " + aisleLength)
+   
     const [currentIndex, setCurrentIndex] = useState(index)
     const shouldProductBeRemoved = useSelector(state => state.groceryList.idOfProductsToDelete.find(item => item === data.id))
-    const removeAnimatedValue = new Animated.Value(1);
-    //let productInitialHeight = useRef(100).current
+
+    const [reanimatedHeight, setReanimatedHeight] = useState(new Value(1))
     const [productInitialHeight, setProductInitialHeight] = useState(0)
-    // LayoutAnimation.configureNext(CustomLayoutScaleY)
+    const dispatch = useDispatch()
+
+    function runTiming(clock, value, dest) {
+        const state = {
+            finished: new Value(0),
+            position: value,
+            time: new Value(0),
+            frameTime: new Value(0),
+        };
+
+        const config = {
+            duration: 300,
+            toValue: dest,
+            easing: Easing.inOut(Easing.cubic),
+        };
+
+        return block([
+
+            cond(clockRunning(clock), 0, [
+                set(state.finished, 0),
+                set(state.time, 0),
+                set(state.position, value),
+                set(state.frameTime, 0),
+                set(config.toValue, dest),
+                startClock(clock),
+            ]),
+            timing(clock, state, config),
+            cond(state.finished, stopClock(clock)),
+            cond(state.finished, call([], () => dispatch(deleteAllProductsMentToBeRemoved()))),
+            state.position,
+        ]);
+    }
+
+
     useEffect(() => {
         setCurrentIndex(index)
     }, [index])
 
+
     const measureInitialProductHeight = (e) => {
         if (e.nativeEvent.layout.height > productInitialHeight) {
-            //productInitialHeight = e.nativeEvent.layout.height;
             setProductInitialHeight(e.nativeEvent.layout.height)
-            console.log(productInitialHeight)
         }
     }
 
@@ -37,44 +84,30 @@ const Product = ({ data, moveProductOneIndexUp, moveProductOneIndexDown, index, 
     }, [shouldProductBeRemoved])
 
     const startRemoveAnimation = () => {
-        // console.log("Remove Animtaion Will start")
-        Animated.timing(removeAnimatedValue, {
-            toValue: 0,
-            duration: 200,
-        }).start(() => dispatch(deleteAllProductsMentToBeRemoved()))
+        setReanimatedHeight(runTiming(new Clock(), new Value(1), new Value(0)))
     }
 
     const checkboxPressHandler = () => {
         dispatch(setCheckOfProduct(data.id, !data.isChecked))
     }
     const deleteIconPressHandler = () => {
-        //LayoutAnimation.configureNext(CustomLayoutScaleY)
         dispatch(removeProduct(data.id));
     }
 
-    const productScaleY = {
-        transform: [{
-            scaleY: removeAnimatedValue.interpolate({
-                inputRange: [0, 1],
-                outputRange: [0, 1]
-            })
-        }]
-    }
-
-    const productOpacity = removeAnimatedValue.interpolate({
-        inputRange: [0, 1],
-        outputRange: [0, 1]
-    })
-
-    const productHeight = removeAnimatedValue.interpolate({
+    const productHeight = interpolate(reanimatedHeight, {
         inputRange: [0, 1],
         outputRange: [0, productInitialHeight]
+    })
+
+    const productOpacityAndScale = interpolate(reanimatedHeight, {
+        inputRange: [0, 1],
+        outputRange: [0, 1]
     })
 
 
 
     return (
-        <Animated.View style={[styles.mainProductContainer, productScaleY, { height: productInitialHeight > 0 ? productHeight : null, opacity: productOpacity }]} onLayout={measureInitialProductHeight} >
+        <Animated.View style={[styles.mainProductContainer, { height: productInitialHeight > 0 ? productHeight : null, opacity: productOpacityAndScale, transform: [{ scaleY: productOpacityAndScale }] }]} onLayout={measureInitialProductHeight} >
             <View style={styles.innerPaddingContainer}>
                 <View style={styles.deleteIconContainer}>
                     <TouchableOpacity style={styles.iconTouchable} onPress={deleteIconPressHandler}>
@@ -103,18 +136,21 @@ const Product = ({ data, moveProductOneIndexUp, moveProductOneIndexDown, index, 
                         </View>
 
                     </View>
-
-                    <View style={styles.checkboxBox}>
+                    <View>
                         <TouchableOpacity style={styles.iconTouchable} onPress={checkboxPressHandler}>
-                            <Foundation name="check" size={normalizeIconSize(20)} color={Colors.green} style={[styles.checkIcon, { opacity: data.isChecked ? 1 : 0 }]} />
+                            <View style={styles.checkboxBox}>
+                                <Foundation name="check" size={normalizeIconSize(20)} color={Colors.green} style={[styles.checkIcon, { opacity: data.isChecked ? 1 : 0 }]} />
+                            </View>
                         </TouchableOpacity>
-
                     </View>
                 </View>
             </View>
         </Animated.View>
     )
-}
+},(prevProps, nextProps)=>{
+    console.log("Props check in Products")
+    return false
+})
 
 const styles = StyleSheet.create({
     mainProductContainer: {
@@ -123,20 +159,13 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         // paddingVertical: normalizePaddingSize(10)
     },
-    innerPaddingContainer:{
+    innerPaddingContainer: {
         flexDirection: 'row',
         width: '100%',
         alignItems: 'center',
         paddingVertical: normalizePaddingSize(10)
-    }, 
-    iconTouchable: {
-        flex: 1,
-        width: '100%',
-        height: '100%',
-        padding: normalizePaddingSize(5),
-        justifyContent: 'center',
-        alignItems: 'center'
     },
+
     deleteIconContainer: {
         paddingHorizontal: normalizePaddingSize(10)
     },
@@ -178,13 +207,24 @@ const styles = StyleSheet.create({
     indexIconsContainer: {
         marginRight: normalizeMarginSize(10)
     },
+    iconTouchable: {
+        flex: 1,
+        width: '100%',
+        height: '100%',
+        justifyContent: 'center',
+        alignItems: 'center',
+    
+    },
     checkboxBox: {
         borderWidth: normalizeWidth(3.5),
         aspectRatio: 1,
         justifyContent: 'center',
         alignItems: 'center',
         borderRadius: normalizeBorderRadiusSize(8),
-        overflow: 'hidden'
+        overflow: 'hidden',
+    },
+    checkIcon: {
+
     },
     singleIconWrapper: {
         height: Dimensions.get('window').width / 15,

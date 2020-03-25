@@ -1,48 +1,20 @@
-import React, { useState, useRef, useEffect } from 'react'
-import { View, Text, StyleSheet, Animated, LayoutAnimation, Dimensions, TouchableOpacity } from 'react-native'
-import DefaultText from './DefaultText'
-import Product from './Product'
-import { normalizePaddingSize, normalizeBorderRadiusSize, normalizeIconSize, normalizeMarginSize } from '../methods/normalizeSizes'
-import Colors from '../constants/Colors'
-import { Ionicons, Foundation, MaterialCommunityIcons } from '@expo/vector-icons'
-import { CustomLayoutScaleY, CustomLayoutSpring } from '../constants/LayoutAnimations'
-import { useFocusEffect } from '@react-navigation/native';
+import { Foundation, Ionicons, MaterialCommunityIcons } from '@expo/vector-icons'
+import React, { useState } from 'react'
+import { Animated, LayoutAnimation, StyleSheet, TouchableOpacity, View } from 'react-native'
 import { useDispatch } from 'react-redux'
-import { setNewProductsList, removeProduct, removeMultipleProduct, setCheckOfProduct, setCheckOfMultipleProducts } from '../store/actions/GroceryListActions'
+import Colors from '../constants/Colors'
+import { CustomLayoutScaleY } from '../constants/LayoutAnimations'
+import { normalizeIconSize, normalizeMarginSize, normalizePaddingSize } from '../methods/normalizeSizes'
+import { removeMultipleProduct, setCheckOfMultipleProducts } from '../store/actions/GroceryListActions'
+import DefaultText from './DefaultText'
 
-const Aisle = ({ aisle, data, setVisibility }) => {
+const Aisle = React.memo(({ aisle, data, setVisibility }) => {
 
     const [aisleVivible, setAisleVivible] = useState(aisle === "All" ? true : false)
     const [iconAnimatiedValue, setIconAnimatiedValue] = useState(new Animated.Value(aisle === "All" ? 0 : 1))
 
     const dispatch = useDispatch()
-
-    const [localData, setLocalData] = useState(data)
-    // // LayoutAnimation.configureNext(CustomLayoutScaleY)
-    useEffect(() => {
-        //This workaround is used because LayoutAnimation Buggs when applied before redux state change
-        //Animations Bugg whole list 
-        // if (data.length === localData.length - 1 && aisleVivible === true) {
-        //     LayoutAnimation.configureNext(CustomLayoutScaleY)
-        // }
-        //console.log("Allow Animation for " + aisle + " " + allowAnimation)
-        
-        // if (aisle === "All") {
-        //     
-        // }
-        //LayoutAnimation.configureNext(CustomLayoutScaleY)
-        setLocalData(data)
-    }, [data])
-
-    // const renderAisleProducts = () => {
-
-    //     return localData.map((item, index) => {
-
-    //         return <Product key={item.id} data={item} index={index} aisleLength={localData.length} enableMoving={aisle === "All"}
-    //             moveProductOneIndexDown={moveProductOneIndexDown} moveProductOneIndexUp={moveProductOneIndexUp} />
-    //     })
-    // }
-
+    // console.log("Rerendering Aisle " + aisle)
     const startIconAnimation = () => {
         Animated.spring(iconAnimatiedValue, {
             toValue: aisleVivible ? 1 : 0,
@@ -52,7 +24,7 @@ const Aisle = ({ aisle, data, setVisibility }) => {
     }
 
     const showMoreIconHandler = () => {
-        //LayoutAnimation.configureNext(CustomLayoutScaleY);
+        LayoutAnimation.configureNext(CustomLayoutScaleY);
         setVisibility(aisle,!aisleVivible)
         setAisleVivible(prev => !prev)
         startIconAnimation();
@@ -66,34 +38,6 @@ const Aisle = ({ aisle, data, setVisibility }) => {
             })
         }]
     }
-    // const moveProductOneIndexUp = (index) => {
-    //     console.log(canMove)
-    //     if (canMove === true) {
-    //         console.log("Moving " + index + " One up")
-    //         const currnetArrayCopy = localData;
-    //         const movedItemCopy = currnetArrayCopy[index]
-    //         currnetArrayCopy[index] = currnetArrayCopy[index - 1]
-    //         currnetArrayCopy[index - 1] = movedItemCopy;
-    //         setCanMove(false)
-    //         LayoutAnimation.configureNext(CustomLayoutSpring, () => { setCanMove(true) });
-    //         dispatch(setNewProductsList(currnetArrayCopy))
-    //     }
-
-    // }
-    // const moveProductOneIndexDown = (index) => {
-    //     console.log(canMove)
-    //     if (canMove === true) {
-    //         console.log("Moving " + index + " One down")
-    //         const currnetArrayCopy = localData;
-    //         const movedItemCopy = currnetArrayCopy[index]
-    //         currnetArrayCopy[index] = currnetArrayCopy[index + 1]
-    //         currnetArrayCopy[index + 1] = movedItemCopy;
-    //         setCanMove(false)
-    //         LayoutAnimation.configureNext(CustomLayoutSpring, () => { setCanMove(true) });
-    //         dispatch(setNewProductsList(currnetArrayCopy))
-    //     }
-
-    // }
 
     const deleteAllAisleProducts = () => {
         const idsArray = data.map(item => {
@@ -105,7 +49,7 @@ const Aisle = ({ aisle, data, setVisibility }) => {
     const checkAllAisleProducts = () => {
         let shouldCheckAll = false;
         const idsArray = data.map(item => {
-            if (item.isChecked === false) {
+            if (item.isChecked !== true) {
                 shouldCheckAll = true
             }
             return item.id
@@ -163,7 +107,10 @@ const Aisle = ({ aisle, data, setVisibility }) => {
             </View>} */}
         </View>
     )
-}
+}, (prevProps, nextProps)=>{
+    console.log("Prop check in aisle")
+    return false
+})
 
 const styles = StyleSheet.create({
     mainContainer: {

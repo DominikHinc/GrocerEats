@@ -165,9 +165,9 @@ export default (state = initialState, action) => {
             return {...state, productsList:[...copyOfProductList]};
         case SET_CHECK_OF_MULTIPLE_PRODUCTS:
             if(action.idsArray.length > 0){
+                console.log(action.shouldAllBeChecked)
                 copyOfProductList = state.productsList.map(item=>{
-                    item = {...item, isChecked:action.shouldAllBeChecked}
-                    return item
+                    return action.idsArray.find(id => id === item.id) !== undefined ? {...item, isChecked:action.shouldAllBeChecked} : item
                 });
              return{...state, productsList:[...copyOfProductList]} 
              }

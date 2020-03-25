@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { ScrollView, StyleSheet, View, LayoutAnimation, SectionList } from 'react-native';
 import Aisle from './Aisle';
 import { CustomLayoutScaleY, CustomLayoutSpring, CustomLayoutDelete } from '../constants/LayoutAnimations';
@@ -20,6 +20,9 @@ const GroceryListList = ({ data }) => {
 
 
     useEffect(() => {
+        if(canMove === false){
+            LayoutAnimation.configureNext(CustomLayoutScaleY, ()=>setCanMove(true))
+        }
         data.forEach(item => {
             if (unorderedAislesList["All"] === undefined) {
                 unorderedAislesList["All"] = [item]
@@ -55,28 +58,17 @@ const GroceryListList = ({ data }) => {
         setLocalOrderedAislesList(orderedAislesList);
     }, [data])
 
-    const setAisleVisiblility = (aisle, isVisible) => {
+    const setAisleVisiblility = useCallback((aisle, isVisible) => {
         setVisibilityOfAisles(prev => {
             prev[aisle] = isVisible;
             return { ...prev };
         })
-        // const index = visibilityOfAisles.findIndex(item => item.aisle === aisle)
-        // setVisibilityOfAisles(prev => {
-        //     if (index >= 0) {
-        //         const copyOfVisibiltyArray = prev;
-        //         copyOfVisibiltyArray[index] = { aisle: aisle, visible: isVisible };
-        //         return ([...copyOfVisibiltyArray])
-        //     } else {
-        //         return [...prev, { aisle: aisle, visible: isVisible }]
-        //     }
-        // })
-
-    }
+    },[setVisibilityOfAisles])
 
 
-    const moveProductOneIndexUp = (index) => {
+    const moveProductOneIndexUp = useCallback((index) => {
         console.log(canMove)
-        // if (canMove === true) {
+        if (canMove === true) {
         console.log("Moving " + index + " One up")
         const currnetArrayCopy = data;
         const movedItemCopy = currnetArrayCopy[index]
@@ -84,12 +76,12 @@ const GroceryListList = ({ data }) => {
         currnetArrayCopy[index - 1] = movedItemCopy;
         setCanMove(false)
         dispatch(setNewProductsList(currnetArrayCopy))
-        // }
+        }
 
-    }
-    const moveProductOneIndexDown = (index) => {
+    },[canMove,dispatch,setCanMove,data])
+    const moveProductOneIndexDown = useCallback((index) => {
         console.log(canMove)
-        // if (canMove === true) {
+        if (canMove === true) {
         console.log("Moving " + index + " One down")
         const currnetArrayCopy = data;
         const movedItemCopy = currnetArrayCopy[index]
@@ -97,17 +89,15 @@ const GroceryListList = ({ data }) => {
         currnetArrayCopy[index + 1] = movedItemCopy;
         setCanMove(false)
         dispatch(setNewProductsList(currnetArrayCopy))
-        // }
+        }
 
-    }
+    },[canMove,dispatch,setCanMove,data])
 
     const renderListHeader = ({ section }) => {
         return <View><Aisle aisle={section.title} data={section.data} setVisibility={setAisleVisiblility} /></View>
     }
 
     const renderListItem = ({ item, index, section }) => {
-        // const visIndex = visibilityOfAisles.findIndex(visItem => visItem.aisle === section.title)
-
         if (visibilityOfAisles[section.title] === true) {
             if (section.title === "All") {
                 return <View><Product data={item} index={index} aisleLength={section.data.length} enableMoving={true}
@@ -118,22 +108,6 @@ const GroceryListList = ({ data }) => {
         }else{
             return null
         }
-
-        // if (visIndex >= 0) {
-        //     if (visibilityOfAisles[visIndex].visible === true) {
-        //         if (section.title === "All") {
-        //             return <View><Product data={item} index={index} aisleLength={section.data.length} enableMoving={true}
-        //                 moveProductOneIndexUp={moveProductOneIndexUp} moveProductOneIndexDown={moveProductOneIndexDown} /></View>
-        //         } else {
-        //             return <View><Product data={item} index={index} /></View>
-        //         }
-        //     } else {
-        //         return null
-        //     }
-
-        // } else {
-        //     return null
-        // }
 
     }
 
