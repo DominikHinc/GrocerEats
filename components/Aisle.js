@@ -1,42 +1,96 @@
 import { Foundation, Ionicons, MaterialCommunityIcons } from '@expo/vector-icons'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Animated, LayoutAnimation, StyleSheet, TouchableOpacity, View } from 'react-native'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import Colors from '../constants/Colors'
-import { CustomLayoutScaleY } from '../constants/LayoutAnimations'
+import { CustomLayoutScaleY, CustomLayoutSpring, CustomLayoutDelete, CustomLayoutList } from '../constants/LayoutAnimations'
 import { normalizeIconSize, normalizeMarginSize, normalizePaddingSize } from '../methods/normalizeSizes'
 import { removeMultipleProduct, setCheckOfMultipleProducts } from '../store/actions/GroceryListActions'
 import DefaultText from './DefaultText'
+import Reanimated, {Easing} from 'react-native-reanimated';
 
-const Aisle = React.memo(({ aisle, data, setVisibility }) => {
+const Aisle = React.memo(({ aisle, data, setVisibility, isVisible, switchAisleVisibility }) => {    
+    const {
+        set,
+        cond,
+        startClock,
+        stopClock,
+        clockRunning,
+        block,
+        timing,
+        Value,
+        Clock,
+        interpolate,
 
-    const [aisleVivible, setAisleVivible] = useState(aisle === "All" ? true : false)
-    const [iconAnimatiedValue, setIconAnimatiedValue] = useState(new Animated.Value(aisle === "All" ? 0 : 1))
+    } = Reanimated;
+
+    const [iconAnimatiedValue, setIconAnimatiedValue] = useState(new Animated.Value(isVisible ? 0 : 1))
+    const listOfProductsToBeRemoved = useSelector(state => state.groceryList.idOfProductsToDelete)
+
+
+    const [reanimatedValue, setReanimatedValue] = useState(new Value(1))
+
+
+    function runTiming(clock, value, dest) {
+        const state = {
+            finished: new Value(0),
+            position: value,
+            time: new Value(0),
+            frameTime: new Value(0),
+        };
+
+        const config = {
+            duration: 200,
+            toValue: dest,
+            easing: Easing.inOut(Easing.cubic),
+        };
+
+        return block([
+
+            cond(clockRunning(clock), 0, [
+                set(state.finished, 0),
+                set(state.time, 0),
+                set(state.position, value),
+                set(state.frameTime, 0),
+                set(config.toValue, dest),
+                startClock(clock),
+            ]),
+            timing(clock, state, config),
+            cond(state.finished, stopClock(clock)),
+            state.position,
+        ]);
+    }
+
+
+    useEffect(() => {
+        let willThisAisleBeRemoved = true;
+        data.forEach(item => {
+            if (listOfProductsToBeRemoved.find(id => id === item.id) === undefined) {
+                willThisAisleBeRemoved = false;
+            }
+        })
+        if (willThisAisleBeRemoved === true) {
+            startRemoveAnimation();
+        }
+    }, [listOfProductsToBeRemoved])
+
+    const startRemoveAnimation = () => {
+        setReanimatedValue(runTiming(new Clock(), new Value(1), new Value(0)))
+    }
 
     const dispatch = useDispatch()
-    // console.log("Rerendering Aisle " + aisle)
     const startIconAnimation = () => {
         Animated.spring(iconAnimatiedValue, {
-            toValue: aisleVivible ? 1 : 0,
+            toValue: isVisible ? 1 : 0,
             bounciness: 10,
             useNativeDriver: true
         }).start()
     }
 
     const showMoreIconHandler = () => {
-        LayoutAnimation.configureNext(CustomLayoutScaleY);
-        setVisibility(aisle,!aisleVivible)
-        setAisleVivible(prev => !prev)
+        LayoutAnimation.configureNext(CustomLayoutList);
+        switchAisleVisibility(aisle)
         startIconAnimation();
-    }
-
-    const iconRotation = {
-        transform: [{
-            rotate: iconAnimatiedValue.interpolate({
-                inputRange: [0, 1],
-                outputRange: ["180deg", "360deg"]
-            })
-        }]
     }
 
     const deleteAllAisleProducts = () => {
@@ -66,8 +120,27 @@ const Aisle = React.memo(({ aisle, data, setVisibility }) => {
         dispatch(removeMultipleProduct(idsArray))
     }
 
+    const iconRotation = {
+        transform: [{
+            rotate: iconAnimatiedValue.interpolate({
+                inputRange: [0, 1],
+                outputRange: ["180deg", "360deg"]
+            })
+        }]
+    }
+    const aisleOpacityAndScale = interpolate(reanimatedValue, {
+        inputRange: [0, 1],
+        outputRange: [0, 1]
+    })
+
+    const aisleMarginTop = interpolate(reanimatedValue, {
+        inputRange: [0, 1],
+        outputRange: [normalizeMarginSize(-100), 0]
+    })
+    
+
     return (
-        <View style={styles.mainContainer}>
+        <Reanimated.View style={[styles.mainContainer, {marginTop:aisleMarginTop, opacity:aisleOpacityAndScale, transform:[{scaleY:aisleOpacityAndScale}]} ]}>
             <View style={styles.aisleTitleContainer}>
                 <View style={styles.aisleBackgroundColorWrapper}>
 
@@ -82,7 +155,7 @@ const Aisle = React.memo(({ aisle, data, setVisibility }) => {
                     </Animated.View>
                 </View>
             </View>
-            {aisleVivible && <View style={styles.aisleEditOptionsContainer}>
+            {isVisible && <View style={styles.aisleEditOptionsContainer}>
                 <View style={styles.deleteAllAisleProductsContainer}>
                     <TouchableOpacity onPress={deleteAllAisleProducts} style={styles.editOptionTouchable}>
                         <Foundation name="x" size={normalizeIconSize(15)} color={Colors.darkRed} style={styles.editOptionIcon} />
@@ -105,16 +178,13 @@ const Aisle = React.memo(({ aisle, data, setVisibility }) => {
             {/* {aisleVivible && <View style={styles.productsListContainer}>
                 {renderAisleProducts()}
             </View>} */}
-        </View>
+        </Reanimated.View>
     )
-}, (prevProps, nextProps)=>{
-    console.log("Prop check in aisle")
-    return false
 })
 
 const styles = StyleSheet.create({
     mainContainer: {
-
+       
     },
     aisleTitleContainer: {
         width: '100%',
@@ -165,7 +235,7 @@ const styles = StyleSheet.create({
     aisleEditOptionsContainer: {
         flexDirection: 'row',
         justifyContent: 'space-evenly',
-        backgroundColor:'white'
+        backgroundColor: 'white'
     },
     editOptionTouchable: {
         flex: 1,

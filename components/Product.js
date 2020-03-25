@@ -10,7 +10,7 @@ import { CustomLayoutSpring, CustomLayoutDelete, CustomLayoutScaleY } from '../c
 import ProductAmountManager from './ProductAmountManager'
 import Animated, { Easing } from 'react-native-reanimated';
 
-const Product = React.memo(({ data, moveProductOneIndexUp, moveProductOneIndexDown, index, aisleLength, enableMoving }) => {
+const Product = React.memo(({  id, title, imageUrl, amountMain, unitMain, isChecked, moveProductOneIndexUp, moveProductOneIndexDown, index, aisleLength, enableMoving }) => {
     const {
         set,
         cond,
@@ -25,12 +25,12 @@ const Product = React.memo(({ data, moveProductOneIndexUp, moveProductOneIndexDo
         Clock,
         interpolate
     } = Animated;
-    // console.log("Rerendering Product " + data.title + "And aisle legth " + aisleLength)
+    // console.log("Rerendering Product " + title + "And aisle legth " + aisleLength)
    
     const [currentIndex, setCurrentIndex] = useState(index)
-    const shouldProductBeRemoved = useSelector(state => state.groceryList.idOfProductsToDelete.find(item => item === data.id))
+    const shouldProductBeRemoved = useSelector(state => state.groceryList.idOfProductsToDelete.find(item => item === id))
 
-    const [reanimatedHeight, setReanimatedHeight] = useState(new Value(1))
+    const [reanimatedValue, setReanimatedValue] = useState(new Value(1))
     const [productInitialHeight, setProductInitialHeight] = useState(0)
     const dispatch = useDispatch()
 
@@ -84,22 +84,22 @@ const Product = React.memo(({ data, moveProductOneIndexUp, moveProductOneIndexDo
     }, [shouldProductBeRemoved])
 
     const startRemoveAnimation = () => {
-        setReanimatedHeight(runTiming(new Clock(), new Value(1), new Value(0)))
+        setReanimatedValue(runTiming(new Clock(), new Value(1), new Value(0)))
     }
 
     const checkboxPressHandler = () => {
-        dispatch(setCheckOfProduct(data.id, !data.isChecked))
+        dispatch(setCheckOfProduct(id, !isChecked))
     }
     const deleteIconPressHandler = () => {
-        dispatch(removeProduct(data.id));
+        dispatch(removeProduct(id));
     }
 
-    const productHeight = interpolate(reanimatedHeight, {
+    const productHeight = interpolate(reanimatedValue, {
         inputRange: [0, 1],
         outputRange: [0, productInitialHeight]
     })
 
-    const productOpacityAndScale = interpolate(reanimatedHeight, {
+    const productOpacityAndScale = interpolate(reanimatedValue, {
         inputRange: [0, 1],
         outputRange: [0, 1]
     })
@@ -115,11 +115,11 @@ const Product = React.memo(({ data, moveProductOneIndexUp, moveProductOneIndexDo
                     </TouchableOpacity>
                 </View>
                 <View style={styles.imageContainer}>
-                    <Image source={{ uri: data.imageUrl }} style={styles.image} />
+                    <Image source={{ uri: imageUrl }} style={styles.image} />
                 </View>
                 <View style={styles.infoContainer}>
-                    <DefaultText style={{ ...styles.titleLabel, textDecorationLine: data.isChecked ? 'line-through' : 'none' }}>{data.title}</DefaultText>
-                    <ProductAmountManager id={data.id} amountMain={data.amountMain} unitMain={data.unitMain} />
+                    <DefaultText style={{ ...styles.titleLabel, textDecorationLine: isChecked ? 'line-through' : 'none' }}>{title}</DefaultText>
+                    <ProductAmountManager id={id} amountMain={amountMain} unitMain={unitMain} />
                 </View>
                 <View style={styles.leftSideIconsContainer}>
                     <View style={styles.indexIconsContainer}   >
@@ -136,10 +136,10 @@ const Product = React.memo(({ data, moveProductOneIndexUp, moveProductOneIndexDo
                         </View>
 
                     </View>
-                    <View>
+                    <View style={{paddingRight:normalizePaddingSize(7)}}>
                         <TouchableOpacity style={styles.iconTouchable} onPress={checkboxPressHandler}>
                             <View style={styles.checkboxBox}>
-                                <Foundation name="check" size={normalizeIconSize(20)} color={Colors.green} style={[styles.checkIcon, { opacity: data.isChecked ? 1 : 0 }]} />
+                                <Foundation name="check" size={normalizeIconSize(20)} color={Colors.green} style={[styles.checkIcon, { opacity: isChecked ? 1 : 0 }]} />
                             </View>
                         </TouchableOpacity>
                     </View>
@@ -147,9 +147,6 @@ const Product = React.memo(({ data, moveProductOneIndexUp, moveProductOneIndexDo
             </View>
         </Animated.View>
     )
-},(prevProps, nextProps)=>{
-    console.log("Props check in Products")
-    return false
 })
 
 const styles = StyleSheet.create({
@@ -213,6 +210,7 @@ const styles = StyleSheet.create({
         height: '100%',
         justifyContent: 'center',
         alignItems: 'center',
+        
     
     },
     checkboxBox: {

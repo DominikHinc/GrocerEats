@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { ScrollView, StyleSheet, View, LayoutAnimation, SectionList } from 'react-native';
 import Aisle from './Aisle';
-import { CustomLayoutScaleY, CustomLayoutSpring, CustomLayoutDelete } from '../constants/LayoutAnimations';
+import { CustomLayoutScaleY, CustomLayoutSpring, CustomLayoutDelete, CustomLayoutMove } from '../constants/LayoutAnimations';
 import DefaultText from './DefaultText';
 import Product from './Product';
 import { useDispatch } from 'react-redux';
@@ -21,8 +21,9 @@ const GroceryListList = ({ data }) => {
 
     useEffect(() => {
         if(canMove === false){
-            LayoutAnimation.configureNext(CustomLayoutScaleY, ()=>setCanMove(true))
+            LayoutAnimation.configureNext(CustomLayoutMove, ()=>setCanMove(true))
         }
+        
         data.forEach(item => {
             if (unorderedAislesList["All"] === undefined) {
                 unorderedAislesList["All"] = [item]
@@ -65,6 +66,13 @@ const GroceryListList = ({ data }) => {
         })
     },[setVisibilityOfAisles])
 
+    const switchAisleVisibility = useCallback((aisle)=>{
+        setVisibilityOfAisles(prev => {
+            prev[aisle] = !prev[aisle];
+            return { ...prev };
+        })
+    },[setVisibilityOfAisles])
+
 
     const moveProductOneIndexUp = useCallback((index) => {
         console.log(canMove)
@@ -94,16 +102,19 @@ const GroceryListList = ({ data }) => {
     },[canMove,dispatch,setCanMove,data])
 
     const renderListHeader = ({ section }) => {
-        return <View><Aisle aisle={section.title} data={section.data} setVisibility={setAisleVisiblility} /></View>
+        return <View key={section.title}><Aisle aisle={section.title} data={section.data} setVisibility={setAisleVisiblility} 
+        switchAisleVisibility={switchAisleVisibility} isVisible={visibilityOfAisles[section.title] === true} /></View>
     }
 
     const renderListItem = ({ item, index, section }) => {
         if (visibilityOfAisles[section.title] === true) {
             if (section.title === "All") {
-                return <View><Product data={item} index={index} aisleLength={section.data.length} enableMoving={true}
-                    moveProductOneIndexUp={moveProductOneIndexUp} moveProductOneIndexDown={moveProductOneIndexDown} /></View>
+                return <View><Product index={index} aisleLength={section.data.length} enableMoving={true}
+                    moveProductOneIndexUp={moveProductOneIndexUp} moveProductOneIndexDown={moveProductOneIndexDown}
+                    id={item.id} title={item.title} imageUrl={item.imageUrl} amountMain={item.amountMain} unitMain={item.unitMain} isChecked={item.isChecked} /></View>
             } else {
-                return <View><Product data={item} index={index} /></View>
+                return <View><Product index={index}
+                id={item.id} title={item.title} imageUrl={item.imageUrl} amountMain={item.amountMain} unitMain={item.unitMain} isChecked={item.isChecked}  /></View>
             }
         }else{
             return null
