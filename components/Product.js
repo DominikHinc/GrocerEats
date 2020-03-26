@@ -8,6 +8,7 @@ import { normalizeBorderRadiusSize, normalizeIconSize, normalizeMarginSize, norm
 import { deleteAllProductsMentToBeRemoved, removeProduct, setCheckOfProduct } from '../store/actions/GroceryListActions'
 import DefaultText from './DefaultText'
 import ProductAmountManager from './ProductAmountManager'
+import NetInfo from '@react-native-community/netinfo';
 
 const Product = React.memo(({ id, title, imageUrl, amountMain, unitMain, isChecked, moveProductOneIndexUp, moveProductOneIndexDown, index, aisleLength, enableMoving }) => {
     const {
@@ -30,6 +31,8 @@ const Product = React.memo(({ id, title, imageUrl, amountMain, unitMain, isCheck
     const [reanimatedValue, setReanimatedValue] = useState(new Value(1))
     const [productInitialHeight, setProductInitialHeight] = useState(0)
 
+    const [imageSource, setImageSource] = useState({uri:imageUrl})
+
     const dispatch = useDispatch()
 
     useEffect(() => {
@@ -42,6 +45,20 @@ const Product = React.memo(({ id, title, imageUrl, amountMain, unitMain, isCheck
             startRemoveAnimation();
         }
     }, [shouldProductBeRemoved])
+
+    useEffect(() => {
+        if (imageUrl === null || imageUrl === undefined) {
+            setImageSource(require('../assets/Images/Custom_Product_Image.png'));
+        } else {
+            NetInfo.fetch().then(state => {
+                if (state.isConnected) {
+                    setImageSource({uri:imageUrl})
+                } else {
+                    setImageSource(require('../assets/Images/No_Internet_Connection.png'));
+                }
+            });
+        }
+    }, [])
 
 
     const measureInitialProductHeight = (e) => {
@@ -107,6 +124,7 @@ const Product = React.memo(({ id, title, imageUrl, amountMain, unitMain, isCheck
 
 
 
+
     return (
         <Animated.View style={[styles.mainProductContainer, { height: productInitialHeight > 0 ? productHeight : null, opacity: productOpacityAndScale, transform: [{ scaleY: productOpacityAndScale }] }]} onLayout={measureInitialProductHeight} >
             <View style={styles.innerPaddingContainer}>
@@ -116,7 +134,7 @@ const Product = React.memo(({ id, title, imageUrl, amountMain, unitMain, isCheck
                     </TouchableOpacity>
                 </View>
                 <View style={styles.imageContainer}>
-                    <Image source={{ uri: imageUrl }} defaultSource={require('../assets/Images/No_Internet_Connection.png')} style={styles.image} />
+                    <Image source={imageSource} style={styles.image} />
                 </View>
                 <View style={styles.infoContainer}>
                     <DefaultText style={{ ...styles.titleLabel, textDecorationLine: isChecked ? 'line-through' : 'none' }}>{title}</DefaultText>

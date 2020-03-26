@@ -200,5 +200,6 @@ const styles = StyleSheet.create({
         marginHorizontal:normalizeMarginSize(20)
     },
     
+    
 })
 export default AddToGroceryListModal

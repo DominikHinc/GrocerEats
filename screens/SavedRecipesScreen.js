@@ -22,7 +22,7 @@ const SavedRecipesScreen = (props) => {
         if (listOfSavedIds.length > 0 && savedListShouldBeRefreshed === true) {
             //setSavedListShouldBeRefreshed(false)
             dispatch(savedRecipeScreenRefreshed())
-            console.log("Fetching For Saved Recipes Data")
+            // console.log("Fetching For Saved Recipes Data")
             setLoading(true)
             fetchSavedRecipesData(listOfSavedIds).then(response => {
                 switch (response.status) {

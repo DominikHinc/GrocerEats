@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { LayoutAnimation, SectionList, StyleSheet, View } from 'react-native';
+import { LayoutAnimation, SectionList, StyleSheet, View, KeyboardAvoidingView } from 'react-native';
 import { useDispatch } from 'react-redux';
 import { CustomLayoutMove } from '../constants/LayoutAnimations';
 import { setNewProductsList } from '../store/actions/GroceryListActions';
@@ -116,15 +116,16 @@ const GroceryListList = ({ data }) => {
     }
 
     return (
-        <View style={styles.mainListContainer}>
+        <KeyboardAvoidingView style={styles.mainListContainer} behavior='padding'>
             <SectionList
                 sections={localOrderedAislesList}
                 renderItem={renderListItem}
                 renderSectionHeader={renderListHeader}
                 keyExtractor={item => item.id}
+                keyboardShouldPersistTaps='always'
             />
             
-        </View>
+        </KeyboardAvoidingView>
     )
 }
 const styles = StyleSheet.create({
