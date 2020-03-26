@@ -11,7 +11,7 @@ import ProductModel from '../models/ProductModel';
 
 
 
-const AddToGroceryListModal = ({currentProduct, setModalVisible, modalVisible }) => {
+const AddToGroceryListModal = ({currentProduct, setModalVisible, modalVisible,noInternetConnection }) => {
     
     const dispatch = useDispatch();
     const productAlreadyOnGroceryList = useSelector(state => state.groceryList.productsList.find(item=>item.id === currentProduct.id))
@@ -100,7 +100,7 @@ const AddToGroceryListModal = ({currentProduct, setModalVisible, modalVisible })
                                 </View>
                                 <View style={styles.imageContainer}>
                                     <View style={styles.imageRoundWrapper}>
-                                        <Image source={{ uri: currentProduct.imageUrl }} style={styles.image} />
+                                        <Image source={noInternetConnection ? require('../assets/Images/No_Internet_Connection.png') : { uri: currentProduct.imageUrl }} style={styles.image} />
                                     </View>
 
                                 </View>

@@ -7,7 +7,7 @@ import DefaultText from './DefaultText';
 import ProductModel from '../models/ProductModel';
 
 
-const SwipableCard = React.memo(({ item, setScrolling, setInfoForModal }) => {
+const SwipableCard = React.memo(({ item, setScrolling, setInfoForModal, noInternetConnection }) => {
     //Variables related to animation
     const translateX = useRef(new Animated.ValueXY()).current;
     //Variables related to units and their amounts
@@ -85,7 +85,7 @@ const SwipableCard = React.memo(({ item, setScrolling, setInfoForModal }) => {
         <Animated.View style={styles.netherContainer}>
             <Animated.View style={[styles.ingredientContainer, { transform: [{ translateX: translateX.x }] }]} >
                 <View style={styles.ingredientImageRoundWrapper}>
-                    <Image source={{ uri: `https://spoonacular.com/cdn/ingredients_100x100/${item.image}` }} style={styles.ingredientImage} />
+                    <Image source={noInternetConnection ? require('../assets/Images/No_Internet_Connection.png') :{ uri: `https://spoonacular.com/cdn/ingredients_100x100/${item.image}` }} style={styles.ingredientImage} />
                 </View>
                 <View style={styles.ingredientInfoContainer}>
                     <DefaultText style={styles.ingredientNameLabel} >{item.name[0].toUpperCase() + item.name.slice(1, item.name.length)}</DefaultText>

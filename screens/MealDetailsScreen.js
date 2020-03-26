@@ -17,6 +17,7 @@ import { ERROR_WHILE_FETCHING, fetchMealDetailsFromServer, MAXIMUM_NUMERS_OF_CAL
 import { normalizeIconSize, normalizePaddingSize } from '../methods/normalizeSizes';
 import { removeSavedRecipe, saveRecipe } from '../store/actions/SavedRecipesActions';
 import ProductModel from '../models/ProductModel';
+import NetInfo from '@react-native-community/netinfo';
 
 
 const SCROLLING_TAB_BORDER_RADIUS = 30
@@ -25,6 +26,7 @@ const MealDetailsScreen = (props) => {
     const { color, id, savedData } = props.route.params;
     const [loading, setLoading] = useState(true)
     const [mealDetails, setMealDetails] = useState(false)
+    const [noInternetConnection, setNoInternetConnection] = useState(false)
 
     // const [upArrowType, setUpArrowType] = useState('arrow-up')
     //const [scrollable, setScrollable] = useState(true)
@@ -34,7 +36,7 @@ const MealDetailsScreen = (props) => {
     const isMealSaved = useSelector(state => state.savedRecipes.savedRecipes).find(item => item.id === id) !== undefined
 
     const [modalVisible, setModalVisible] = useState(false)
-    const [currentProduct, setCurrentProduct] = useState(new ProductModel('1','Product','','','','','',''))
+    const [currentProduct, setCurrentProduct] = useState(new ProductModel('1', 'Product', '', '', '', '', '', ''))
 
     //let scrollVelocity = useRef(0).current
 
@@ -49,12 +51,12 @@ const MealDetailsScreen = (props) => {
     const setInfoForModal = useCallback((info) => {
         setCurrentProduct(info)
         setModalVisible(true);
-    },[setCurrentProduct, setModalVisible])
+    }, [setCurrentProduct, setModalVisible])
 
     const setScrolling = useCallback((canScroll) => {
         //setScrollable(canScroll);
         scrollable = canScroll
-    },[scrollable])
+    }, [scrollable])
 
     useEffect(() => {
         if (mealDetails === false) {
@@ -84,6 +86,14 @@ const MealDetailsScreen = (props) => {
                 })
             }
         }
+
+        NetInfo.fetch().then(state => {
+            if (state.isConnected) {
+                setNoInternetConnection(false)
+            } else {
+                setNoInternetConnection(true)
+            }
+        })
 
     }, [])
 
@@ -139,7 +149,7 @@ const MealDetailsScreen = (props) => {
 
                 ingredientsMap[item.id] = 1
                 return (
-                    <SwipableCard key={item.id} item={item} setScrolling={setScrolling} setInfoForModal={setInfoForModal} />
+                    <SwipableCard key={item.id} item={item} setScrolling={setScrolling} setInfoForModal={setInfoForModal} noInternetConnection={noInternetConnection} />
                 )
             })
         }
@@ -151,13 +161,14 @@ const MealDetailsScreen = (props) => {
         <View style={{ ...styles.screen, backgroundColor: loading ? 'white' : 'black' }}>
             <GoBackArrow goBack={() => { props.navigation.goBack() }} />
             <FloatingHeartIcon onPress={onHeartIconPressed} active={isMealSaved} />
-            <Animated.Image source={{ uri: `https://spoonacular.com/recipeImages/${id}-636x393.${mealDetails.imageType}` }} style={[styles.backgroundImage, { opacity: imageOpacity, height: imageHeight }]} resizeMode='cover' />
+            <Animated.Image source={noInternetConnection ? require('../assets/Images/No_Internet_Connection.png') : { uri: `https://spoonacular.com/recipeImages/${id}-636x393.${mealDetails.imageType}` }} 
+            style={[styles.backgroundImage, { opacity: imageOpacity, height: imageHeight }]} resizeMode='cover' />
 
             {!loading && <ScrollView scrollEnabled={scrollable} style={styles.mainScrollView} onScroll={onScrollHandler}
                 onMomentumScrollEnd={onMomentumEndHandler} showsVerticalScrollIndicator={false} scrollEventThrottle={17} onScrollBeginDrag={onScrollHandler}>
                 <View style={styles.spaceFiller} />
                 <View style={styles.mainContainer}>
-                    <Animated.View style={[styles.upArrowContainer, {transform:[{scaleY:arrowScale}]}]}>
+                    <Animated.View style={[styles.upArrowContainer, { transform: [{ scaleY: arrowScale }] }]}>
                         <SimpleLineIcons name={'arrow-up'} size={normalizeIconSize(25)} color={Colors.gray} style={styles.upArrow} />
                         {/* {upArrowType === 'minus' ? <AntDesign name='minus' size={normalizeIconSize(28)} color={Colors.gray} style={{ ...styles.upArrow, transform: [{ scaleX: 2 }] }} />
                             :
@@ -167,8 +178,8 @@ const MealDetailsScreen = (props) => {
                         <DefaultText style={styles.title}>{mealDetails.title}</DefaultText>
                     </View>
 
-                    <BasicMealInfo readyInMinutes={mealDetails.readyInMinutes} servings={mealDetails.servings} 
-                    likes={mealDetails.aggregateLikes} score={mealDetails.spoonacularScore} />
+                    <BasicMealInfo readyInMinutes={mealDetails.readyInMinutes} servings={mealDetails.servings}
+                        likes={mealDetails.aggregateLikes} score={mealDetails.spoonacularScore} />
 
                     {mealDetails !== false && mealDetails.dishTypes.length > 0 && <View style={styles.mainTagsContainer}>
                         <View style={styles.tagsContainer}>
@@ -202,7 +213,7 @@ const MealDetailsScreen = (props) => {
                 </View>
             </ScrollView>}
             {loading && <View style={styles.loadingContainer} ><ActivityIndicator size='large' color={color} /></View>}
-            <AddToGroceryListModal modalVisible={modalVisible} setModalVisible={setModalVisiblilty} currentProduct={currentProduct}/>
+            <AddToGroceryListModal modalVisible={modalVisible} setModalVisible={setModalVisiblilty} currentProduct={currentProduct} noInternetConnection={noInternetConnection} />
 
         </View>
     )
