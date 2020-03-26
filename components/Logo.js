@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { Animated, Easing, StyleSheet, View } from 'react-native'
 import { useSafeArea } from 'react-native-safe-area-context'
 import Colors from '../constants/Colors'
-import { normalizeIconSize } from '../methods/normalizeSizes'
+import { normalizeIconSize, normalizePaddingSize } from '../methods/normalizeSizes'
 import DefaultText from './DefaultText'
 
 
@@ -58,7 +58,7 @@ const Logo = (props) => {
     //(e) => { logoInitialHeight === -1 ? logoInitialHeight = e.nativeEvent.layout.height : null }
     return (
         <Animated.View onLayout={onLayout}  
-        style={{ ...styles.safeAreaViewWrapper, paddingTop: insets.top, height: logoHeight, opacity: logoOpacity }}>
+        style={{ ...styles.safeAreaViewWrapper, paddingTop: insets.top + normalizePaddingSize(5), height: logoHeight, opacity: logoOpacity }}>
             {props.goBack && <View style={styles.arrowContainer}>
                 <Ionicons style={styles.arrow} name='ios-arrow-back' size={normalizeIconSize(23)} onPress={() => { props.goBack() }} />
             </View>}

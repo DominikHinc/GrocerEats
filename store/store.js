@@ -3,6 +3,7 @@ import ReduxThunk from 'redux-thunk';
 import ApiReducer from './reducers/ApiReducer';
 import SavedRecipesReducer from './reducers/SavedRecipesReducer';
 import GroceryListReducer from './reducers/GroceryListReducer';
+import { refreshApiKey } from './actions/ApiActions';
 
 
 
@@ -14,4 +15,14 @@ const rootReducer = combineReducers({
     groceryList:GroceryListReducer
   })
 
-  export default createStore(rootReducer, applyMiddleware(ReduxThunk))
+  const store = createStore(rootReducer, applyMiddleware(ReduxThunk));
+
+  export const getCurrentApi = ()=>{
+    return store.getState().api
+  }
+
+  export const refreshApi = ()=>{
+    store.dispatch(refreshApiKey())
+  }
+
+  export default store

@@ -22,8 +22,7 @@ import ProductModel from '../models/ProductModel';
 const SCROLLING_TAB_BORDER_RADIUS = 30
 
 const MealDetailsScreen = (props) => {
-    const { color, id, gotDetailedData } = props.route.params;
-    const savedRecipesList = useSelector(state => state.savedRecipes.savedRecipes)
+    const { color, id, savedData } = props.route.params;
     const [loading, setLoading] = useState(true)
     const [mealDetails, setMealDetails] = useState(false)
 
@@ -32,7 +31,7 @@ const MealDetailsScreen = (props) => {
     let scrollable = useRef(true).current
     const currentContentOffset = new Animated.Value(0)
 
-    const [isMealSaved, setIsMealSaved] = useState(savedRecipesList.find(item => item.id === id) === undefined ? false : true)
+    const isMealSaved = useSelector(state => state.savedRecipes.savedRecipes).find(item => item.id === id) !== undefined
 
     const [modalVisible, setModalVisible] = useState(false)
     const [currentProduct, setCurrentProduct] = useState(new ProductModel('1','Product','','','','','',''))
@@ -59,8 +58,8 @@ const MealDetailsScreen = (props) => {
 
     useEffect(() => {
         if (mealDetails === false) {
-            if (gotDetailedData === true) {
-                setMealDetails(savedRecipesList.find(item => item.id === id).mealDetails)
+            if (savedData !== undefined) {
+                setMealDetails(savedData)
                 setLoading(false)
             } else {
                 setLoading(true)
@@ -104,8 +103,7 @@ const MealDetailsScreen = (props) => {
     }
     const onHeartIconPressed = () => {
         if (!loading) {
-            !isMealSaved ? dispatch(saveRecipe(id)) : dispatch(removeSavedRecipe(id))
-            setIsMealSaved(prev => !prev)
+            !isMealSaved ? dispatch(saveRecipe(id, mealDetails)) : dispatch(removeSavedRecipe(id))
         }
     }
 

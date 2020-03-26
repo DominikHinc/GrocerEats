@@ -19,6 +19,7 @@ const FloatingHeartIcon = React.memo(({ active, id, alignLeft, small, onPress })
             //startIconAnimation(active ? 1 : 0)
             setIsIconActive(active);
         } 
+        setCanIconBePressed(true)
     }, [active])
 
 
@@ -30,7 +31,6 @@ const FloatingHeartIcon = React.memo(({ active, id, alignLeft, small, onPress })
         }).start(()=>{
             //TODO after integration with SQL is implemented revisit this statement
             onPress()
-            setCanIconBePressed(true)
         })
     }
 

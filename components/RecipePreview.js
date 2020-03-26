@@ -1,6 +1,6 @@
 import { AntDesign, Foundation, Ionicons, MaterialCommunityIcons } from '@expo/vector-icons'
 import React, { useState } from 'react'
-import { Image, StyleSheet, TouchableOpacity, View } from 'react-native'
+import { Image, StyleSheet, TouchableOpacity, View, Alert } from 'react-native'
 import { useDispatch, useSelector } from 'react-redux'
 import DefaultText from '../components/DefaultText'
 import Colors from '../constants/Colors'
@@ -13,23 +13,21 @@ import { saveRecipe, removeSavedRecipe } from '../store/actions/SavedRecipesActi
 
 
 
-const RecipePreview = ({ title, id, image, readyInMinutes, servings, onPress, missedIngredients, usedIngredients }) => {
+const RecipePreview = ({ title, id, image, readyInMinutes, servings, onPress, missedIngredients, usedIngredients, savedData }) => {
     const readyInMinutesChangedToHoursAndMinutes = changeMinutesToHoursAndMinutes(readyInMinutes)
     let clockColor = calculateTimeColor(readyInMinutes)
     let servingsColor = calculateServingsColor(servings)
-    //let isMealSaved = useSelector(state => state.savedRecipes.savedRecipes).find(item => item.id === id)
-    //const [isMealSaved, setIsMealSaved] = useState(useSelector(state => state.savedRecipes.savedRecipes).find(item => item.id === id) !== undefined)
+
     const isMealSaved = useSelector(state => state.savedRecipes.savedRecipes).find(item => item.id === id) !== undefined
     const dispatch = useDispatch();
-    //TODO implement saving logic that will work with just preview
+
     const onHeartIconPressed = () => {
-        !isMealSaved ? dispatch(saveRecipe(id)) : dispatch(removeSavedRecipe(id))
-        //console.log(isMealSaved)
-        //setIsMealSaved(prev => prev === true ? false : true)
+
+        !isMealSaved ? dispatch(saveRecipe(id, savedData === undefined ? undefined : savedData)) : dispatch(removeSavedRecipe(id))
+
+
     }
-    //console.log("Recipe Preview Rerendering")
-    //console.log(isMealSaved)
-   
+
     return (
         <View>
             <FloatingHeartIcon active={isMealSaved} small={true} alignLeft={true} onPress={onHeartIconPressed} />
@@ -37,7 +35,7 @@ const RecipePreview = ({ title, id, image, readyInMinutes, servings, onPress, mi
                 <View style={styles.mainContainer}>
                     <View style={styles.imageContainer}>
                         <Image source={{ uri: image !== undefined ? `https://spoonacular.com/recipeImages/${id}-240x150.${image.includes(".") ? (image.split('.'))[1] : image}` : null }}
-                            style={styles.image} defaultSource={require('../assets/Images/No_Internet_Connection.png')} />
+                            style={styles.image} />
                     </View>
                     <View style={styles.infoContainer}>
                         <View style={styles.titleContainer}>

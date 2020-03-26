@@ -6,6 +6,8 @@ import MealPreviewList from '../components/MealPreviewList'
 import SearchBar from '../components/SearchBar'
 import Colors from '../constants/Colors'
 import { ERROR_WHILE_FETCHING, fetchStandardSearchFromServer, MAXIMUM_NUMERS_OF_CALLS_REACHED, NO_MORE_RECIPES, RECIPE_COULD_NOT_BE_FOUND, SUCCESS } from '../methods/fetchFromServer'
+import { useDispatch } from 'react-redux'
+import { loadSavedRecipes } from '../store/actions/SavedRecipesActions'
 
 
 const StandardSearchScreen = (props) => {
@@ -21,6 +23,14 @@ const StandardSearchScreen = (props) => {
     const [loading, setLoading] = useState(false)
     let firstSearchId = useRef().current;
     const perLoadAmount = 25;
+
+    const dispatch = useDispatch()
+    
+    useEffect(()=>{
+        console.log("Starting to load saved recipes")
+        dispatch(loadSavedRecipes())
+    },[dispatch])
+
 
     //Animation Realted Variables
     const [shouldLogoBeShown, setShouldLogoBeShown] = useState(true)

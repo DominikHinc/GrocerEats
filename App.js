@@ -1,12 +1,20 @@
 import { NavigationContainer } from '@react-navigation/native';
 import { AppLoading } from 'expo';
 import * as Font from 'expo-font';
-import React, { useState } from 'react';
-import { UIManager } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { UIManager, YellowBox } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import GrocerEatsNavigator from './Navigation/GrocerEatsNavigator';
-import { Provider } from 'react-redux';
+import { Provider, useDispatch } from 'react-redux';
 import store from './store/store';
+import { init_saved_recipes_db } from './helpers/db';
+
+init_saved_recipes_db().then(()=>{
+  console.log("Initialized Saved Recipes Data Base Successfully")
+}).catch(err=>{
+  console.log("Initializing Saved Recipes Data Base Failed")
+  console.log(err)
+})
 
 const fetchFonts = () => {
   return Font.loadAsync({
@@ -17,6 +25,7 @@ const fetchFonts = () => {
   })
 }
 
+YellowBox.ignoreWarnings(["Require cycle:"])
 
 export default function App() {
   const [fontsLoaded, setFontsLoaded] = useState(false)
@@ -33,7 +42,6 @@ export default function App() {
         setFontsLoaded(true)
       }} />
   }
-
 
   return (
     <SafeAreaProvider>
