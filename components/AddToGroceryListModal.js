@@ -6,7 +6,7 @@ import { normalizeBorderRadiusSize, normalizeIconSize, normalizePaddingSize, nor
 import AmountOfGroceriesManager from './AmountOfIngradientManager';
 import DefaultText from './DefaultText';
 import { useDispatch, useSelector } from 'react-redux';
-import {addProduct} from '../store/actions/GroceryListActions'
+import {addProduct, editProductAmount} from '../store/actions/GroceryListActions'
 import ProductModel from '../models/ProductModel';
 
 
@@ -41,8 +41,11 @@ const AddToGroceryListModal = ({currentProduct, setModalVisible, modalVisible,no
         const isValid = amount.match(/^-?\d*(\.\d+)?$/);
         if (isValid) {
             closeModalHandler();
-            dispatch(addProduct(new ProductModel(currentProduct.id, currentProduct.title[0].toUpperCase() + currentProduct.title.slice(1, currentProduct.title.length), 
-            currentProduct.imageUrl,amount,
+            dispatch(productAlreadyOnGroceryList !== undefined ? 
+            editProductAmount(productAlreadyOnGroceryList.id,(parseFloat(productAlreadyOnGroceryList.amountMain) + parseFloat(amount)).toString())    
+            :
+            addProduct(new ProductModel(currentProduct.id, currentProduct.title[0].toUpperCase() + currentProduct.title.slice(1, currentProduct.title.length), 
+            currentProduct.imageUrl,amount, 
             selectedUnit === currentProduct.unitMain ? currentProduct.amountSecondary : currentProduct.amountMain,
             selectedUnit,
             selectedUnit === currentProduct.unitMain ? currentProduct.unitSecondary : currentProduct.unitMain, 

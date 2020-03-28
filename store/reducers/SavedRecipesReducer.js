@@ -15,7 +15,7 @@ export default (state = initialState, action) =>{
                 const newSavedRecipes = state.savedRecipes.filter(item=>item.id !== action.id)
                 return{...state, savedRecipes:newSavedRecipes};
             case LOAD_SAVED_RECIPES:
-                console.log("Loading save recipes")
+                console.log("Loading saved recipes")
                 return {...state, savedRecipes:action.data}
             default:
                 return state

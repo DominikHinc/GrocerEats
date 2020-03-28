@@ -7,12 +7,19 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import GrocerEatsNavigator from './Navigation/GrocerEatsNavigator';
 import { Provider, useDispatch } from 'react-redux';
 import store from './store/store';
-import { init_saved_recipes_db } from './helpers/db';
+import { init_saved_recipes_db, init_grocery_list_db } from './helpers/db';
 
 init_saved_recipes_db().then(()=>{
   console.log("Initialized Saved Recipes Data Base Successfully")
 }).catch(err=>{
   console.log("Initializing Saved Recipes Data Base Failed")
+  console.log(err)
+})
+
+init_grocery_list_db().then(()=>{
+  console.log("Initialized Grocery List Data Base Successfully")
+}).catch(err=>{
+  console.log("Initializing Grocery List Data Base Failed")
   console.log(err)
 })
 

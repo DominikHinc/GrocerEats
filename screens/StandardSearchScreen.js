@@ -8,6 +8,7 @@ import Colors from '../constants/Colors'
 import { ERROR_WHILE_FETCHING, fetchStandardSearchFromServer, MAXIMUM_NUMERS_OF_CALLS_REACHED, NO_MORE_RECIPES, RECIPE_COULD_NOT_BE_FOUND, SUCCESS } from '../methods/fetchFromServer'
 import { useDispatch } from 'react-redux'
 import { loadSavedRecipes } from '../store/actions/SavedRecipesActions'
+import { loadSavedProducts } from '../store/actions/GroceryListActions'
 
 
 const StandardSearchScreen = (props) => {
@@ -29,6 +30,8 @@ const StandardSearchScreen = (props) => {
     useEffect(()=>{
         console.log("Starting to load saved recipes")
         dispatch(loadSavedRecipes())
+        console.log("Starting to load saved products")
+        dispatch(loadSavedProducts())
     },[dispatch])
 
 

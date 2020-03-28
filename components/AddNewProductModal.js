@@ -44,9 +44,13 @@ const AddNewProductModal = ({ modalVisible, setModalVisible }) => {
                 Alert.alert("Not every field has been filled", "Please fill every field.")
             } else {
                 console.log("Product Will be added")
-                dispatch(addProduct(new ProductModel("C" + (Math.random()).toString(), nameTextInputValue, null,
+                dispatch(addProduct(new ProductModel(parseInt(Math.random() * 1000000), nameTextInputValue, null,
                 amountTextInputValue, "0", unitTextInputValue, "", aisleTextInputValue, false)))
                 setModalVisible(false)
+                setNameTextInputValue("")
+                setUnitTextInputValue("")
+                setAisleTextInputValue("")
+                setAmountTextInputValue("")
                 Keyboard.dismiss()
             }
         } else {

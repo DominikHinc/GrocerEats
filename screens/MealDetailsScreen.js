@@ -26,7 +26,7 @@ const MealDetailsScreen = (props) => {
     const { color, id, savedData } = props.route.params;
     const [loading, setLoading] = useState(true)
     const [mealDetails, setMealDetails] = useState(false)
-    const [noInternetConnection, setNoInternetConnection] = useState(false)
+    const [noInternetConnection, setNoInternetConnection] = useState(true)
 
     // const [upArrowType, setUpArrowType] = useState('arrow-up')
     //const [scrollable, setScrollable] = useState(true)
@@ -93,130 +93,136 @@ const MealDetailsScreen = (props) => {
             } else {
                 setNoInternetConnection(true)
             }
+        }).catch(err => {
+            Alert.alert("Something went wrong.", err.message)
+            setNoInternetConnection(true)
         })
+     
 
-    }, [])
 
 
-    //On Event happen handlers
-    const onScrollHandler = (e) => {
-        currentContentOffset.setValue(e.nativeEvent.contentOffset.y);
-        //console.log(e.nativeEvent.velocity.y)
-        //scrollVelocity=e.nativeEvent.velocity.y
-        // setUpArrowType('minus');
+}, [])
+
+
+//On Event happen handlers
+const onScrollHandler = (e) => {
+    currentContentOffset.setValue(e.nativeEvent.contentOffset.y);
+    //console.log(e.nativeEvent.velocity.y)
+    //scrollVelocity=e.nativeEvent.velocity.y
+    // setUpArrowType('minus');
+}
+const onMomentumEndHandler = (e) => {
+    currentContentOffset.setValue(e.nativeEvent.contentOffset.y);
+    //console.log(e.nativeEvent.velocity.y)
+    //scrollVelocity=e.nativeEvent.velocity.y
+    // setUpArrowType('arrow-up')
+}
+const onHeartIconPressed = () => {
+    if (!loading) {
+        !isMealSaved ? dispatch(saveRecipe(id, mealDetails)) : dispatch(removeSavedRecipe(id))
     }
-    const onMomentumEndHandler = (e) => {
-        currentContentOffset.setValue(e.nativeEvent.contentOffset.y);
-        //console.log(e.nativeEvent.velocity.y)
-        //scrollVelocity=e.nativeEvent.velocity.y
-        // setUpArrowType('arrow-up')
+}
+
+//Interpolated variables
+const imageOpacity = currentContentOffset.interpolate({
+    inputRange: [0, Dimensions.get('screen').height / 2],
+    outputRange: [1, 0],
+    extrapolate: 'clamp',
+    easing: Easing.ease,
+})
+const imageHeight = currentContentOffset.interpolate({
+    inputRange: [0, Dimensions.get('screen').height / 2],
+    outputRange: [Dimensions.get('screen').height / 2 + SCROLLING_TAB_BORDER_RADIUS, Dimensions.get('screen').height / 6],
+    extrapolate: 'clamp',
+    easing: Easing.ease,
+
+})
+
+const arrowScale = currentContentOffset.interpolate({
+    inputRange: [0, Dimensions.get('screen').height / 2],
+    outputRange: [1, -1],
+    extrapolate: 'clamp',
+    easing: Easing.ease,
+})
+
+const renderIngredients = () => {
+    if (mealDetails.extendedIngredients) {
+        let ingredientsMap = {};
+        return mealDetails.extendedIngredients.map((item, index) => {
+            if (ingredientsMap[item.id] === 1) {
+                return null;
+            }
+
+            ingredientsMap[item.id] = 1
+            return (
+                <SwipableCard key={item.id} item={item} setScrolling={setScrolling} setInfoForModal={setInfoForModal} noInternetConnection={noInternetConnection} />
+            )
+        })
     }
-    const onHeartIconPressed = () => {
-        if (!loading) {
-            !isMealSaved ? dispatch(saveRecipe(id, mealDetails)) : dispatch(removeSavedRecipe(id))
-        }
-    }
+}
 
-    //Interpolated variables
-    const imageOpacity = currentContentOffset.interpolate({
-        inputRange: [0, Dimensions.get('screen').height / 2],
-        outputRange: [1, 0],
-        extrapolate: 'clamp',
-        easing: Easing.ease,
-    })
-    const imageHeight = currentContentOffset.interpolate({
-        inputRange: [0, Dimensions.get('screen').height / 2],
-        outputRange: [Dimensions.get('screen').height / 2 + SCROLLING_TAB_BORDER_RADIUS, Dimensions.get('screen').height / 6],
-        extrapolate: 'clamp',
-        easing: Easing.ease,
+console.log("Rerendering mealDetails")
 
-    })
-
-    const arrowScale = currentContentOffset.interpolate({
-        inputRange: [0, Dimensions.get('screen').height / 2],
-        outputRange: [1, -1],
-        extrapolate: 'clamp',
-        easing: Easing.ease,
-    })
-
-    const renderIngredients = () => {
-        if (mealDetails.extendedIngredients) {
-            let ingredientsMap = {};
-            return mealDetails.extendedIngredients.map((item, index) => {
-                if (ingredientsMap[item.id] === 1) {
-                    return null;
-                }
-
-                ingredientsMap[item.id] = 1
-                return (
-                    <SwipableCard key={item.id} item={item} setScrolling={setScrolling} setInfoForModal={setInfoForModal} noInternetConnection={noInternetConnection} />
-                )
-            })
-        }
-    }
-
-    console.log("Rerendering mealDetails")
-
-    return (
-        <View style={{ ...styles.screen, backgroundColor: loading ? 'white' : 'black' }}>
-            <GoBackArrow goBack={() => { props.navigation.goBack() }} />
-            <FloatingHeartIcon onPress={onHeartIconPressed} active={isMealSaved} />
-            <Animated.Image source={noInternetConnection ? require('../assets/Images/No_Internet_Connection.png') : { uri: `https://spoonacular.com/recipeImages/${id}-636x393.${mealDetails.imageType}` }} 
+return (
+    <View style={{ ...styles.screen, backgroundColor: loading ? 'white' : 'black' }}>
+        <GoBackArrow goBack={() => { props.navigation.goBack() }} />
+        <FloatingHeartIcon onPress={onHeartIconPressed} active={isMealSaved} />
+        <Animated.Image source={noInternetConnection ? require('../assets/Images/No_Internet_Connection.png') : { uri: `https://spoonacular.com/recipeImages/${id}-636x393.${mealDetails.imageType}` }}
             style={[styles.backgroundImage, { opacity: imageOpacity, height: imageHeight }]} resizeMode='cover' />
 
-            {!loading && <ScrollView scrollEnabled={scrollable} style={styles.mainScrollView} onScroll={onScrollHandler}
-                onMomentumScrollEnd={onMomentumEndHandler} showsVerticalScrollIndicator={false} scrollEventThrottle={17} onScrollBeginDrag={onScrollHandler}>
-                <View style={styles.spaceFiller} />
-                <View style={styles.mainContainer}>
-                    <Animated.View style={[styles.upArrowContainer, { transform: [{ scaleY: arrowScale }] }]}>
-                        <SimpleLineIcons name={'arrow-up'} size={normalizeIconSize(25)} color={Colors.gray} style={styles.upArrow} />
-                        {/* {upArrowType === 'minus' ? <AntDesign name='minus' size={normalizeIconSize(28)} color={Colors.gray} style={{ ...styles.upArrow, transform: [{ scaleX: 2 }] }} />
+        {!loading && <ScrollView scrollEnabled={scrollable} style={styles.mainScrollView} onScroll={onScrollHandler}
+            onMomentumScrollEnd={onMomentumEndHandler} showsVerticalScrollIndicator={false} scrollEventThrottle={17} onScrollBeginDrag={onScrollHandler}>
+            <View style={styles.spaceFiller} />
+            <View style={styles.mainContainer}>
+                <Animated.View style={[styles.upArrowContainer, { transform: [{ scaleY: arrowScale }] }]}>
+                    <SimpleLineIcons name={'arrow-up'} size={normalizeIconSize(25)} color={Colors.gray} style={styles.upArrow} />
+                    {/* {upArrowType === 'minus' ? <AntDesign name='minus' size={normalizeIconSize(28)} color={Colors.gray} style={{ ...styles.upArrow, transform: [{ scaleX: 2 }] }} />
                             :
                             <SimpleLineIcons name={upArrowType} size={normalizeIconSize(25)} color={Colors.gray} style={styles.upArrow} />} */}
-                    </Animated.View>
-                    <View style={styles.titleContainer}>
-                        <DefaultText style={styles.title}>{mealDetails.title}</DefaultText>
-                    </View>
-
-                    <BasicMealInfo readyInMinutes={mealDetails.readyInMinutes} servings={mealDetails.servings}
-                        likes={mealDetails.aggregateLikes} score={mealDetails.spoonacularScore} />
-
-                    {mealDetails !== false && mealDetails.dishTypes.length > 0 && <View style={styles.mainTagsContainer}>
-                        <View style={styles.tagsContainer}>
-                            <MealTags tags={mealDetails.dishTypes} />
-                        </View>
-                    </View>}
-                    <DefaultText style={styles.sectionTitle}>
-                        Ingredients:
-                    </DefaultText>
-                    <DefaultText style={styles.tutorialLabel}>
-                        Swipe arrow left to add to your grocery list
-                    </DefaultText>
-
-                    <View style={styles.ingredientsMainContainer}>
-                        {renderIngredients()}
-                    </View>
-
-                    {mealDetails !== false && mealDetails.analyzedInstructions.length > 0 ? <View style={styles.stepsMainContainer}>
-                        <DefaultText style={styles.sectionTitle}>Preparation:</DefaultText>
-                        <MealPreparation steps={mealDetails.analyzedInstructions} />
-                    </View>
-                        :
-                        <DefaultText style={{ textAlign: "center" }}>Preparation steps were not found</DefaultText>
-                    }
-
-                    <View style={styles.additionalInfoContainer} >
-                        <DefaultText style={styles.sectionTitle}>Additional Info</DefaultText>
-                        <AdditonalMealInfo mealDetails={mealDetails} />
-                    </View>
-
+                </Animated.View>
+                <View style={styles.titleContainer}>
+                    <DefaultText style={styles.title}>{mealDetails.title}</DefaultText>
                 </View>
-            </ScrollView>}
-            {loading && <View style={styles.loadingContainer} ><ActivityIndicator size='large' color={color} /></View>}
-            <AddToGroceryListModal modalVisible={modalVisible} setModalVisible={setModalVisiblilty} currentProduct={currentProduct} noInternetConnection={noInternetConnection} />
 
-        </View>
-    )
+                <BasicMealInfo readyInMinutes={mealDetails.readyInMinutes} servings={mealDetails.servings}
+                    likes={mealDetails.aggregateLikes} score={mealDetails.spoonacularScore} />
+
+                {mealDetails !== false && mealDetails.dishTypes.length > 0 && <View style={styles.mainTagsContainer}>
+                    <View style={styles.tagsContainer}>
+                        <MealTags tags={mealDetails.dishTypes} />
+                    </View>
+                </View>}
+                <DefaultText style={styles.sectionTitle}>
+                    Ingredients:
+                    </DefaultText>
+                <DefaultText style={styles.tutorialLabel}>
+                    Swipe arrow left to add to your grocery list
+                    </DefaultText>
+
+                <View style={styles.ingredientsMainContainer}>
+                    {renderIngredients()}
+                </View>
+
+                {mealDetails !== false && mealDetails.analyzedInstructions.length > 0 ? <View style={styles.stepsMainContainer}>
+                    <DefaultText style={styles.sectionTitle}>Preparation:</DefaultText>
+                    <MealPreparation steps={mealDetails.analyzedInstructions} />
+                </View>
+                    :
+                    <DefaultText style={{ textAlign: "center" }}>Preparation steps were not found</DefaultText>
+                }
+
+                <View style={styles.additionalInfoContainer} >
+                    <DefaultText style={styles.sectionTitle}>Additional Info</DefaultText>
+                    <AdditonalMealInfo mealDetails={mealDetails} />
+                </View>
+
+            </View>
+        </ScrollView>}
+        {loading && <View style={styles.loadingContainer} ><ActivityIndicator size='large' color={color} /></View>}
+        <AddToGroceryListModal modalVisible={modalVisible} setModalVisible={setModalVisiblilty} currentProduct={currentProduct} noInternetConnection={noInternetConnection} />
+
+    </View>
+)
 }
 
 const styles = StyleSheet.create({

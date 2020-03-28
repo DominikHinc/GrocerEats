@@ -5,7 +5,24 @@ const db = SQLite.openDatabase('GrocerEats.db');
 export const init_saved_recipes_db = () => {
   const promise = new Promise((resolve, reject) => {
     db.transaction((tx) => {
-      tx.executeSql('CREATE TABLE IF NOT EXISTS GrocerEats (mealId INTEGER PRIMARY KEY NOT NULL, mealDetails TEXT NOT NULL);',
+      tx.executeSql('CREATE TABLE IF NOT EXISTS SavedRecipes (mealId INTEGER PRIMARY KEY NOT NULL, mealDetails TEXT NOT NULL);',
+        [],
+        () => {
+          resolve()
+        },
+        (_, err) => {
+          reject(err);
+        }
+      );
+    })
+  })
+  return promise;
+}
+
+export const init_grocery_list_db = () => {
+  const promise = new Promise((resolve, reject) => {
+    db.transaction((tx) => {
+      tx.executeSql('CREATE TABLE IF NOT EXISTS GroceryList (id INTEGER PRIMARY KEY NOT NULL, title TEXT NOT NULL, imageUrl TEXT, amountMain TEXT NOT NULL, amountSecondary TEXT, unitMain TEXT NOT NULL, unitSecondary TEXT, aisle TEXT, isChecked INTEGER NOT NULL, willBeDeleted INTEGER);',
         [],
         () => {
           resolve()
@@ -23,7 +40,7 @@ export const insertSavedRecipe = (mealId, mealDetails) => {
   const promise = new Promise((resolve, reject) => {
     db.transaction(tx => {
       tx.executeSql(
-        `INSERT INTO GrocerEats (mealId, mealDetails) VALUES (?, ?);`,
+        `INSERT INTO SavedRecipes (mealId, mealDetails) VALUES (?, ?);`,
         [mealId, mealDetails],
         (_, result) => {
           resolve(result);
@@ -41,7 +58,7 @@ export const deleteSavedRecipe = (mealId) => {
   const promise = new Promise((resolve, reject) => {
     db.transaction(tx => {
       tx.executeSql(
-        `DELETE FROM GrocerEats WHERE mealId = ?;`,
+        `DELETE FROM SavedRecipes WHERE mealId = ?;`,
         [mealId],
         (_, result) => {
           resolve(result);
@@ -59,7 +76,7 @@ export const fetchSavedRecipes = () => {
   const promise = new Promise((resolve, reject) => {
     db.transaction(tx => {
       tx.executeSql(
-        'SELECT * FROM GrocerEats',
+        'SELECT * FROM SavedRecipes',
         [],
         (_, result) => {
           resolve(result);
@@ -72,4 +89,77 @@ export const fetchSavedRecipes = () => {
   });
   return promise;
 };
+
+export const insertProduct = (id, title, imageUrl, amountMain, amountSecondary, unitMain, unitSecondary, aisle, isChecked, willBeDeleted) => {
+  const promise = new Promise((resolve, reject) => {
+    db.transaction(tx => {
+      tx.executeSql(
+        `INSERT INTO GroceryList (id, title, imageUrl, amountMain, amountSecondary, unitMain, unitSecondary, aisle, isChecked, willBeDeleted) VALUES (?, ? ,? ,? ,? ,? ,? ,? ,? ,?);`,
+        [id, title, imageUrl, amountMain.toString(), amountSecondary.toString(), unitMain, unitSecondary, aisle, false, false],
+        (_, result) => {
+          resolve(result);
+        },
+        (_, err) => {
+          reject(err);
+        }
+      );
+    });
+  });
+  return promise;
+}
+
+export const setProductAmount = (id, amountMain) => {
+  const promise = new Promise((resolve, reject) => {
+    db.transaction(tx => {
+      tx.executeSql(
+        `UPDATE GroceryList SET amountMain = ? WHERE id = ?`,
+        [amountMain, id],
+        (_, result) => {
+          resolve(result);
+        },
+        (_, err) => {
+          reject(err);
+        }
+      );
+    });
+  });
+  return promise;
+}
+
+export const deleteProduct = (id) => {
+  const promise = new Promise((resolve, reject) => {
+    db.transaction(tx => {
+      tx.executeSql(
+        `DELETE FROM GroceryList WHERE id = ?;`,
+        [id],
+        (_, result) => {
+          resolve(result);
+        },
+        (_, err) => {
+          reject(err);
+        }
+      );
+    });
+  });
+  return promise;
+}
+
+export const fetchSavedProducts = () => {
+  const promise = new Promise((resolve, reject) => {
+    db.transaction(tx => {
+      tx.executeSql(
+        'SELECT * FROM GroceryList',
+        [],
+        (_, result) => {
+          resolve(result);
+        },
+        (_, err) => {
+          reject(err);
+        }
+      );
+    });
+  });
+  return promise;
+};
+
 
