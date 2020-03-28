@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { LayoutAnimation, SectionList, StyleSheet, View, KeyboardAvoidingView } from 'react-native';
 import { useDispatch } from 'react-redux';
 import { CustomLayoutMove } from '../constants/LayoutAnimations';
-import { setNewProductsList } from '../store/actions/GroceryListActions';
+import { setNewProductsList, swapTwoProductsOrder } from '../store/actions/GroceryListActions';
 import Aisle from './Aisle';
 import Product from './Product';
 
@@ -69,13 +69,14 @@ const GroceryListList = ({ data }) => {
     const moveProductOneIndexUp = useCallback((index) => {
         console.log(canMove)
         if (canMove === true) {
-        console.log("Moving " + index + " One up")
-        const currnetArrayCopy = data;
-        const movedItemCopy = currnetArrayCopy[index]
-        currnetArrayCopy[index] = currnetArrayCopy[index - 1]
-        currnetArrayCopy[index - 1] = movedItemCopy;
+        // console.log("Moving " + index + " One up")
+        // const currnetArrayCopy = data;
+        // const movedItemCopy = currnetArrayCopy[index]
+        // currnetArrayCopy[index] = currnetArrayCopy[index - 1]
+        // currnetArrayCopy[index - 1] = movedItemCopy;
+        // dispatch(setNewProductsList(currnetArrayCopy))
         setCanMove(false)
-        dispatch(setNewProductsList(currnetArrayCopy))
+        dispatch(swapTwoProductsOrder(index,-1))
         }
 
     },[canMove,dispatch,setCanMove,data])
@@ -83,13 +84,14 @@ const GroceryListList = ({ data }) => {
     const moveProductOneIndexDown = useCallback((index) => {
         console.log(canMove)
         if (canMove === true) {
-        console.log("Moving " + index + " One down")
-        const currnetArrayCopy = data;
-        const movedItemCopy = currnetArrayCopy[index]
-        currnetArrayCopy[index] = currnetArrayCopy[index + 1]
-        currnetArrayCopy[index + 1] = movedItemCopy;
+        // console.log("Moving " + index + " One down")
+        // const currnetArrayCopy = data;
+        // const movedItemCopy = currnetArrayCopy[index]
+        // currnetArrayCopy[index] = currnetArrayCopy[index + 1]
+        // currnetArrayCopy[index + 1] = movedItemCopy;
+        // dispatch(setNewProductsList(currnetArrayCopy))
         setCanMove(false)
-        dispatch(setNewProductsList(currnetArrayCopy))
+        dispatch(swapTwoProductsOrder(index,1))
         }
 
     },[canMove,dispatch,setCanMove,data])

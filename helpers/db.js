@@ -111,6 +111,24 @@ export const insertProduct = (id, title, imageUrl, amountMain, amountSecondary, 
   return promise;
 }
 
+export const updateProduct = (targetId, id, title, imageUrl, amountMain, amountSecondary, unitMain, unitSecondary, aisle, isChecked, willBeDeleted)=>{
+  const promise = new Promise((resolve, reject) => {
+    db.transaction(tx => {
+      tx.executeSql(
+        `UPDATE GroceryList SET id = ?, title = ?, imageUrl = ?, amountMain = ?, amountSecondary = ?, unitMain = ?, unitSecondary = ?, aisle = ?, isChecked = ? WHERE id = ?`,
+        [id, title, imageUrl, amountMain, amountSecondary, unitMain, unitSecondary, aisle, isChecked, targetId],
+        (_, result) => {
+          resolve(result);
+        },
+        (_, err) => {
+          reject(err);
+        }
+      );
+    });
+  });
+  return promise;
+}
+
 export const setProductAmount = (id, amountMain) => {
   const promise = new Promise((resolve, reject) => {
     db.transaction(tx => {

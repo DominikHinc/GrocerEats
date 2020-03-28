@@ -1,4 +1,4 @@
-import { insertProduct, fetchSavedProducts, setProductAmount, deleteSavedRecipe, deleteProduct, setProductCheck, deleteAllProducts } from "../../helpers/db"
+import { insertProduct, fetchSavedProducts, setProductAmount, deleteSavedRecipe, deleteProduct, setProductCheck, deleteAllProducts, updateProduct } from "../../helpers/db"
 import { Alert } from "react-native"
 
 export const ADD_PRODUCT = 'ADD_PRODUCT'
@@ -11,6 +11,7 @@ export const SET_NEW_PRODUCTS_LIST = "SET_NEW_PRODUCTS_LIST"
 export const SET_CHECK_OF_MULTIPLE_PRODUCTS = "SET_CHECK_OF_MULTIPLE_PRODUCTS"
 export const DELETE_ALL_PRODUCTS_MENT_TO_BE_REMOVED = "DELETE_ALL_PRODUCTS_MENT_TO_BE_REMOVED"
 export const LOAD_SAVED_PRODUCTS = 'LOAD_SAVED_PRODUCTS'
+export const SWAP_TWO_PRODUCTS_ODRDER = 'SWAP_TWO_PRODUCTS_ODRDER'
 
 
 export const addProduct = (product) => {
@@ -125,6 +126,24 @@ export const setCheckOfMultipleProducts = (idsArray, shouldAllBeChecked) => {
             Alert.alert("Something went wrong", error.message)
         }
 
+    }
+}
+
+export const swapTwoProductsOrder = (selectedIndex, moveAmount)=>{
+    return async (dispatch, getState)=>{
+        try {
+            const p1 = getState().groceryList.productsList[selectedIndex]
+            const p2 = getState().groceryList.productsList[selectedIndex + moveAmount]
+            const dbResault1 = await updateProduct(p2.id, 0, p1.title, p1.imageUrl, p1.amountMain, p1.amountSecondary, p1.unitMain, p1.unitSecondary,p1.aisle, p1.isChecked)
+            const dbResault2 = await updateProduct(p1.id, p2.id, p2.title, p2.imageUrl, p2.amountMain, p2.amountSecondary, p2.unitMain, p2.unitSecondary,p2.aisle, p2.isChecked)
+            const dbResault3 = await updateProduct(0, p1.id, p1.title, p1.imageUrl, p1.amountMain, p1.amountSecondary, p1.unitMain, p1.unitSecondary,p1.aisle, p1.isChecked)
+            console.log(dbResault1)
+            console.log(dbResault2)
+            console.log(dbResault3)
+            dispatch({type:SWAP_TWO_PRODUCTS_ODRDER, selectedIndex, moveAmount})
+        } catch (error) {
+            console.log(error.message)
+        }
     }
 }
 
