@@ -166,19 +166,19 @@ const Aisle = React.memo(({ aisle, data, isVisible, switchAisleVisibility }) => 
                 <View style={styles.deleteAllAisleProductsContainer}>
                     <TouchableOpacity onPress={deleteAllAisleProducts} style={styles.editOptionTouchable}>
                         <Foundation name="x" size={normalizeIconSize(15)} color={Colors.darkRed} style={styles.editOptionIcon} />
-                        <DefaultText style={styles.editOptionLabel}>Remove All</DefaultText>
+                        <DefaultText style={styles.editOptionLabel}>Remove all</DefaultText>
                     </TouchableOpacity>
                 </View>
                 <View style={styles.deleteAllAisleProductsContainer}>
                     <TouchableOpacity onPress={removeCheckedProducts} style={styles.editOptionTouchable}>
                         <MaterialCommunityIcons name="close-box-outline" size={normalizeIconSize(15)} color={Colors.darkRed} style={styles.editOptionIcon} />
-                        <DefaultText style={styles.editOptionLabel}>Remove Checked</DefaultText>
+                        <DefaultText style={styles.editOptionLabel}>Remove checked</DefaultText>
                     </TouchableOpacity>
                 </View>
                 <View style={styles.deleteAllAisleProductsContainer}>
                     <TouchableOpacity onPress={checkAllAisleProducts} style={styles.editOptionTouchable}>
                         <MaterialCommunityIcons name="checkbox-multiple-marked-outline" size={normalizeIconSize(15)} color={Colors.green} style={styles.editOptionIcon} />
-                        <DefaultText style={styles.editOptionLabel}>Check All</DefaultText>
+                        <DefaultText style={styles.editOptionLabel}>Check all</DefaultText>
                     </TouchableOpacity>
                 </View>
             </View>}

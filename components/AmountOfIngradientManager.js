@@ -10,7 +10,7 @@ const AmountOfGroceriesManager = ({ closeModal, textInputRef, amount, setAmount,
     useEffect(() => {
         //Because picker does not allow creating dynamic list inside of its body the unit list must be created seperatly
 
-        setTabOfUnits([{ label: "No Unit", value: "" }]);
+        setTabOfUnits([{ label: "No unit", value: "" }]);
         if (currentProduct.unitMain.length > 0) {
             setTabOfUnits(prev => [...prev, { label: currentProduct.unitMain, value: currentProduct.unitMain }])
         }

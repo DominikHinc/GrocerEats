@@ -89,7 +89,7 @@ const mainTabNavigator = () => {
                 cardStyleInterpolator: forFade 
             }} />
             <BottomTabNavigator.Screen name="SavedRecipesScreen" component={searchByNutrientsStackNavigator} options={{
-                tabBarLabel: 'Saved Recipes',
+                tabBarLabel: 'Saved recipes',
                 tabBarColor: Colors.red,
                 tabBarIcon: ({ color }) => {
                     return <AntDesign name='heart' size={iconSize} color={color} />
@@ -97,7 +97,7 @@ const mainTabNavigator = () => {
                 cardStyleInterpolator: forFade 
             }} />
             <BottomTabNavigator.Screen name="YourGroceryList" component={yourGroceryListStackNavigator} options={{
-                tabBarLabel: 'Your List',
+                tabBarLabel: 'Your list',
                 tabBarColor: Colors.green,
                 tabBarIcon: ({ color }) => {
                     return <Ionicons name='ios-list-box' size={iconSize} color={color} />

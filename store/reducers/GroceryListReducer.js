@@ -76,14 +76,14 @@ export default (state = initialState, action) => {
              return state
         case SET_NEW_PRODUCTS_LIST:
             return {...state,productsList:[...action.productsList]}
-        case SWAP_TWO_PRODUCTS_ODRDER:
-             const copy = state.productsList[action.selectedIndex]
-             copyOfProductList = state.productsList;
-             copyOfProductList[action.selectedIndex] = copyOfProductList[action.selectedIndex + action.moveAmount];
-             copyOfProductList[action.selectedIndex + action.moveAmount] = copy;
-             console.log("Swapped Succesfully")
-             console.log(copyOfProductList)
-             return{...state, productsList:[...copyOfProductList]}
+        // case SWAP_TWO_PRODUCTS_ODRDER:
+        //      const copy = state.productsList[action.selectedIndex]
+        //      copyOfProductList = state.productsList;
+        //      copyOfProductList[action.selectedIndex] = copyOfProductList[action.selectedIndex + action.moveAmount];
+        //      copyOfProductList[action.selectedIndex + action.moveAmount] = copy;
+        //      console.log("Swapped Succesfully")
+        //      console.log(copyOfProductList)
+        //      return{...state, productsList:[...copyOfProductList]}
              
         default:
             return state

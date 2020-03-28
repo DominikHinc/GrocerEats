@@ -13,7 +13,11 @@ const SavedRecipesScreen = (props) => {
     const [recipesList, setRecipesList] = useState([])
 
     useEffect(()=>{
-        setRecipesList(savedRecipesList)
+        setRecipesList(savedRecipesList.sort((a,b)=>{
+            if(a.mealDetails.title < b.mealDetails.title){return -1}
+            if(a.mealDetails.title > b.mealDetails.title){return 1}
+            return 0;
+        }))
     },[savedRecipesList,setRecipesList])
 
 

@@ -74,7 +74,7 @@ const StandardSearchScreen = (props) => {
                 }
                 setLoading(false);
                 setRecipesFetchOffset(prev => prev + perLoadAmount)
-            }).catch(error => Alert.alert("Something Went wrong", error.message))
+            }).catch(error => Alert.alert("Something went wrong", error.message))
 
         }
     }, [shouldDataBeFetchedFromServer])
@@ -100,7 +100,7 @@ const StandardSearchScreen = (props) => {
         <View style={styles.screen} >
             <Logo shouldLogoBeShown={shouldLogoBeShown} color={Colors.blue} />
             <View style={styles.restOfTheScreenContainer}>
-                <SearchBar onSearchPress={searchHandler} hintText="Search Recipes By Name" />
+                <SearchBar onSearchPress={searchHandler} hintText="Search recipes by name" />
                 {recipesList.length > 0 && !couldNotFindRecipe && !loading && <MealPreviewList data={recipesList} onEndReached={loadMore}
                     gotDetailedData={false} noMoreDataToDisplay={hasAllRecipesOfGivenSearchBeenFetched} navigationProp={props.navigation} />}
                 {loading && <View style={styles.loadingContainer}><ActivityIndicator size='large' color={Colors.blue} /></View>}

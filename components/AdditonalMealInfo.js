@@ -7,13 +7,13 @@ import DefaultText from './DefaultText';
 const AdditonalMealInfo = React.memo(({ mealDetails }) => {
     const additionalInfoData = useRef({
         Cheap: mealDetails.cheap,
-        Dairy_Free: mealDetails.dairyFree,
-        Gluten_Free: mealDetails.glutenFree,
+        Dairy_free: mealDetails.dairyFree,
+        Gluten_free: mealDetails.glutenFree,
         Ketogenic: mealDetails.ketogenic,
         Vegan: mealDetails.vegan,
         Vegetarian: mealDetails.vegetarian,
-        Very_Healthy: mealDetails.veryHealthy,
-        Very_Popular: mealDetails.veryPopular,
+        Very_healthy: mealDetails.veryHealthy,
+        Very_popular: mealDetails.veryPopular,
     }).current
     let positiveInfoList = useRef([]).current;
     let negativeInfoList = useRef([]).current;

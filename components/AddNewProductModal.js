@@ -74,26 +74,26 @@ const AddNewProductModal = ({ modalVisible, setModalVisible }) => {
                                     <Feather name="x" size={normalizeIconSize(25)} onPress={() => { setModalVisible(false) }} style={styles.closeModalIcon} />
                                 </View>
                                 <View style={styles.modalTitleContainer}>
-                                    <DefaultText style={styles.modalTitle}>Add New Product To Grocery List</DefaultText>
+                                    <DefaultText style={styles.modalTitle}>Add new product to grocery list</DefaultText>
                                 </View>
                                 <View style={styles.productNameContainer}>
-                                    <DefaultText style={styles.modalText}>Product Name:</DefaultText>
+                                    <DefaultText style={styles.modalText}>Product name:</DefaultText>
                                     <TextInput style={[styles.productNameInput, styles.textInputStyle]} placeholder="Name" maxLength={36}
                                         value={nameTextInputValue} onChangeText={validateChangedNameHandler} />
                                 </View>
                                 <View style={styles.productAisleContainer}>
-                                    <DefaultText style={styles.modalText}>Aisle Of Product:</DefaultText>
+                                    <DefaultText style={styles.modalText}>Aisle of product:</DefaultText>
                                     <TextInput style={[styles.productAisleInput, styles.textInputStyle]} placeholder="Aisle" maxLength={30}
                                         value={aisleTextInputValue} onChangeText={validateChangedAisleHandler} />
                                 </View>
                                 <View style={styles.amountAndUnitContainer}>
                                     <View style={styles.amountContainer}>
-                                        <DefaultText style={styles.modalText}>Product Amount:</DefaultText>
+                                        <DefaultText style={styles.modalText}>Product amount:</DefaultText>
                                         <TextInput style={[styles.amountInput, styles.textInputStyle]} placeholder="Amount" maxLength={6}
                                             value={amountTextInputValue} onChangeText={validateChangedAmountHandler} />
                                     </View>
                                     <View style={styles.unitContainer}>
-                                        <DefaultText style={styles.modalText}>Unit Of Amount:</DefaultText>
+                                        <DefaultText style={styles.modalText}>Unit of amount:</DefaultText>
                                         <TextInput style={[styles.unitInput, styles.textInputStyle]} placeholder="Unit" maxLength={12}
                                             value={unitTextInputValue} onChangeText={validateChangedUnitHandler} />
                                     </View>

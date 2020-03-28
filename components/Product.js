@@ -10,7 +10,7 @@ import DefaultText from './DefaultText'
 import ProductAmountManager from './ProductAmountManager'
 import NetInfo from '@react-native-community/netinfo';
 
-const Product = React.memo(({ id, title, imageUrl, amountMain, unitMain, isChecked, moveProductOneIndexUp, moveProductOneIndexDown, index, aisleLength, enableMoving }) => {
+const Product = React.memo(({ id, title, imageUrl, amountMain, unitMain, isChecked, noInternetConnection }) => {
     const {
         set,
         cond,
@@ -25,20 +25,20 @@ const Product = React.memo(({ id, title, imageUrl, amountMain, unitMain, isCheck
         interpolate
     } = Animated;
 
-    const [currentIndex, setCurrentIndex] = useState(index)
+    // const [currentIndex, setCurrentIndex] = useState(index)
     const shouldProductBeRemoved = useSelector(state => state.groceryList.idOfProductsToDelete.find(item => item === id))
 
     const [reanimatedValue, setReanimatedValue] = useState(new Value(1))
     const [productInitialHeight, setProductInitialHeight] = useState(0)
 
-    const [imageSource, setImageSource] = useState({uri:imageUrl})
+    const [imageSource, setImageSource] = useState({ uri: imageUrl })
 
     const dispatch = useDispatch()
 
-    useEffect(() => {
-        //Because using just index passed by parent seems to sometimes bug everything, it was necessary to use local state
-        setCurrentIndex(index)
-    }, [index])
+    // useEffect(() => {
+    //     //Because using just index passed by parent seems to sometimes bug everything, it was necessary to use local state
+    //     setCurrentIndex(index)
+    // }, [index])
 
     useEffect(() => {
         if (shouldProductBeRemoved !== undefined) {
@@ -50,15 +50,9 @@ const Product = React.memo(({ id, title, imageUrl, amountMain, unitMain, isCheck
         if (imageUrl === null || imageUrl === undefined) {
             setImageSource(require('../assets/Images/Custom_Product_Image.png'));
         } else {
-            NetInfo.fetch().then(state => {
-                if (state.isConnected) {
-                    setImageSource({uri:imageUrl})
-                } else {
-                    setImageSource(require('../assets/Images/No_Internet_Connection.png'));
-                }
-            });
+            noInternetConnection ? setImageSource(require('../assets/Images/No_Internet_Connection.png')) : setImageSource({ uri: imageUrl })
         }
-    }, [])
+    }, [noInternetConnection])
 
 
     const measureInitialProductHeight = (e) => {
@@ -141,7 +135,7 @@ const Product = React.memo(({ id, title, imageUrl, amountMain, unitMain, isCheck
                     <ProductAmountManager id={id} amountMain={amountMain} unitMain={unitMain} />
                 </View>
                 <View style={styles.leftSideIconsContainer}>
-                    <View style={styles.indexIconsContainer}   >
+                    {/* <View style={styles.indexIconsContainer}   >
                         <View style={styles.singleIconWrapper}>
                             {currentIndex > 0 && enableMoving === true && <TouchableOpacity style={styles.singleIconTouchable} onPress={() => moveProductOneIndexUp(index)}>
                                 <Ionicons name='ios-arrow-up' size={normalizeIconSize(20)} style={styles.indexIcon} />
@@ -153,7 +147,7 @@ const Product = React.memo(({ id, title, imageUrl, amountMain, unitMain, isCheck
                             </TouchableOpacity>}
                         </View>
 
-                    </View>
+                    </View> */}
                     <View style={{ paddingRight: normalizePaddingSize(7) }}>
                         <TouchableOpacity style={styles.iconTouchable} onPress={checkboxPressHandler}>
                             <View style={styles.checkboxBox}>

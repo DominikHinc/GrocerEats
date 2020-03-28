@@ -206,7 +206,7 @@ return (
                 }
 
                 <View style={styles.additionalInfoContainer} >
-                    <DefaultText style={styles.sectionTitle}>Additional Info</DefaultText>
+                    <DefaultText style={styles.sectionTitle}>Additional info</DefaultText>
                     <AdditonalMealInfo mealDetails={mealDetails} />
                 </View>
 
