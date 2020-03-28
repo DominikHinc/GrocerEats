@@ -22,7 +22,7 @@ export const init_saved_recipes_db = () => {
 export const init_grocery_list_db = () => {
   const promise = new Promise((resolve, reject) => {
     db.transaction((tx) => {
-      tx.executeSql('CREATE TABLE IF NOT EXISTS GroceryList (id INTEGER PRIMARY KEY NOT NULL, title TEXT NOT NULL, imageUrl TEXT, amountMain TEXT NOT NULL, amountSecondary TEXT, unitMain TEXT NOT NULL, unitSecondary TEXT, aisle TEXT, isChecked INTEGER NOT NULL, willBeDeleted INTEGER);',
+      tx.executeSql('CREATE TABLE IF NOT EXISTS GroceryList (id INTEGER PRIMARY KEY NOT NULL, title TEXT NOT NULL, imageUrl TEXT, amountMain TEXT NOT NULL, amountSecondary TEXT, unitMain TEXT NOT NULL, unitSecondary TEXT, aisle TEXT, isChecked INTEGER, willBeDeleted INTEGER);',
         [],
         () => {
           resolve()
@@ -98,7 +98,7 @@ export const insertProduct = (id, title, imageUrl, amountMain, amountSecondary, 
     db.transaction(tx => {
       tx.executeSql(
         `INSERT INTO GroceryList (id, title, imageUrl, amountMain, amountSecondary, unitMain, unitSecondary, aisle, isChecked, willBeDeleted) VALUES (?, ? ,? ,? ,? ,? ,? ,? ,? ,?);`,
-        [id, title, imageUrl, amountMain.toString(), amountSecondary.toString(), unitMain, unitSecondary, aisle, false, false],
+        [id, title, imageUrl, amountMain.toString(), amountSecondary.toString(), unitMain, unitSecondary, aisle, isChecked, false],
         (_, result) => {
           resolve(result);
         },
@@ -129,7 +129,7 @@ export const setProductAmount = (id, amountMain) => {
   return promise;
 }
 
-export const setProductCheck = (id, shouldBeChecked) =>{
+export const setProductCheck = (id, shouldBeChecked) => {
   const promise = new Promise((resolve, reject) => {
     db.transaction(tx => {
       tx.executeSql(
@@ -153,6 +153,24 @@ export const deleteProduct = (id) => {
       tx.executeSql(
         `DELETE FROM GroceryList WHERE id = ?;`,
         [id],
+        (_, result) => {
+          resolve(result);
+        },
+        (_, err) => {
+          reject(err);
+        }
+      );
+    });
+  });
+  return promise;
+}
+
+export const deleteAllProducts = () => {
+  const promise = new Promise((resolve, reject) => {
+    db.transaction(tx => {
+      tx.executeSql(
+        `DELETE FROM GroceryList;`,
+        [],
         (_, result) => {
           resolve(result);
         },

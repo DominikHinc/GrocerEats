@@ -107,15 +107,9 @@ const MealDetailsScreen = (props) => {
 //On Event happen handlers
 const onScrollHandler = (e) => {
     currentContentOffset.setValue(e.nativeEvent.contentOffset.y);
-    //console.log(e.nativeEvent.velocity.y)
-    //scrollVelocity=e.nativeEvent.velocity.y
-    // setUpArrowType('minus');
 }
 const onMomentumEndHandler = (e) => {
     currentContentOffset.setValue(e.nativeEvent.contentOffset.y);
-    //console.log(e.nativeEvent.velocity.y)
-    //scrollVelocity=e.nativeEvent.velocity.y
-    // setUpArrowType('arrow-up')
 }
 const onHeartIconPressed = () => {
     if (!loading) {

@@ -1,4 +1,4 @@
-import { insertProduct, fetchSavedProducts, setProductAmount, deleteSavedRecipe, deleteProduct, setProductCheck } from "../../helpers/db"
+import { insertProduct, fetchSavedProducts, setProductAmount, deleteSavedRecipe, deleteProduct, setProductCheck, deleteAllProducts } from "../../helpers/db"
 import { Alert } from "react-native"
 
 export const ADD_PRODUCT = 'ADD_PRODUCT'
@@ -28,7 +28,7 @@ export const addProduct = (product) => {
 
     }
 }
-
+//This will only add product id to list that will delete it from Grocery list only after deleteAllProductsMentToBeRemoved is called
 export const removeProduct = (id) => {
     return {
         type: REMOVE_PRODUCT,
@@ -68,9 +68,22 @@ export const editProduct = (product) => {
 }
 
 export const setNewProductsList = (productsList) => {
-    return {
-        type: SET_NEW_PRODUCTS_LIST,
-        productsList
+    return async dispatch => {
+        try {
+
+            const dbResault = await deleteAllProducts();
+            console.log(dbResault)
+            productsList.forEach(async product =>{
+                const insertDbResault = await insertProduct(product.id, product.title, product.imageUrl,product.amountMain, product.amountSecondary
+                    ,product.unitMain,product.unitSecondary,product.aisle,product.isChecked, false )
+                console.log(insertDbResault)
+            })
+            
+            dispatch({type: SET_NEW_PRODUCTS_LIST,productsList})
+        } catch (error) {
+            
+        }
+        
     }
 }
 

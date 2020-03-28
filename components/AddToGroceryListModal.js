@@ -114,7 +114,7 @@ const AddToGroceryListModal = ({currentProduct, setModalVisible, modalVisible,no
                                     <DefaultText style={{ textAlign: 'center', color:productAlreadyOnGroceryList === undefined ? Colors.red : Colors.green }}>
                                         {productAlreadyOnGroceryList === undefined ? "This product is not on your grocery list" 
                                         :
-                                        "You have already " + productAlreadyOnGroceryList.amountMain + " (" + productAlreadyOnGroceryList.unitMain + ") of this product on your grocery list.\nDo you want to add more?"}
+                                        `You have already ${productAlreadyOnGroceryList.amountMain}${productAlreadyOnGroceryList.unitMain === "" ? '' : ' ('}${productAlreadyOnGroceryList.unitMain}${productAlreadyOnGroceryList.unitMain === "" ? '' : ')'} of this product on your grocery list.\nDo you want to add more?`}
                                     </DefaultText>
                                 </View>
                             </View>
