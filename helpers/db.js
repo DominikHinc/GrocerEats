@@ -36,6 +36,7 @@ export const init_grocery_list_db = () => {
   return promise;
 }
 
+//Functions that change Saved Recipes Table
 export const insertSavedRecipe = (mealId, mealDetails) => {
   const promise = new Promise((resolve, reject) => {
     db.transaction(tx => {
@@ -90,6 +91,8 @@ export const fetchSavedRecipes = () => {
   return promise;
 };
 
+//Functions that change Grocery list
+
 export const insertProduct = (id, title, imageUrl, amountMain, amountSecondary, unitMain, unitSecondary, aisle, isChecked, willBeDeleted) => {
   const promise = new Promise((resolve, reject) => {
     db.transaction(tx => {
@@ -114,6 +117,24 @@ export const setProductAmount = (id, amountMain) => {
       tx.executeSql(
         `UPDATE GroceryList SET amountMain = ? WHERE id = ?`,
         [amountMain, id],
+        (_, result) => {
+          resolve(result);
+        },
+        (_, err) => {
+          reject(err);
+        }
+      );
+    });
+  });
+  return promise;
+}
+
+export const setProductCheck = (id, shouldBeChecked) =>{
+  const promise = new Promise((resolve, reject) => {
+    db.transaction(tx => {
+      tx.executeSql(
+        `UPDATE GroceryList SET isChecked = ? WHERE id = ?`,
+        [shouldBeChecked, id],
         (_, result) => {
           resolve(result);
         },

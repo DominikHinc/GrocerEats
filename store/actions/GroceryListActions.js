@@ -1,4 +1,4 @@
-import { insertProduct, fetchSavedProducts, setProductAmount, deleteSavedRecipe, deleteProduct } from "../../helpers/db"
+import { insertProduct, fetchSavedProducts, setProductAmount, deleteSavedRecipe, deleteProduct, setProductCheck } from "../../helpers/db"
 import { Alert } from "react-native"
 
 export const ADD_PRODUCT = 'ADD_PRODUCT'
@@ -47,14 +47,14 @@ export const deleteAllProductsMentToBeRemoved = () => {
         try {
             console.log(getState().groceryList.idOfProductsToDelete)
 
-            getState().groceryList.idOfProductsToDelete.forEach(async item=>{
+            getState().groceryList.idOfProductsToDelete.forEach(async item => {
                 const dbResault = await deleteProduct(item);
                 console.log(dbResault)
             })
 
             dispatch({ type: DELETE_ALL_PRODUCTS_MENT_TO_BE_REMOVED })
         } catch (error) {
-            Alert.alert("Something went wrong",error.message)
+            Alert.alert("Something went wrong", error.message)
         }
 
     }
@@ -81,24 +81,37 @@ export const editProductAmount = (id, amountMain) => {
             console.log(dbResault)
             dispatch({ type: EDIT_PRODUCT_AMOUNT, id, amountMain })
         } catch (error) {
-
+            Alert.alert("Something went wrong", error.message)
         }
-
     }
 }
 
 export const setCheckOfProduct = (id, shouldProductBeChecked) => {
-    return {
-        type: SETCHECKOFPRODUCT,
-        id,
-        shouldProductBeChecked
+    return async dispatch => {
+        try {
+            const dbResault = await setProductCheck(id, shouldProductBeChecked)
+            console.log(dbResault)
+
+            dispatch({ type: SETCHECKOFPRODUCT, id, shouldProductBeChecked })
+        } catch (error) {
+            Alert.alert("Something went wrong", error.message)
+        }
+
     }
 }
 export const setCheckOfMultipleProducts = (idsArray, shouldAllBeChecked) => {
-    return {
-        type: SET_CHECK_OF_MULTIPLE_PRODUCTS,
-        idsArray,
-        shouldAllBeChecked
+    return async dispatch => {
+        try {
+            idsArray.forEach(async id => {
+                const dbResault = await setProductCheck(id, shouldAllBeChecked)
+                console.log(dbResault)
+            })
+
+            dispatch({ type: SET_CHECK_OF_MULTIPLE_PRODUCTS, idsArray, shouldAllBeChecked })
+        } catch (error) {
+            Alert.alert("Something went wrong", error.message)
+        }
+
     }
 }
 
@@ -116,7 +129,7 @@ export const loadSavedProducts = () => {
 
             dispatch({ type: SET_NEW_PRODUCTS_LIST, productsList: productsList })
         } catch (error) {
-
+            Alert.alert("Something went wrong", error.message)
         }
 
     }

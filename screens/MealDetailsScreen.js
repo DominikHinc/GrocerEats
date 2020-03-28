@@ -26,7 +26,7 @@ const MealDetailsScreen = (props) => {
     const { color, id, savedData } = props.route.params;
     const [loading, setLoading] = useState(true)
     const [mealDetails, setMealDetails] = useState(false)
-    const [noInternetConnection, setNoInternetConnection] = useState(true)
+    const [noInternetConnection, setNoInternetConnection] = useState(false)
 
     // const [upArrowType, setUpArrowType] = useState('arrow-up')
     //const [scrollable, setScrollable] = useState(true)

@@ -22,17 +22,23 @@ const StandardSearchScreen = (props) => {
     const [hasAllRecipesOfGivenSearchBeenFetched, setHasAllRecipesOfGivenSearchBeenFetched] = useState(false)
     const [recipesFetchOffset, setRecipesFetchOffset] = useState(0)
     const [loading, setLoading] = useState(false)
+
+    const [hasDatabaseBeenLoaded, setHasDatabaseBeenLoaded] = useState(false)
     let firstSearchId = useRef().current;
     const perLoadAmount = 25;
 
     const dispatch = useDispatch()
-    
-    useEffect(()=>{
-        console.log("Starting to load saved recipes")
-        dispatch(loadSavedRecipes())
-        console.log("Starting to load saved products")
-        dispatch(loadSavedProducts())
-    },[dispatch])
+
+    useEffect(() => {
+        if (!hasDatabaseBeenLoaded) {
+            setHasDatabaseBeenLoaded(true)
+            console.log("Starting to load saved recipes")
+            dispatch(loadSavedRecipes())
+            console.log("Starting to load saved products")
+            dispatch(loadSavedProducts())
+        }
+
+    }, [dispatch])
 
 
     //Animation Realted Variables
@@ -94,7 +100,7 @@ const StandardSearchScreen = (props) => {
         <View style={styles.screen} >
             <Logo shouldLogoBeShown={shouldLogoBeShown} color={Colors.blue} />
             <View style={styles.restOfTheScreenContainer}>
-                <SearchBar onSearchPress={searchHandler} hintText="Search Recipes By Name"/>
+                <SearchBar onSearchPress={searchHandler} hintText="Search Recipes By Name" />
                 {recipesList.length > 0 && !couldNotFindRecipe && !loading && <MealPreviewList data={recipesList} onEndReached={loadMore}
                     gotDetailedData={false} noMoreDataToDisplay={hasAllRecipesOfGivenSearchBeenFetched} navigationProp={props.navigation} />}
                 {loading && <View style={styles.loadingContainer}><ActivityIndicator size='large' color={Colors.blue} /></View>}
