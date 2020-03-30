@@ -3,8 +3,6 @@ import { StyleSheet, Text } from 'react-native'
 import { normalizeFontSize } from '../methods/normalizeSizes.js'
 
 const DefaultText = (props) => {
-    //console.log(props.style)
-    //console.log(props.style.fontSize)
 
     return (
         <Text {...props}

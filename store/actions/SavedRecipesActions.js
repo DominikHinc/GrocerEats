@@ -1,6 +1,6 @@
-import { insertSavedRecipe, fetchSavedRecipes, deleteSavedRecipe } from "../../helpers/db";
-import { fetchMealDetailsFromServer, SUCCESS } from "../../methods/fetchFromServer";
 import { Alert } from "react-native";
+import { deleteSavedRecipe, fetchSavedRecipes, insertSavedRecipe } from "../../helpers/db";
+import { fetchMealDetailsFromServer, SUCCESS } from "../../methods/fetchFromServer";
 
 export const SAVE_RECIPE = "SAVE_RECIPE";
 export const REMOVE_SAVED_RECIPE = "REMOVE_SAVED_RECIPE";
@@ -19,8 +19,9 @@ export const saveRecipe = (id, mealDetails) => {
                 }
             }
             const mealDetailsStr = JSON.stringify(mealDetails);
-            const dbResault = await insertSavedRecipe(id, mealDetailsStr)
-            console.log(dbResault)
+
+            await insertSavedRecipe(id, mealDetailsStr)
+
             dispatch({ type: SAVE_RECIPE, id, mealDetails })
         } catch (error) {
             // Alert.alert("Something went wrong.", error.message)
@@ -34,8 +35,7 @@ export const removeSavedRecipe = (id) => {
     console.log("Remove action")
     return async dispatch => {
         try {
-            const dbResault = await deleteSavedRecipe(id);
-            console.log(dbResault)
+            await deleteSavedRecipe(id);
             dispatch({ type: REMOVE_SAVED_RECIPE, id: id })
         } catch (error) {
             Alert.alert("Something went wrong.", "Error while removing saved recipe")

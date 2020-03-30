@@ -1,24 +1,23 @@
 import React, { useEffect, useState } from 'react'
-import { ActivityIndicator, StyleSheet, View } from 'react-native'
-import { useDispatch, useSelector } from 'react-redux'
+import { StyleSheet, View } from 'react-native'
+import { useSelector } from 'react-redux'
 import DefaultText from '../components/DefaultText'
 import Logo from '../components/Logo'
 import MealPreviewList from '../components/MealPreviewList'
 import Colors from '../constants/Colors'
-import { loadSavedRecipes } from '../store/actions/SavedRecipesActions'
 
 
 const SavedRecipesScreen = (props) => {
     const savedRecipesList = useSelector(state => state.savedRecipes.savedRecipes);
     const [recipesList, setRecipesList] = useState([])
 
-    useEffect(()=>{
-        setRecipesList(savedRecipesList.sort((a,b)=>{
-            if(a.mealDetails.title < b.mealDetails.title){return -1}
-            if(a.mealDetails.title > b.mealDetails.title){return 1}
+    useEffect(() => {
+        setRecipesList(savedRecipesList.sort((a, b) => {
+            if (a.mealDetails.title < b.mealDetails.title) { return -1 }
+            if (a.mealDetails.title > b.mealDetails.title) { return 1 }
             return 0;
         }))
-    },[savedRecipesList,setRecipesList])
+    }, [savedRecipesList, setRecipesList])
 
 
     return (

@@ -1,13 +1,11 @@
 import { Feather } from '@expo/vector-icons'
 import React from 'react'
-import { StyleSheet, View, TouchableOpacity } from 'react-native'
+import { StyleSheet, TouchableOpacity, View } from 'react-native'
 import Colors from '../constants/Colors'
 import { normalizeBorderRadiusSize, normalizeIconSize, normalizeMarginSize, normalizePaddingSize } from '../methods/normalizeSizes'
 import DefaultText from './DefaultText'
 
 const IngredientTag = ({ ingredientName, removeIngredient }) => {
-    //console.log(ingredientName)
-
     return (
         <View style={styles.mainContainer}>
             <DefaultText>{ingredientName}</DefaultText>

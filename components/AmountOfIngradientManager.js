@@ -4,7 +4,7 @@ import { Picker, StyleSheet, TextInput, TouchableOpacity, View } from 'react-nat
 import { normalizeBorderRadiusSize, normalizeFontSize, normalizeHeight, normalizeIconSize, normalizeMarginSize, normalizePaddingSize, normalizeWidth } from '../methods/normalizeSizes';
 import DefaultText from './DefaultText';
 
-const AmountOfGroceriesManager = ({ closeModal, textInputRef, amount, setAmount, selectedUnit, setSelectedUnit, currentProduct, addToGroceryList,productAlreadyOnGroceryList }) => {
+const AmountOfGroceriesManager = ({textInputRef, amount, setAmount, selectedUnit, setSelectedUnit, currentProduct, addToGroceryList, productAlreadyOnGroceryList }) => {
     const [tabOfUnits, setTabOfUnits] = useState([{ label: "No Unit", value: "" }, { label: 'g', value: 'g' }]);
 
     useEffect(() => {
@@ -68,11 +68,6 @@ const AmountOfGroceriesManager = ({ closeModal, textInputRef, amount, setAmount,
     return (
         <View style={styles.amountDetailsContainer}>
             <View style={styles.addButtonsContainer}>
-                {/* <TouchableOpacity style={styles.addButtonTouchable} onPress={closeModal}>
-                    <View style={styles.insideOfButton}>
-                        <DefaultText>Add Note</DefaultText>
-                    </View>
-                </TouchableOpacity> */}
                 <TouchableOpacity style={styles.addButtonTouchable} onPress={addToGroceryList}>
                     <View style={styles.insideOfButton}>
                         <DefaultText>Add</DefaultText>
@@ -94,7 +89,7 @@ const AmountOfGroceriesManager = ({ closeModal, textInputRef, amount, setAmount,
 
                     {productAlreadyOnGroceryList === undefined && <View style={styles.pickerContainer}>
                         <Ionicons style={styles.pickerIcon} name="ios-arrow-down" size={normalizeIconSize(18)} />
-                        <View style={{opacity:0}}>
+                        <View style={{ opacity: 0 }}>
                             <Picker enabled={true} selectedValue={selectedUnit} style={styles.unitPicker}
                                 prompt="Select unit" onValueChange={pickerValueChangeHandler}>
                                 {getPickerOptions()}
@@ -122,8 +117,8 @@ const styles = StyleSheet.create({
         flex: 1,
         width: '100%',
         paddingBottom: normalizePaddingSize(15),
-        backgroundColor:'white',
-        
+        backgroundColor: 'white',
+
     },
     amountButtonsContainer: {
         flexDirection: 'row',
@@ -167,7 +162,7 @@ const styles = StyleSheet.create({
     },
     amountLabelContainer: {
         paddingBottom: normalizePaddingSize(5),
-        backgroundColor:'white'
+        backgroundColor: 'white'
     },
     amountLabel: {
         textAlign: 'center',
@@ -178,8 +173,6 @@ const styles = StyleSheet.create({
     amountTextInput: {
         fontFamily: 'sofia',
         textAlign: 'center',
-        //borderBottomWidth: 1,
-        //borderColor: Colors.lightGray,
         paddingHorizontal: normalizePaddingSize(10),
         fontSize: normalizeFontSize(18),
 
@@ -188,19 +181,14 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         paddingLeft: normalizePaddingSize(12),
-        //borderWidth:1
     },
     unitLabel: {
         paddingLeft: normalizePaddingSize(3)
     },
     pickerContainer: {
         flexDirection: 'row',
-        //width: '45%',
-        //borderWidth: 1,
         alignItems: 'center',
-        justifyContent:'center',
-        //borderWidth: 1,
-        //opacity:0
+        justifyContent: 'center',
     },
     unitPicker: {
         borderWidth: 1,
@@ -208,9 +196,8 @@ const styles = StyleSheet.create({
         width: normalizeWidth(10),
         height: normalizeHeight(30),
         marginLeft: normalizeMarginSize(-20),
-        //borderWidth: 1,
         color: "transparent",
-        backgroundColor:'white'
+        backgroundColor: 'white'
 
     },
     pickerIcon: {

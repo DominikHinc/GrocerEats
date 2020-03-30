@@ -1,5 +1,5 @@
 import React from 'react'
-import { ActivityIndicator, StyleSheet, View, FlatList } from 'react-native'
+import { ActivityIndicator, FlatList, StyleSheet, View } from 'react-native'
 import Colors from '../constants/Colors'
 import { normalizeMarginSize } from '../methods/normalizeSizes'
 import DefaultText from './DefaultText'
@@ -9,19 +9,19 @@ import RecipePreview from './RecipePreview'
 
 const MealPreviewList = React.memo(({ data, onEndReached, noMoreDataToDisplay, navigationProp, endOfListText, renderRecipeSearchedByIngredinets, renderSavedRecipe }) => {
     const renderStandardSearchRecipePreviews = ({ item, index }) => {
-    item = renderSavedRecipe ? item = item.mealDetails : item
-    return <RecipePreview onPress={() => { navigationProp.navigate("MealDetails", { id: item.id, color: Colors.blue, savedData: renderSavedRecipe ? item : undefined }) }}
-        title={item.title} id={item.id}
-        image={item.imageType === undefined ? item.imageUrls !== undefined ?
+        item = renderSavedRecipe ? item = item.mealDetails : item
+        return <RecipePreview onPress={() => { navigationProp.navigate("MealDetails", { id: item.id, color: Colors.blue, savedData: renderSavedRecipe ? item : undefined }) }}
+            title={item.title} id={item.id}
+            image={item.imageType === undefined ? item.imageUrls !== undefined ?
                 item.imageUrls.length > 1 ? item.imageUrls[item.imageUrls.length - 1] : item.image : item.image : item.imageType}
-        readyInMinutes={item.readyInMinutes} savedData={renderSavedRecipe ? item : undefined}
-        servings={item.servings}
-        savedMealDetailsData={item} />
-}
+            readyInMinutes={item.readyInMinutes} savedData={renderSavedRecipe ? item : undefined}
+            servings={item.servings}
+            savedMealDetailsData={item} />
+    }
     const renderRecipePreviewSearchedByIngredients = ({ item, index }) => {
-    //Because the data recieved after searching by ingradients is so diffrent separation was mandarory
-    return <RecipePreview onPress={() => { navigationProp.navigate("MealDetails", { id: item.id, color: Colors.blue}) }}
-        title={item.title} id={item.id} image={item.imageType} missedIngredients={item.missedIngredientCount} usedIngredients={item.usedIngredientCount} />
+        //Because the data recieved after searching by ingradients is so diffrent separation was mandarory
+        return <RecipePreview onPress={() => { navigationProp.navigate("MealDetails", { id: item.id, color: Colors.blue }) }}
+            title={item.title} id={item.id} image={item.imageType} missedIngredients={item.missedIngredientCount} usedIngredients={item.usedIngredientCount} />
     }
 
 
@@ -31,7 +31,7 @@ const MealPreviewList = React.memo(({ data, onEndReached, noMoreDataToDisplay, n
             :
             <DefaultText style={{ textAlign: 'center', paddingTop: '5%' }}>{endOfListText === undefined ? "No more recipes found" : endOfListText}</DefaultText>
     }
-    console.log("List rerendering")
+
     return (
         <FlatList style={styles.listStyle} keyExtractor={item => item.id.toString()} data={data}
             renderItem={renderRecipeSearchedByIngredinets === true ? renderRecipePreviewSearchedByIngredients : renderStandardSearchRecipePreviews}
@@ -49,7 +49,6 @@ const styles = StyleSheet.create({
     },
     listStyle: {
         marginHorizontal: '3%',
-        // marginTop: '3%',
         flex: 1
     }
 })

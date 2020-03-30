@@ -33,26 +33,25 @@ const FloatingSearchIcon = React.memo(({ onPress }) => {
     }
 
     return (
-       
-            <Animated.View style={[styles.searchIconContainer,
-            { height: normalizeHeight(52), width: normalizeWidth(52), borderRadius: normalizeBorderRadiusSize(27) },
-            { right: '5%', bottom:Dimensions.get('window').width / 20}]}>
-                <TouchableComp onPress={onPress} style={styles.touchable}>
-                    <View style={styles.innerView}>
-                        <Ionicons style={styles.searchIcon} name="ios-search" size={normalizeIconSize(27)} />
-                    </View>
-                </TouchableComp>
-            </Animated.View>
+
+        <Animated.View style={[styles.searchIconContainer,
+        { height: normalizeHeight(52), width: normalizeWidth(52), borderRadius: normalizeBorderRadiusSize(27) },
+        { right: '5%', bottom: Dimensions.get('window').width / 20 }]}>
+            <TouchableComp onPress={onPress} style={styles.touchable}>
+                <View style={styles.innerView}>
+                    <Ionicons style={styles.searchIcon} name="ios-search" size={normalizeIconSize(27)} />
+                </View>
+            </TouchableComp>
+        </Animated.View>
     )
 })
 
 const styles = StyleSheet.create({
-    keyboardAvoidingView:{
-        position:'absolute',
-        height:Dimensions.get('window').height,
-        width:Dimensions.get('screen').width,
-        //backgroundColor:'red',
-        zIndex:1
+    keyboardAvoidingView: {
+        position: 'absolute',
+        height: Dimensions.get('window').height,
+        width: Dimensions.get('screen').width,
+        zIndex: 1
     },
     searchIconContainer: {
         position: 'absolute',

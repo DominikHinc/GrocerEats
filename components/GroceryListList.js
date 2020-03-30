@@ -1,12 +1,10 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import { LayoutAnimation, SectionList, StyleSheet, View, KeyboardAvoidingView } from 'react-native';
-import { useDispatch } from 'react-redux';
-import { CustomLayoutMove } from '../constants/LayoutAnimations';
-import { setNewProductsList, swapTwoProductsOrder } from '../store/actions/GroceryListActions';
-import Aisle from './Aisle';
-import Product from './Product';
 import NetInfo from '@react-native-community/netinfo';
 import { useFocusEffect } from '@react-navigation/native';
+import React, { useCallback, useEffect, useState } from 'react';
+import { KeyboardAvoidingView, LayoutAnimation, SectionList, StyleSheet, View } from 'react-native';
+import { CustomLayoutMove } from '../constants/LayoutAnimations';
+import Aisle from './Aisle';
+import Product from './Product';
 
 const GroceryListList = ({ data }) => {
 
@@ -17,10 +15,6 @@ const GroceryListList = ({ data }) => {
 
     const unorderedAislesList = {};
     let orderedAislesList = [];
-
-
-
-    // const dispatch = useDispatch();
 
     useEffect(() => {
         //If can move if false, then that means that this effect was called because the order of products changed
@@ -55,9 +49,10 @@ const GroceryListList = ({ data }) => {
             }
         })
         orderedAislesList = [];
-        //Because I don't want the Aisles order to be dependent on index of products I sort it alphabetically
+        //Because I don't want the aisles order to be dependent on index of products I sort them alphabetically
         Object.keys(unorderedAislesList).sort().forEach((key) => {
             orderedAislesList = [...orderedAislesList, { title: key, data: unorderedAislesList[key].sort((a,b)=>{
+                //Because I don't want the products order to be dependent on their id I sort them alphabetically
                 if(a.title < b.title){return -1}
                 if(a.title > b.title){return 1}
                 return 0;

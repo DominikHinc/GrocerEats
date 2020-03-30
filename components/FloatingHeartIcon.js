@@ -6,30 +6,27 @@ import Colors from '../constants/Colors'
 import { normalizeBorderRadiusSize, normalizeHeight, normalizeIconSize, normalizeMarginSize, normalizePaddingSize, normalizeWidth } from '../methods/normalizeSizes'
 
 
-const FloatingHeartIcon = React.memo(({ active, id, alignLeft, small, onPress }) => {
+const FloatingHeartIcon = React.memo(({ active, alignLeft, small, onPress }) => {
     const insets = useSafeArea();
 
     const [animatedValue, setAnimatedValue] = useState(new Animated.Value(active ? 1 : 0))
     const [isIconActive, setIsIconActive] = useState(active ? true : false)
     const [canIconBePressed, setCanIconBePressed] = useState(true)
 
-    //console.log("Floating heart icon rerendering")
     useEffect(() => {
-        if(active !== isIconActive){
-            //startIconAnimation(active ? 1 : 0)
+        if (active !== isIconActive) {
             setIsIconActive(active);
-        } 
+        }
         setCanIconBePressed(true)
     }, [active])
 
 
-    const startIconAnimation = (toValue)=>{
+    const startIconAnimation = (toValue) => {
         Animated.spring(animatedValue, {
             toValue: toValue,
             friction: 10,
-            useNativeDriver:true
-        }).start(()=>{
-            //TODO after integration with SQL is implemented revisit this statement
+            useNativeDriver: true
+        }).start(() => {
             onPress()
         })
     }
@@ -40,11 +37,11 @@ const FloatingHeartIcon = React.memo(({ active, id, alignLeft, small, onPress })
                 inputRange: [0, 1],
                 outputRange: ['0deg', '360deg']
             })
-        }, 
+        },
         {
             scale: animatedValue.interpolate({
-                inputRange: [0, 0.5,1],
-                outputRange: [1,0.5, 1]
+                inputRange: [0, 0.5, 1],
+                outputRange: [1, 0.5, 1]
             })
         }]
     }
@@ -55,20 +52,19 @@ const FloatingHeartIcon = React.memo(({ active, id, alignLeft, small, onPress })
         TouchableComp = TouchableNativeFeedback;
     }
 
-    const onPressHandler = ()=>{
+    const onPressHandler = () => {
         startIconAnimation(isIconActive ? 0 : 1);
         setIsIconActive(prev => !prev)
         setCanIconBePressed(false)
-        //onPress()
     }
-    
+
 
 
     return (
-        <Animated.View style={ [styles.heartIconContainer, iconRotation,
-        {height:normalizeHeight(small ? 26 : 52), width: normalizeWidth(small ? 26 : 52),borderRadius: normalizeBorderRadiusSize(small ? 13 : 27)},
-        {right: alignLeft ? undefined : '6%', left: alignLeft ? '20%' : undefined,top: alignLeft ? normalizeMarginSize(-5) : insets.top + normalizePaddingSize(7)}
-        ] }>
+        <Animated.View style={[styles.heartIconContainer, iconRotation,
+        { height: normalizeHeight(small ? 26 : 52), width: normalizeWidth(small ? 26 : 52), borderRadius: normalizeBorderRadiusSize(small ? 13 : 27) },
+        { right: alignLeft ? undefined : '6%', left: alignLeft ? '20%' : undefined, top: alignLeft ? normalizeMarginSize(-5) : insets.top + normalizePaddingSize(7) }
+        ]}>
             <TouchableComp disabled={!canIconBePressed} onPress={onPressHandler} style={styles.touchable} background={TouchableNativeFeedback.Ripple(active ? Colors.gray : Colors.red, false)}>
                 <View style={styles.innerView}>
                     <AntDesign name="heart" size={normalizeIconSize(small ? 15 : 27)} color={isIconActive ? Colors.red : Colors.gray} style={{ ...styles.heartIcon }} />
@@ -84,12 +80,12 @@ const styles = StyleSheet.create({
         position: 'absolute',
         backgroundColor: 'white',
         overflow: 'hidden',
-        
+
         zIndex: 2,
         justifyContent: 'center',
         alignItems: 'center',
         elevation: 2,
-        
+
 
 
     },

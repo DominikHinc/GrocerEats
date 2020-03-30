@@ -1,6 +1,6 @@
-import { Ionicons, Entypo, Feather } from '@expo/vector-icons'
-import React, { useRef, useState, useEffect } from 'react'
-import { Animated, Easing, StyleSheet, TextInput, TouchableOpacity, View, Dimensions } from 'react-native'
+import { Entypo, Feather, Ionicons } from '@expo/vector-icons'
+import React, { useEffect, useRef, useState } from 'react'
+import { Animated, Dimensions, Easing, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native'
 import Colors from '../constants/Colors'
 import { normalizeBorderRadiusSize, normalizeFontSize, normalizeIconSize, normalizePaddingSize } from '../methods/normalizeSizes'
 import DefaultText from './DefaultText'
@@ -37,7 +37,7 @@ const SearchBar = ({ onSearchPress, backgroundColor, useAddBarPreset, placeholde
     }
 
     const textInputTextChangeHandler = (text) => {
-        if (text.match(/^[a-zA-Z][a-zA-Z\s]*$/) || text.length === 0) {
+        if (text.match(/^[A-Za-z0-9ĄąĆćĘęŁłŃńÓóŚśŹźŻżÄäẞßÜüÖö ][A-Za-z0-9ĄąĆćĘęŁłŃńÓóŚśŹźŻżÄäẞßÜüÖö \s]*$/) || text.length === 0) {
             setTextInputText(text)
             setShouldXIconBeShown(false)
             if (setBufferedText !== undefined) {
@@ -100,14 +100,12 @@ const styles = StyleSheet.create({
     },
     searchTextInputContainer: {
         width: '100%',
-        //backgroundColor: Colors.blue,
         borderRadius: normalizeBorderRadiusSize(20),
         flexDirection: 'row',
         alignItems: 'center',
 
     },
     searchTextInput: {
-        //width: '80%',
         flex: 1,
         marginLeft: '5%',
         borderRadius: normalizeBorderRadiusSize(15),

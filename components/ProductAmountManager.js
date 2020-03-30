@@ -1,11 +1,11 @@
 import { Feather } from '@expo/vector-icons'
-import React, { useState, useRef, useEffect } from 'react'
-import { StyleSheet, View, TextInput, Alert } from 'react-native'
-import { normalizeIconSize, normalizeMarginSize, normalizeFontSize } from '../methods/normalizeSizes'
-import DefaultText from './DefaultText'
-import Colors from '../constants/Colors'
+import React, { useEffect, useRef, useState } from 'react'
+import { Alert, StyleSheet, TextInput, View } from 'react-native'
 import { useDispatch } from 'react-redux'
+import Colors from '../constants/Colors'
+import { normalizeFontSize, normalizeIconSize, normalizeMarginSize } from '../methods/normalizeSizes'
 import { editProductAmount } from '../store/actions/GroceryListActions'
+import DefaultText from './DefaultText'
 
 const ProductAmountManager = React.memo(({id, amountMain, unitMain }) => {
     const [amountTextInputValue, setAmountTextInputValue] = useState(amountMain.toString())
@@ -29,11 +29,11 @@ const ProductAmountManager = React.memo(({id, amountMain, unitMain }) => {
 
         if(isEditable === false){
             const isValid = amountTextInputValue.match(/^-?\d*(\.\d+)?$/);
-            if (isValid) {
+            if (isValid && parseFloat(amountTextInputValue) > 0) {
                 //console.log("Object will be edited")
                 dispatch(editProductAmount(id, amountTextInputValue))
             } else {
-                Alert.alert("Invalid Amount", "You can only enter numbers")
+                Alert.alert("Invalid amount", "You can only enter numbers, that are greater than 0")
                 setAmountText(amountMain)
             }
         }

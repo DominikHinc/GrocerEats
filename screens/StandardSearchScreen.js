@@ -1,19 +1,18 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { ActivityIndicator, Alert, Keyboard, StyleSheet, TouchableWithoutFeedback, View } from 'react-native'
+import { useDispatch } from 'react-redux'
 import DefaultText from '../components/DefaultText'
 import Logo from '../components/Logo'
 import MealPreviewList from '../components/MealPreviewList'
 import SearchBar from '../components/SearchBar'
 import Colors from '../constants/Colors'
 import { ERROR_WHILE_FETCHING, fetchStandardSearchFromServer, MAXIMUM_NUMERS_OF_CALLS_REACHED, NO_MORE_RECIPES, RECIPE_COULD_NOT_BE_FOUND, SUCCESS } from '../methods/fetchFromServer'
-import { useDispatch } from 'react-redux'
-import { loadSavedRecipes } from '../store/actions/SavedRecipesActions'
 import { loadSavedProducts } from '../store/actions/GroceryListActions'
+import { loadSavedRecipes } from '../store/actions/SavedRecipesActions'
 
 
 const StandardSearchScreen = (props) => {
     //UI Related Vriables
-    //const [searchBarTextInputValue, setSearchBarTextInputValue] = useState('')
     const [textToSearch, setTextToSearch] = useState("")
     //Fetching Data From Server Related Variables
     const [recipesList, setRecipesList] = useState([])
@@ -123,7 +122,6 @@ const styles = StyleSheet.create({
         zIndex: 1,
         backgroundColor: 'white',
         height: '100%'
-        //marginTop: '2%'
     },
     loadingContainer: {
         flex: 1,

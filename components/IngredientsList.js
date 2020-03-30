@@ -1,13 +1,12 @@
-import React from 'react'
-import { FlatList, StyleSheet, View, Dimensions, TouchableWithoutFeedback } from 'react-native'
-import { normalizeHeight, normalizePaddingSize, normalizeWidth, normalizeIconSize } from '../methods/normalizeSizes'
-import IngredientTag from './IngredientTag'
 import { Feather } from '@expo/vector-icons'
-import DefaultText from './DefaultText'
+import React from 'react'
+import { Dimensions, FlatList, StyleSheet, TouchableWithoutFeedback, View } from 'react-native'
 import Colors from '../constants/Colors'
+import { normalizeHeight, normalizeIconSize, normalizePaddingSize, normalizeWidth } from '../methods/normalizeSizes'
+import DefaultText from './DefaultText'
+import IngredientTag from './IngredientTag'
 
 const IngredientsList = ({ ingredientsList, removeIngredient, removeAllIngredients }) => {
-    //console.log(ingredientsList)
     const renderIngredientsList = ({ item, index }) => {
         return <IngredientTag ingredientName={item} removeIngredient={removeIngredient} />
     }
@@ -49,7 +48,7 @@ const styles = StyleSheet.create({
         left: normalizePaddingSize(3),
         alignItems: 'center',
         width: Dimensions.get('window').width / 5,
-       
+
     },
     removeAllIngredinetsTouchable: {
         flex: 1,
@@ -58,11 +57,11 @@ const styles = StyleSheet.create({
     removeAllIngredinetsInnerContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-        justifyContent:'center'
+        justifyContent: 'center'
     },
     allLabel: {
         fontFamily: 'sofia-med',
-        
+
     },
     xIcon: {
 

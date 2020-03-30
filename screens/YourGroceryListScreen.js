@@ -1,14 +1,13 @@
+import { AntDesign } from '@expo/vector-icons'
 import React, { useState } from 'react'
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native'
+import { StyleSheet, TouchableOpacity, View } from 'react-native'
+import { useSafeArea } from 'react-native-safe-area-context'
+import { useSelector } from 'react-redux'
+import AddNewProductModal from '../components/AddNewProductModal'
+import GroceryListList from '../components/GroceryListList'
 import Logo from '../components/Logo'
 import Colors from '../constants/Colors'
-import { useSelector } from 'react-redux'
-import DefaultText from '../components/DefaultText'
-import GroceryListList from '../components/GroceryListList'
-import { AntDesign } from '@expo/vector-icons'
 import { normalizeIconSize, normalizeMarginSize, normalizeWidth } from '../methods/normalizeSizes'
-import { useSafeArea } from 'react-native-safe-area-context'
-import AddNewProductModal from '../components/AddNewProductModal'
 
 const YourGroceryListScreen = (props) => {
     const groceryList = useSelector(state => state.groceryList.productsList);

@@ -10,7 +10,7 @@ const GoBackArrow = (props) => {
     if (Platform.OS === 'android' && Platform.Version > 21) {
         TouchableComp = TouchableNativeFeedback;
     }
-    if(props.forceOpacity){
+    if (props.forceOpacity) {
         TouchableComp = TouchableOpacity;
     }
 
@@ -29,36 +29,31 @@ const styles = StyleSheet.create({
     mainArrowContainer: {
         position: 'absolute',
         left: '3%',
-        // left:0
         elevation: 2,
         height: normalizeHeight(52),
         width: normalizeWidth(52),
         borderRadius: normalizeBorderRadiusSize(27),
-        //backgroundColor: 'white',
         zIndex: 2,
         justifyContent: 'center',
         alignItems: 'center',
-        overflow:'hidden'
+        overflow: 'hidden'
     },
-    touchable:{
-        flex:1, 
-        width:'100%', 
-        height:'100%', 
-        justifyContent:'center', 
-        alignItems:'center'
+    touchable: {
+        flex: 1,
+        width: '100%',
+        height: '100%',
+        justifyContent: 'center',
+        alignItems: 'center'
     },
-    innerView:{
-        flex:1, 
-        width:'100%', 
-        height:'100%', 
-        justifyContent:'center', 
-        alignItems:'center', 
-        backgroundColor:'white'
+    innerView: {
+        flex: 1,
+        width: '100%',
+        height: '100%',
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'white'
     },
     arrow: {
-        // paddingLeft: '6%',
-        // paddingTop:10,
-        // zIndex:99
     }
 })
 

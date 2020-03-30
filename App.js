@@ -1,26 +1,22 @@
 import { NavigationContainer } from '@react-navigation/native';
 import { AppLoading } from 'expo';
 import * as Font from 'expo-font';
-import React, { useState, useEffect } from 'react';
-import { UIManager, YellowBox } from 'react-native';
+import React, { useState } from 'react';
+import { UIManager, YellowBox, Alert } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { Provider } from 'react-redux';
+import { init_grocery_list_db, init_saved_recipes_db } from './helpers/db';
 import GrocerEatsNavigator from './Navigation/GrocerEatsNavigator';
-import { Provider, useDispatch } from 'react-redux';
 import store from './store/store';
-import { init_saved_recipes_db, init_grocery_list_db } from './helpers/db';
 
 init_saved_recipes_db().then(()=>{
-  console.log("Initialized Saved Recipes Data Base Successfully")
 }).catch(err=>{
-  console.log("Initializing Saved Recipes Data Base Failed")
-  console.log(err)
+  Alert.alert("Something went wrong","Error while initializing saved recipes database")
 })
 
 init_grocery_list_db().then(()=>{
-  console.log("Initialized Grocery List Data Base Successfully")
 }).catch(err=>{
-  console.log("Initializing Grocery List Data Base Failed")
-  console.log(err)
+  Alert.alert("Something went wrong","Error while initializing grocery list database")
 })
 
 const fetchFonts = () => {

@@ -22,7 +22,7 @@ const Aisle = React.memo(({ aisle, data, isVisible, switchAisleVisibility }) => 
         Clock,
         interpolate,
 
-    } = Reanimated; //Because in this component Both Animated from react and Reanimated are used, import of Reanimated Library was changed to Reanimated
+    } = Reanimated; //Because in this component Both Animated from react and Reanimated are used, name of import of Reanimated Library was changed to Reanimated
 
     const listOfProductsToBeRemoved = useSelector(state => state.groceryList.idOfProductsToDelete)
 

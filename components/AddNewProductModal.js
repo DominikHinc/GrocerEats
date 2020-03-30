@@ -1,12 +1,12 @@
-import React, { useState } from 'react'
-import { View, Text, StyleSheet, Dimensions, TextInput, Modal, TouchableOpacity, Alert, Keyboard } from 'react-native'
-import DefaultText from './DefaultText'
-import { normalizeBorderRadiusSize, normalizePaddingSize, normalizeIconSize, normalizeFontSize } from '../methods/normalizeSizes'
 import { Feather } from '@expo/vector-icons'
-import Colors from '../constants/Colors'
+import React, { useState } from 'react'
+import { Alert, Keyboard, Modal, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native'
 import { useDispatch } from 'react-redux'
+import Colors from '../constants/Colors'
+import { normalizeBorderRadiusSize, normalizeFontSize, normalizeIconSize, normalizePaddingSize } from '../methods/normalizeSizes'
 import ProductModel from '../models/ProductModel'
 import { addProduct } from '../store/actions/GroceryListActions'
+import DefaultText from './DefaultText'
 
 
 const AddNewProductModal = ({ modalVisible, setModalVisible }) => {
@@ -19,12 +19,12 @@ const AddNewProductModal = ({ modalVisible, setModalVisible }) => {
     const dispatch = useDispatch()
 
     const validateChangedNameHandler = (text) => {
-        if (text.match(/^[A-Za-z0-9 _]*$/) || text.length === 0) {
+        if (text.match(/^[A-Za-z0-9ĄąĆćĘęŁłŃńÓóŚśŹźŻżÄäẞßÜüÖö ]*$/) || text.length === 0) {
             setNameTextInputValue(text)
         }
     }
     const validateChangedAisleHandler = (text) => {
-        if (text.match(/^[A-Za-z0-9 _]*$/) || text.length === 0) {
+        if (text.match(/^[A-Za-z0-9ĄąĆćĘęŁłŃńÓóŚśŹźŻżÄäẞßÜüÖö ]*$/) || text.length === 0) {
             setAisleTextInputValue(text)
         }
     }
@@ -32,20 +32,20 @@ const AddNewProductModal = ({ modalVisible, setModalVisible }) => {
         setAmountTextInputValue(text)
     }
     const validateChangedUnitHandler = (text) => {
-        if (text.match(/^[A-Za-z0-9 _]*$/) || text.length === 0) {
+        if (text.match(/^[A-Za-z0-9ĄąĆćĘęŁłŃńÓóŚśŹźŻżÄäẞßÜüÖö ]*$/) || text.length === 0) {
             setUnitTextInputValue(text)
         }
     }
 
     const addNewProduct = () => {
         const isValid = amountTextInputValue.match(/^-?\d*(\.\d+)?$/);
-        if (isValid) {
+        if (isValid && parseFloat(amountTextInputValue) > 0) {
             if (nameTextInputValue.length < 1 || amountTextInputValue.length < 1 || aisleTextInputValue.length < 1 || unitTextInputValue.length < 1) {
                 Alert.alert("Not every field has been filled", "Please fill every field.")
             } else {
                 console.log("Product Will be added")
                 dispatch(addProduct(new ProductModel(parseInt(Math.random() * 1000000), nameTextInputValue, null,
-                amountTextInputValue, "0", unitTextInputValue, "", aisleTextInputValue, false)))
+                    amountTextInputValue, "0", unitTextInputValue, "", aisleTextInputValue, false)))
                 setModalVisible(false)
                 setNameTextInputValue("")
                 setUnitTextInputValue("")
@@ -54,7 +54,7 @@ const AddNewProductModal = ({ modalVisible, setModalVisible }) => {
                 Keyboard.dismiss()
             }
         } else {
-            Alert.alert("Given Amount Is not a Valid Number", "You can only enter 0-9 characters, with maximum of one dot between them.")
+            Alert.alert("Given amount is not a valid number", "You can only enter numbers, that are greater than 0")
         }
     }
 

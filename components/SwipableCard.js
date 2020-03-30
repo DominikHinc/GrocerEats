@@ -3,8 +3,8 @@ import React, { useRef } from 'react';
 import { Animated, Dimensions, Image, PanResponder, StyleSheet, View } from 'react-native';
 import Colors from '../constants/Colors';
 import { normalizeIconSize, normalizeMarginSize, normalizePaddingSize } from '../methods/normalizeSizes';
-import DefaultText from './DefaultText';
 import ProductModel from '../models/ProductModel';
+import DefaultText from './DefaultText';
 
 
 const SwipableCard = React.memo(({ item, setScrolling, setInfoForModal, noInternetConnection }) => {
@@ -107,14 +107,12 @@ const SwipableCard = React.memo(({ item, setScrolling, setInfoForModal, noIntern
 
 const styles = StyleSheet.create({
     netherContainer: {
-        //backgroundColor:'red'
         backgroundColor: Colors.gray,
         marginVertical: normalizeMarginSize(8)
     },
     ingredientContainer: {
         width: '100%',
         flexDirection: 'row',
-        //marginVertical: 5,
         alignItems: 'center',
         backgroundColor: 'white',
         zIndex: 2,
@@ -124,8 +122,6 @@ const styles = StyleSheet.create({
         width: Dimensions.get('window').width / 6,
         aspectRatio: 1,
         borderRadius: Dimensions.get('window').width / 12,
-        //borderWidth: 1,
-        //borderColor: Colors.gray,
         backgroundColor: 'white',
         elevation: 2,
         overflow: 'hidden',

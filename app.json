@@ -2,20 +2,20 @@
   "expo": {
     "name": "GrocerEats",
     "slug": "GrocerEats",
+    "owner":"Dominik Hinc",
     "privacy": "public",
     "sdkVersion": "36.0.0",
     "platforms": [
       "ios",
-      "android",
-      "web"
+      "android"
     ],
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/LogoStandard.png",
     "splash": {
-      "image": "./assets/splash.png",
+      "backgroundColor": "#ffffff",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "image": "./assets/LogoAdaptive.png"
     },
     "updates": {
       "fallbackToCacheTimeout": 0
@@ -24,7 +24,19 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "bundleIdentifier": "pl.dominik.hinc.grocereats",
+      "supportsTablet": true,
+      "buildNumber": "1.0.0"
+    },
+    "android":{
+      "package": "pl.dominik.hinc.grocereats",
+      "versionCode": 1,
+      "permissions": [],
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/LogoAdaptiveForeground.png",
+        "backgroundColor": "#ffffff",
+        "backgroundImage": "./assets/LogoAdaptiveBackground.png"
+      }
     },
     "description": ""
   }

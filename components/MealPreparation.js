@@ -31,7 +31,7 @@ const styles = StyleSheet.create({
 
     },
     step: {
-        paddingVertical:normalizePaddingSize(10) 
+        paddingVertical: normalizePaddingSize(10)
     },
     stepNumberLabel: {
         fontFamily: 'sofia-med',
@@ -40,7 +40,7 @@ const styles = StyleSheet.create({
     },
     stepLabel: {
         fontSize: 18,
-        paddingHorizontal: normalizePaddingSize(10) ,
+        paddingHorizontal: normalizePaddingSize(10),
         textAlign: 'center'
     }
 

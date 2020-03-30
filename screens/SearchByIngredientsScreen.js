@@ -50,7 +50,6 @@ const SearchByIngredientsScreen = (props) => {
                         if (response.firstSearchId !== undefined) {
                             firstSearchId = response.firstSearchId;
                         }
-                        //console.log(response.response[0])
                         let uniqueRecipes = {};
                         response.response.forEach(item => {
                             if (uniqueRecipes[item.title] === undefined) {
@@ -61,7 +60,6 @@ const SearchByIngredientsScreen = (props) => {
                         for (let uniqueRecipe in uniqueRecipes) {
                             uniqueRecipesArray = [...uniqueRecipesArray, uniqueRecipes[uniqueRecipe]]
                         }
-                        //console.log(uniqueRecipesArray)
                         setRecipesList(uniqueRecipesArray);
                         break;
                 }
@@ -72,14 +70,13 @@ const SearchByIngredientsScreen = (props) => {
         }
     }, [shouldDataBeFetchedFromServer])
 
-    
+
 
     const addIngredient = (ingredinetName) => {
         if (ingredientsList.find(item => ingredinetName === item) === undefined && ingredinetName.length > 0) {
             LayoutAnimation.configureNext(CustomLayoutSpring)
             setIngredientsList(prev => [ingredinetName, ...prev]);
         }
-        //setAddBarTextInputValue("");
     }
 
     const removeIngredient = (ingredientName) => {
@@ -87,7 +84,7 @@ const SearchByIngredientsScreen = (props) => {
         LayoutAnimation.configureNext(CustomLayoutSpring);
     }
 
-    const removeAllIngredients = ()=>{
+    const removeAllIngredients = () => {
         setIngredientsList([])
         LayoutAnimation.configureNext(CustomLayoutSpring);
     }
@@ -102,16 +99,16 @@ const SearchByIngredientsScreen = (props) => {
         setShouldDataBeFetchedFromServer(true);
         setShouldLogoBeShown(false)
     }
-    
-    const setBufferedText = (text)=>{
-            ingradientTextBuffer = text
+
+    const setBufferedText = (text) => {
+        ingradientTextBuffer = text
     }
 
     return (
         <View style={styles.screen}>
             <Logo color={Colors.yellow} shouldLogoBeShown={shouldLogoBeShown} />
             <View style={styles.restOfTheScreenContainer}>
-                <SearchBar  onSearchPress={addIngredient} forceClear={forceClearTextInput} setBufferedText={setBufferedText}
+                <SearchBar onSearchPress={addIngredient} forceClear={forceClearTextInput} setBufferedText={setBufferedText}
                     backgroundColor={Colors.yellow} useAddBarPreset={true} placeholder="Add ingredient" hintText="Search recipes by ingredients"
                     onFocus={() => { setIsKeyboardDisplayed(true) }} onBlur={() => { setIsKeyboardDisplayed(false) }} />
                 {ingredientsList.length > 0 && <IngredientsList removeAllIngredients={removeAllIngredients} ingredientsList={ingredientsList} removeIngredient={removeIngredient} />}
@@ -147,8 +144,7 @@ const styles = StyleSheet.create({
     restOfTheScreenContainer: {
         flex: 1,
         zIndex: 1,
-        backgroundColor: 'white',
-        //marginTop: '2%'
+        backgroundColor: 'white'
     },
     loadingContainer: {
         flex: 1,

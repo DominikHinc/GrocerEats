@@ -1,18 +1,15 @@
-import React from 'react'
+import { AntDesign, Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
-import StandardSearchScreen from '../screens/StandardSearchScreen'
-import SearchByIngredientsScreen from '../screens/SearchByIngredientsScreen'
-import SearchByNutrientsScreen from '../screens/SavedRecipesScreen'
-import YourGroceryListScreen from '../screens/YourGroceryListScreen'
-import { Ionicons, AntDesign, MaterialCommunityIcons } from '@expo/vector-icons'
-import Colors from '../constants/Colors'
+import React from 'react';
 import { Platform } from 'react-native';
+import Colors from '../constants/Colors';
 import MealDetailsScreen from '../screens/MealDetailsScreen';
-import Logo from '../components/Logo';
-import { normalizeIconSize } from '../methods/normalizeSizes';
-import DefaultText from '../components/DefaultText';
+import SearchByNutrientsScreen from '../screens/SavedRecipesScreen';
+import SearchByIngredientsScreen from '../screens/SearchByIngredientsScreen';
+import StandardSearchScreen from '../screens/StandardSearchScreen';
+import YourGroceryListScreen from '../screens/YourGroceryListScreen';
 
 
 const BottomTabNavigator = Platform.OS === 'android' ? createMaterialBottomTabNavigator() : createBottomTabNavigator();

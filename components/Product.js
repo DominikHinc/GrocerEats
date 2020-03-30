@@ -1,4 +1,4 @@
-import { Foundation, Ionicons } from '@expo/vector-icons'
+import { Foundation } from '@expo/vector-icons'
 import React, { useEffect, useState } from 'react'
 import { Dimensions, Image, StyleSheet, TouchableOpacity, View } from 'react-native'
 import Animated, { Easing } from 'react-native-reanimated'
@@ -8,7 +8,6 @@ import { normalizeBorderRadiusSize, normalizeIconSize, normalizeMarginSize, norm
 import { deleteAllProductsMentToBeRemoved, removeProduct, setCheckOfProduct } from '../store/actions/GroceryListActions'
 import DefaultText from './DefaultText'
 import ProductAmountManager from './ProductAmountManager'
-import NetInfo from '@react-native-community/netinfo';
 
 const Product = React.memo(({ id, title, imageUrl, amountMain, unitMain, isChecked, noInternetConnection }) => {
     const {

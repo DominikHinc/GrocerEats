@@ -14,13 +14,13 @@ import MealTags from '../components/MealTags';
 import SwipableCard from '../components/SwipableCard';
 import Colors from '../constants/Colors';
 import { ERROR_WHILE_FETCHING, fetchMealDetailsFromServer, MAXIMUM_NUMERS_OF_CALLS_REACHED, SUCCESS } from '../methods/fetchFromServer';
-import { normalizeIconSize, normalizePaddingSize } from '../methods/normalizeSizes';
+import { normalizeIconSize, normalizePaddingSize, normalizeBorderRadiusSize } from '../methods/normalizeSizes';
 import { removeSavedRecipe, saveRecipe } from '../store/actions/SavedRecipesActions';
 import ProductModel from '../models/ProductModel';
 import NetInfo from '@react-native-community/netinfo';
 
 
-const SCROLLING_TAB_BORDER_RADIUS = 30
+const SCROLLING_TAB_BORDER_RADIUS = normalizeBorderRadiusSize(32) 
 
 const MealDetailsScreen = (props) => {
     const { color, id, savedData } = props.route.params;
@@ -28,8 +28,6 @@ const MealDetailsScreen = (props) => {
     const [mealDetails, setMealDetails] = useState(false)
     const [noInternetConnection, setNoInternetConnection] = useState(false)
 
-    // const [upArrowType, setUpArrowType] = useState('arrow-up')
-    //const [scrollable, setScrollable] = useState(true)
     let scrollable = useRef(true).current
     const currentContentOffset = new Animated.Value(0)
 
@@ -38,10 +36,7 @@ const MealDetailsScreen = (props) => {
     const [modalVisible, setModalVisible] = useState(false)
     const [currentProduct, setCurrentProduct] = useState(new ProductModel('1', 'Product', '', '', '', '', '', ''))
 
-    //let scrollVelocity = useRef(0).current
-
     const dispatch = useDispatch()
-
 
     //Setters
     const setModalVisiblilty = (shouldBeVisible) => {
@@ -54,10 +49,10 @@ const MealDetailsScreen = (props) => {
     }, [setCurrentProduct, setModalVisible])
 
     const setScrolling = useCallback((canScroll) => {
-        //setScrollable(canScroll);
         scrollable = canScroll
     }, [scrollable])
 
+    //Fetching from server
     useEffect(() => {
         if (mealDetails === false) {
             if (savedData !== undefined) {
@@ -74,7 +69,6 @@ const MealDetailsScreen = (props) => {
                         case MAXIMUM_NUMERS_OF_CALLS_REACHED:
                             props.navigation.goBack()
                             Alert.alert("Something went wrong", response.error)
-                            //, [{text:"Ok",onPress:()=>{props.navigation.goBack()}}]
                             break;
                         case SUCCESS:
                             setMealDetails(response.response)
@@ -97,126 +91,121 @@ const MealDetailsScreen = (props) => {
             Alert.alert("Something went wrong.", err.message)
             setNoInternetConnection(true)
         })
-     
 
 
 
-}, [])
+
+    }, [])
 
 
-//On Event happen handlers
-const onScrollHandler = (e) => {
-    currentContentOffset.setValue(e.nativeEvent.contentOffset.y);
-}
-const onMomentumEndHandler = (e) => {
-    currentContentOffset.setValue(e.nativeEvent.contentOffset.y);
-}
-const onHeartIconPressed = () => {
-    if (!loading) {
-        !isMealSaved ? dispatch(saveRecipe(id, mealDetails)) : dispatch(removeSavedRecipe(id))
+    //On Event happen handlers
+    const onScrollHandler = (e) => {
+        currentContentOffset.setValue(e.nativeEvent.contentOffset.y);
     }
-}
-
-//Interpolated variables
-const imageOpacity = currentContentOffset.interpolate({
-    inputRange: [0, Dimensions.get('screen').height / 2],
-    outputRange: [1, 0],
-    extrapolate: 'clamp',
-    easing: Easing.ease,
-})
-const imageHeight = currentContentOffset.interpolate({
-    inputRange: [0, Dimensions.get('screen').height / 2],
-    outputRange: [Dimensions.get('screen').height / 2 + SCROLLING_TAB_BORDER_RADIUS, Dimensions.get('screen').height / 6],
-    extrapolate: 'clamp',
-    easing: Easing.ease,
-
-})
-
-const arrowScale = currentContentOffset.interpolate({
-    inputRange: [0, Dimensions.get('screen').height / 2],
-    outputRange: [1, -1],
-    extrapolate: 'clamp',
-    easing: Easing.ease,
-})
-
-const renderIngredients = () => {
-    if (mealDetails.extendedIngredients) {
-        let ingredientsMap = {};
-        return mealDetails.extendedIngredients.map((item, index) => {
-            if (ingredientsMap[item.id] === 1) {
-                return null;
-            }
-
-            ingredientsMap[item.id] = 1
-            return (
-                <SwipableCard key={item.id} item={item} setScrolling={setScrolling} setInfoForModal={setInfoForModal} noInternetConnection={noInternetConnection} />
-            )
-        })
+    const onMomentumEndHandler = (e) => {
+        currentContentOffset.setValue(e.nativeEvent.contentOffset.y);
     }
-}
+    const onHeartIconPressed = () => {
+        if (!loading) {
+            !isMealSaved ? dispatch(saveRecipe(id, mealDetails)) : dispatch(removeSavedRecipe(id))
+        }
+    }
 
-console.log("Rerendering mealDetails")
+    //Interpolated variables
+    const imageOpacity = currentContentOffset.interpolate({
+        inputRange: [0, Dimensions.get('screen').height / 2],
+        outputRange: [1, 0],
+        extrapolate: 'clamp',
+        easing: Easing.ease,
+    })
+    const imageHeight = currentContentOffset.interpolate({
+        inputRange: [0, Dimensions.get('screen').height / 2],
+        outputRange: [Dimensions.get('screen').height / 2 + SCROLLING_TAB_BORDER_RADIUS, Dimensions.get('screen').height / 6],
+        extrapolate: 'clamp',
+        easing: Easing.ease,
 
-return (
-    <View style={{ ...styles.screen, backgroundColor: loading ? 'white' : 'black' }}>
-        <GoBackArrow goBack={() => { props.navigation.goBack() }} />
-        <FloatingHeartIcon onPress={onHeartIconPressed} active={isMealSaved} />
-        <Animated.Image source={noInternetConnection ? require('../assets/Images/No_Internet_Connection.png') : { uri: `https://spoonacular.com/recipeImages/${id}-636x393.${mealDetails.imageType}` }}
-            style={[styles.backgroundImage, { opacity: imageOpacity, height: imageHeight }]} resizeMode='cover' />
+    })
 
-        {!loading && <ScrollView scrollEnabled={scrollable} style={styles.mainScrollView} onScroll={onScrollHandler}
-            onMomentumScrollEnd={onMomentumEndHandler} showsVerticalScrollIndicator={false} scrollEventThrottle={17} onScrollBeginDrag={onScrollHandler}>
-            <View style={styles.spaceFiller} />
-            <View style={styles.mainContainer}>
-                <Animated.View style={[styles.upArrowContainer, { transform: [{ scaleY: arrowScale }] }]}>
-                    <SimpleLineIcons name={'arrow-up'} size={normalizeIconSize(25)} color={Colors.gray} style={styles.upArrow} />
-                    {/* {upArrowType === 'minus' ? <AntDesign name='minus' size={normalizeIconSize(28)} color={Colors.gray} style={{ ...styles.upArrow, transform: [{ scaleX: 2 }] }} />
-                            :
-                            <SimpleLineIcons name={upArrowType} size={normalizeIconSize(25)} color={Colors.gray} style={styles.upArrow} />} */}
-                </Animated.View>
-                <View style={styles.titleContainer}>
-                    <DefaultText style={styles.title}>{mealDetails.title}</DefaultText>
-                </View>
+    const arrowScale = currentContentOffset.interpolate({
+        inputRange: [0, Dimensions.get('screen').height / 2],
+        outputRange: [1, -1],
+        extrapolate: 'clamp',
+        easing: Easing.ease,
+    })
 
-                <BasicMealInfo readyInMinutes={mealDetails.readyInMinutes} servings={mealDetails.servings}
-                    likes={mealDetails.aggregateLikes} score={mealDetails.spoonacularScore} />
-
-                {mealDetails !== false && mealDetails.dishTypes.length > 0 && <View style={styles.mainTagsContainer}>
-                    <View style={styles.tagsContainer}>
-                        <MealTags tags={mealDetails.dishTypes} />
-                    </View>
-                </View>}
-                <DefaultText style={styles.sectionTitle}>
-                    Ingredients:
-                    </DefaultText>
-                <DefaultText style={styles.tutorialLabel}>
-                    Swipe arrow left to add to your grocery list
-                    </DefaultText>
-
-                <View style={styles.ingredientsMainContainer}>
-                    {renderIngredients()}
-                </View>
-
-                {mealDetails !== false && mealDetails.analyzedInstructions.length > 0 ? <View style={styles.stepsMainContainer}>
-                    <DefaultText style={styles.sectionTitle}>Preparation:</DefaultText>
-                    <MealPreparation steps={mealDetails.analyzedInstructions} />
-                </View>
-                    :
-                    <DefaultText style={{ textAlign: "center" }}>Preparation steps were not found</DefaultText>
+    const renderIngredients = () => {
+        if (mealDetails.extendedIngredients) {
+            let ingredientsMap = {};
+            return mealDetails.extendedIngredients.map((item, index) => {
+                if (ingredientsMap[item.id] === 1) {
+                    return null;
                 }
 
-                <View style={styles.additionalInfoContainer} >
-                    <DefaultText style={styles.sectionTitle}>Additional info</DefaultText>
-                    <AdditonalMealInfo mealDetails={mealDetails} />
+                ingredientsMap[item.id] = 1
+                return (
+                    <SwipableCard key={item.id} item={item} setScrolling={setScrolling} setInfoForModal={setInfoForModal} noInternetConnection={noInternetConnection} />
+                )
+            })
+        }
+    }
+
+    return (
+        <View style={{ ...styles.screen, backgroundColor: loading ? 'white' : 'black' }}>
+            <GoBackArrow goBack={() => { props.navigation.goBack() }} />
+            <FloatingHeartIcon onPress={onHeartIconPressed} active={isMealSaved} />
+            <Animated.Image source={noInternetConnection ? require('../assets/Images/No_Internet_Connection.png') : { uri: `https://spoonacular.com/recipeImages/${id}-636x393.${mealDetails.imageType}` }}
+                style={[styles.backgroundImage, { opacity: imageOpacity, height: imageHeight }]} resizeMode='cover' />
+
+            {!loading && <ScrollView scrollEnabled={scrollable} style={styles.mainScrollView} onScroll={onScrollHandler}
+                onMomentumScrollEnd={onMomentumEndHandler} showsVerticalScrollIndicator={false} scrollEventThrottle={17} onScrollBeginDrag={onScrollHandler}>
+                <View style={styles.spaceFiller} />
+                <View style={styles.mainContainer}>
+                    <Animated.View style={[styles.upArrowContainer, { transform: [{ scaleY: arrowScale }] }]}>
+                        <SimpleLineIcons name={'arrow-up'} size={normalizeIconSize(25)} color={Colors.gray} style={styles.upArrow} />
+                    </Animated.View>
+                    <View style={styles.titleContainer}>
+                        <DefaultText style={styles.title}>{mealDetails.title}</DefaultText>
+                    </View>
+
+                    <BasicMealInfo readyInMinutes={mealDetails.readyInMinutes} servings={mealDetails.servings}
+                        likes={mealDetails.aggregateLikes} score={mealDetails.spoonacularScore} />
+
+                    {mealDetails !== false && mealDetails.dishTypes.length > 0 && <View style={styles.mainTagsContainer}>
+                        <View style={styles.tagsContainer}>
+                            <MealTags tags={mealDetails.dishTypes} />
+                        </View>
+                    </View>}
+                    <DefaultText style={styles.sectionTitle}>
+                        Ingredients:
+                    </DefaultText>
+                    <DefaultText style={styles.tutorialLabel}>
+                        Swipe arrow left to add to your grocery list
+                    </DefaultText>
+
+                    <View style={styles.ingredientsMainContainer}>
+                        {renderIngredients()}
+                    </View>
+
+                    {mealDetails !== false && mealDetails.analyzedInstructions.length > 0 ? <View style={styles.stepsMainContainer}>
+                        <DefaultText style={styles.sectionTitle}>Preparation:</DefaultText>
+                        <MealPreparation steps={mealDetails.analyzedInstructions} />
+                    </View>
+                        :
+                        <DefaultText style={{ textAlign: "center" }}>Preparation steps were not found</DefaultText>
+                    }
+
+                    <View style={styles.additionalInfoContainer} >
+                        <DefaultText style={styles.sectionTitle}>Additional info</DefaultText>
+                        <AdditonalMealInfo mealDetails={mealDetails} />
+                    </View>
+
                 </View>
+            </ScrollView>}
+            {loading && <View style={styles.loadingContainer} ><ActivityIndicator size='large' color={color} /></View>}
+            <AddToGroceryListModal modalVisible={modalVisible} setModalVisible={setModalVisiblilty} currentProduct={currentProduct} noInternetConnection={noInternetConnection} />
 
-            </View>
-        </ScrollView>}
-        {loading && <View style={styles.loadingContainer} ><ActivityIndicator size='large' color={color} /></View>}
-        <AddToGroceryListModal modalVisible={modalVisible} setModalVisible={setModalVisiblilty} currentProduct={currentProduct} noInternetConnection={noInternetConnection} />
-
-    </View>
-)
+        </View>
+    )
 }
 
 const styles = StyleSheet.create({
@@ -235,8 +224,6 @@ const styles = StyleSheet.create({
     },
     backgroundImage: {
         width: '100%',
-        //aspectRatio: 1,
-        //minHeight: Dimensions.get('screen').height / 1.7,
         zIndex: 0,
         position: 'absolute',
         top: 0,
@@ -266,7 +253,7 @@ const styles = StyleSheet.create({
 
     },
     upArrow: {
-        //height: normalizeIconSize(23)
+
     },
     titleContainer: {
         paddingTop: normalizePaddingSize(5),
@@ -289,7 +276,6 @@ const styles = StyleSheet.create({
         color: Colors.gray
     },
     mainTagsContainer: {
-        //paddingTop: '4%',
 
     },
     ingredientsMainContainer: {

@@ -1,14 +1,14 @@
 import { AntDesign, Foundation, Ionicons, MaterialCommunityIcons } from '@expo/vector-icons'
-import React, { useState } from 'react'
-import { Image, StyleSheet, TouchableOpacity, View, Alert } from 'react-native'
+import React from 'react'
+import { Image, StyleSheet, TouchableOpacity, View } from 'react-native'
 import { useDispatch, useSelector } from 'react-redux'
 import DefaultText from '../components/DefaultText'
 import Colors from '../constants/Colors'
 import { calculateServingsColor, calculateTimeColor } from '../methods/calculateColors'
 import { changeMinutesToHoursAndMinutes } from '../methods/mathHelper'
 import { normalizeBorderRadiusSize, normalizeIconSize, normalizeMarginSize } from '../methods/normalizeSizes'
+import { removeSavedRecipe, saveRecipe } from '../store/actions/SavedRecipesActions'
 import FloatingHeartIcon from './FloatingHeartIcon'
-import { saveRecipe, removeSavedRecipe } from '../store/actions/SavedRecipesActions'
 
 
 
@@ -22,10 +22,7 @@ const RecipePreview = ({ title, id, image, readyInMinutes, servings, onPress, mi
     const dispatch = useDispatch();
 
     const onHeartIconPressed = () => {
-
         !isMealSaved ? dispatch(saveRecipe(id, savedData === undefined ? undefined : savedData)) : dispatch(removeSavedRecipe(id))
-
-
     }
 
     return (
@@ -96,17 +93,13 @@ const styles = StyleSheet.create({
         paddingHorizontal: '5%'
     },
     titleContainer: {
-
     },
     title: {
         fontFamily: 'sofia-bold',
         fontSize: 20,
-        //textAlign:'center',
-
     },
     arrowConatiner: {
         flexDirection: 'row-reverse',
-        //marginTop:-10
     },
     indicatorIcons: {
         marginRight: '1.5%'
