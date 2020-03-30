@@ -16,7 +16,7 @@ const YourGroceryListScreen = (props) => {
 
     return (
         <View style={styles.screen}>
-            <Logo color={Colors.green} />
+            <Logo color={Colors.green} shouldLogoBeShown={true} />
             <GroceryListList data={groceryList} />
             <View style={[styles.addNewProductIconContainer, { top: insets.top + normalizeMarginSize(15) }]}>
                 <TouchableOpacity style={styles.addNewProductTouchable} onPress={()=>setModalVisible(prev=>!prev)} >

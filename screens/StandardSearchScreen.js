@@ -31,9 +31,7 @@ const StandardSearchScreen = (props) => {
     useEffect(() => {
         if (!hasDatabaseBeenLoaded) {
             setHasDatabaseBeenLoaded(true)
-            console.log("Starting to load saved recipes")
             dispatch(loadSavedRecipes())
-            console.log("Starting to load saved products")
             dispatch(loadSavedProducts())
         }
 
@@ -49,7 +47,6 @@ const StandardSearchScreen = (props) => {
             setShouldDataBeFetchedFromServer(false);
             recipesList.length > 0 ? null : setLoading(true)
             setCouldNotFindRecipe(false);
-            console.log("Searching " + textToSearch)
             fetchStandardSearchFromServer(textToSearch, recipesList.length, recipesFetchOffset, firstSearchId, perLoadAmount).then((response) => {
                 switch (response.status) {
                     case RECIPE_COULD_NOT_BE_FOUND:
