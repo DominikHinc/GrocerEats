@@ -15,3 +15,4 @@ web-report/
 constants/APIKEY.js
 methods/fetchFromServer.js
 store/actions/ApiActions.js
+store/reducers/ApiReducer.js
