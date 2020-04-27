@@ -12,3 +12,6 @@ web-report/
 
 # macOS
 .DS_Store
+constants/APIKEY.js
+methods/fetchFromServer.js
+store/actions/ApiActions.js
