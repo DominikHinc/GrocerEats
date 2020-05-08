@@ -46,7 +46,7 @@ const searchStackNavigator = ({navigation, route}) => {
         <StackNavigator.Screen name="MealDetails" component={MealDetailsScreen}   />
     </StackNavigator.Navigator>)
 }
-const searchByIngradientsStackNavigator = () => {
+const searchByIngredientsStackNavigator = () => {
     return (<StackNavigator.Navigator headerMode='none'>
         <StackNavigator.Screen name="SearchByIngradients" component={SearchByIngredientsScreen}   />
         <StackNavigator.Screen name="MealDetails" component={MealDetailsScreen}   />
@@ -77,7 +77,7 @@ const mainTabNavigator = () => {
                 cardStyleInterpolator: forFade 
         
             }} />
-            <BottomTabNavigator.Screen name="SearchByIngradients" component={searchByIngradientsStackNavigator} options={{
+            <BottomTabNavigator.Screen name="SearchByIngradients" component={searchByIngredientsStackNavigator} options={{
                 tabBarLabel: 'Ingredients',
                 tabBarColor: Colors.yellow,
                 tabBarIcon: ({ color }) => {

@@ -7,7 +7,7 @@ import RecipePreview from './RecipePreview'
 
 
 
-const MealPreviewList = React.memo(({ data, onEndReached, noMoreDataToDisplay, navigationProp, endOfListText, renderRecipeSearchedByIngredinets, renderSavedRecipe }) => {
+const MealPreviewList = React.memo(({ data, onEndReached, noMoreDataToDisplay, navigationProp, endOfListText, renderRecipeSearchedByIngredients, renderSavedRecipe }) => {
     const renderStandardSearchRecipePreviews = ({ item, index }) => {
         item = renderSavedRecipe ? item = item.mealDetails : item
         return <RecipePreview onPress={() => { navigationProp.navigate("MealDetails", { id: item.id, color: Colors.blue, savedData: renderSavedRecipe ? item : undefined }) }}
@@ -19,7 +19,7 @@ const MealPreviewList = React.memo(({ data, onEndReached, noMoreDataToDisplay, n
             savedMealDetailsData={item} />
     }
     const renderRecipePreviewSearchedByIngredients = ({ item, index }) => {
-        //Because the data recieved after searching by ingradients is so diffrent separation was mandarory
+        //Because the data received after searching by ingredients is so different separation was mandatory
         return <RecipePreview onPress={() => { navigationProp.navigate("MealDetails", { id: item.id, color: Colors.blue }) }}
             title={item.title} id={item.id} image={item.imageType} missedIngredients={item.missedIngredientCount} usedIngredients={item.usedIngredientCount} />
     }
@@ -34,7 +34,7 @@ const MealPreviewList = React.memo(({ data, onEndReached, noMoreDataToDisplay, n
 
     return (
         <FlatList style={styles.listStyle} keyExtractor={item => item.id.toString()} data={data}
-            renderItem={renderRecipeSearchedByIngredinets === true ? renderRecipePreviewSearchedByIngredients : renderStandardSearchRecipePreviews}
+            renderItem={renderRecipeSearchedByIngredients === true ? renderRecipePreviewSearchedByIngredients : renderStandardSearchRecipePreviews}
             showsVerticalScrollIndicator={false} ItemSeparatorComponent={(hilighted) => <View style={styles.recipesListItemSeparator} />}
             contentContainerStyle={{ paddingBottom: '3%', paddingTop: '5%' }} scrollEventThrottle={30}
             onEndReachedThreshold={0.1} onEndReached={onEndReached !== undefined ? onEndReached : null}

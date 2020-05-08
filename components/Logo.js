@@ -10,66 +10,30 @@ import { CustomLayoutDelete } from '../constants/LayoutAnimations'
 
 
 
-const Logo = (props) => {
+const Logo = ({ shouldLogoBeShown, goBack, color }) => {
     const insets = useSafeArea();
-    const { shouldLogoBeShown } = props
-
-    // const [logoAnimationProgress, setLogoAnimationProgress] = useState(new Animated.Value(shouldLogoBeShown === undefined ? 1 : shouldLogoBeShown ? 1 : 0))
-    const [logoInitialHeight, setLogoInitialHeight] = useState(-1)
 
     const [showCreditsModal, setShowCreditsModal] = useState(false)
 
-    const [isLogoVisible, setisLogoVisible] = useState(shouldLogoBeShown)
+    const [isLogoVisible, setIsLogoVisible] = useState(shouldLogoBeShown)
 
     useEffect(() => {
-        // shouldLogoBeShown === undefined ? showLogo() : shouldLogoBeShown ? showLogo() : hideLogo()
-         LayoutAnimation.configureNext(CustomLayoutDelete)
-        setisLogoVisible(shouldLogoBeShown)
-       
+        LayoutAnimation.configureNext(CustomLayoutDelete)
+        setIsLogoVisible(shouldLogoBeShown)
+
     }, [shouldLogoBeShown])
 
-    // const hideLogo = () => {
-    //     Animated.timing(logoAnimationProgress, {
-    //         toValue: 0,
-    //         duration: 150,
-    //         easing: Easing.linear
-    //     }).start()
-    // }
-    // const showLogo = () => {
-    //     Animated.timing(logoAnimationProgress, {
-    //         toValue: 1,
-    //         duration: 150,
-    //         easing: Easing.linear
-    //     }).start()
-    // }
-
-    // const logoHeight = logoAnimationProgress.interpolate({
-    //     inputRange: [0, 1],
-    //     outputRange: [0, normalizeHeight(insets.top + 69)],
-    // })
-    // const logoOpacity = logoAnimationProgress.interpolate({
-    //     inputRange: [0, 1],
-    //     outputRange: [0, 1]
-    // })
-    // const onLayout = (e) => {
-    //     console.log(e.nativeEvent.layout.height)
-    //     if (logoInitialHeight < 0) {
-
-    //         setLogoInitialHeight(e.nativeEvent.layout.height)
-    //     }
-
-    // }
     return (
         <Animated.View
-            style={{ ...styles.safeAreaViewWrapper, paddingTop: insets.top + normalizePaddingSize(5)}}>
+            style={{ ...styles.safeAreaViewWrapper, paddingTop: insets.top + normalizePaddingSize(5) }}>
             {isLogoVisible && <View>
-                {props.goBack && <View style={styles.arrowContainer}>
-                    <Ionicons style={styles.arrow} name='ios-arrow-back' size={normalizeIconSize(23)} onPress={() => { props.goBack() }} />
+                {goBack && <View style={styles.arrowContainer}>
+                    <Ionicons style={styles.arrow} name='ios-arrow-back' size={normalizeIconSize(23)} onPress={() => { goBack() }} />
                 </View>}
-                <DefaultText style={{ ...styles.logo, color: props.color }}>GrocerEats</DefaultText>
-                <View style={{ ...styles.creditsContainer, right: props.color !== Colors.green ? '5%' : null, left: props.color === Colors.green ? '5%' : null }}>
+                <DefaultText style={{ ...styles.logo, color: color }}>GrocerEats</DefaultText>
+                <View style={{ ...styles.creditsContainer, right: color !== Colors.green ? '5%' : null, left: color === Colors.green ? '5%' : null }}>
                     <TouchableOpacity style={{ flex: 1 }} onPress={() => { setShowCreditsModal(true) }}>
-                        <View style={{ ...styles.creditsTouchableInnerView, paddingLeft: props.color !== Colors.green ? normalizePaddingSize(15) : null, paddingRight: props.color === Colors.green ? normalizePaddingSize(15) : null }}>
+                        <View style={{ ...styles.creditsTouchableInnerView, paddingLeft: color !== Colors.green ? normalizePaddingSize(15) : null, paddingRight: color === Colors.green ? normalizePaddingSize(15) : null }}>
                             <DefaultText style={styles.creditsLabel}>Credits</DefaultText>
                         </View>
                     </TouchableOpacity>

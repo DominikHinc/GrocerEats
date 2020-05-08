@@ -24,7 +24,6 @@ const Product = React.memo(({ id, title, imageUrl, amountMain, unitMain, isCheck
         interpolate
     } = Animated;
 
-    // const [currentIndex, setCurrentIndex] = useState(index)
     const shouldProductBeRemoved = useSelector(state => state.groceryList.idOfProductsToDelete.find(item => item === id))
 
     const [reanimatedValue, setReanimatedValue] = useState(new Value(1))
@@ -33,11 +32,6 @@ const Product = React.memo(({ id, title, imageUrl, amountMain, unitMain, isCheck
     const [imageSource, setImageSource] = useState({ uri: imageUrl })
 
     const dispatch = useDispatch()
-
-    // useEffect(() => {
-    //     //Because using just index passed by parent seems to sometimes bug everything, it was necessary to use local state
-    //     setCurrentIndex(index)
-    // }, [index])
 
     useEffect(() => {
         if (shouldProductBeRemoved !== undefined) {
@@ -116,8 +110,6 @@ const Product = React.memo(({ id, title, imageUrl, amountMain, unitMain, isCheck
     })
 
 
-
-
     return (
         <Animated.View style={[styles.mainProductContainer, { height: productInitialHeight > 0 ? productHeight : null, opacity: productOpacityAndScale, transform: [{ scaleY: productOpacityAndScale }] }]} onLayout={measureInitialProductHeight} >
             <View style={styles.innerPaddingContainer}>
@@ -134,19 +126,6 @@ const Product = React.memo(({ id, title, imageUrl, amountMain, unitMain, isCheck
                     <ProductAmountManager id={id} amountMain={amountMain} unitMain={unitMain} />
                 </View>
                 <View style={styles.leftSideIconsContainer}>
-                    {/* <View style={styles.indexIconsContainer}   >
-                        <View style={styles.singleIconWrapper}>
-                            {currentIndex > 0 && enableMoving === true && <TouchableOpacity style={styles.singleIconTouchable} onPress={() => moveProductOneIndexUp(index)}>
-                                <Ionicons name='ios-arrow-up' size={normalizeIconSize(20)} style={styles.indexIcon} />
-                            </TouchableOpacity>}
-                        </View>
-                        <View style={styles.singleIconWrapper}>
-                            {currentIndex < aisleLength - 1 && enableMoving === true && <TouchableOpacity style={styles.singleIconTouchable} onPress={() => moveProductOneIndexDown(index)}>
-                                <Ionicons name='ios-arrow-down' size={normalizeIconSize(20)} style={styles.indexIcon} />
-                            </TouchableOpacity>}
-                        </View>
-
-                    </View> */}
                     <View style={{ paddingRight: normalizePaddingSize(7) }}>
                         <TouchableOpacity style={styles.iconTouchable} onPress={checkboxPressHandler}>
                             <View style={styles.checkboxBox}>

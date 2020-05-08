@@ -8,13 +8,13 @@ import MealPreviewList from '../components/MealPreviewList'
 import SearchBar from '../components/SearchBar'
 import Colors from '../constants/Colors'
 import { CustomLayoutSpring } from '../constants/LayoutAnimations'
-import { ERROR_WHILE_FETCHING, fetchSearchByIngredientsFromServer, MAXIMUM_NUMERS_OF_CALLS_REACHED, RECIPE_COULD_NOT_BE_FOUND, SUCCESS } from '../methods/fetchFromServer'
+import { ERROR_WHILE_FETCHING, fetchSearchByIngredientsFromServer, MAXIMUM_NUMBERS_OF_CALLS_REACHED, RECIPE_COULD_NOT_BE_FOUND, SUCCESS } from '../methods/fetchFromServer'
 
 
 const SearchByIngredientsScreen = (props) => {
     //This workaround is necessary for adding ingredient when search button is pressed
     const [forceClearTextInput, setForceClearTextInput] = useState(false)
-    let ingradientTextBuffer = useRef("").current
+    let ingredientTextBuffer = useRef("").current
 
     const [recipesList, setRecipesList] = useState([])
     const [ingredientsList, setIngredientsList] = useState([])
@@ -42,10 +42,10 @@ const SearchByIngredientsScreen = (props) => {
                     case ERROR_WHILE_FETCHING:
                         Alert.alert("Something went wrong", response.error)
                         break;
-                    case MAXIMUM_NUMERS_OF_CALLS_REACHED:
+                    case MAXIMUM_NUMBERS_OF_CALLS_REACHED:
                         Alert.alert("Something went wrong", response.error)
                         break;
-                    //Because there is no way to offset search by ingredinets there is no need to implement case NO_MORE_RECIPES
+                    //Because there is no way to offset search by ingredients there is no need to implement case NO_MORE_RECIPES
                     case SUCCESS:
                         if (response.firstSearchId !== undefined) {
                             firstSearchId = response.firstSearchId;
@@ -72,10 +72,10 @@ const SearchByIngredientsScreen = (props) => {
 
 
 
-    const addIngredient = (ingredinetName) => {
-        if (ingredientsList.find(item => ingredinetName === item) === undefined && ingredinetName.length > 0) {
+    const addIngredient = (ingredientName) => {
+        if (ingredientsList.find(item => ingredientName === item) === undefined && ingredientName.length > 0) {
             LayoutAnimation.configureNext(CustomLayoutSpring)
-            setIngredientsList(prev => [ingredinetName, ...prev]);
+            setIngredientsList(prev => [ingredientName, ...prev]);
         }
     }
 
@@ -90,10 +90,9 @@ const SearchByIngredientsScreen = (props) => {
     }
 
 
-    const searchHander = () => {
-        console.log("Searching")
+    const searchHandler = () => {
         setForceClearTextInput(true)
-        addIngredient(ingradientTextBuffer)
+        addIngredient(ingredientTextBuffer)
         setRecipesList([]);
         Keyboard.dismiss();
         setShouldDataBeFetchedFromServer(true);
@@ -101,7 +100,7 @@ const SearchByIngredientsScreen = (props) => {
     }
 
     const setBufferedText = (text) => {
-        ingradientTextBuffer = text
+        ingredientTextBuffer = text
     }
 
     return (
@@ -114,7 +113,7 @@ const SearchByIngredientsScreen = (props) => {
                 {ingredientsList.length > 0 && <IngredientsList removeAllIngredients={removeAllIngredients} ingredientsList={ingredientsList} removeIngredient={removeIngredient} />}
 
                 {recipesList.length > 0 && !couldNotFindRecipe && !loading && <MealPreviewList data={recipesList}
-                    gotDetailedData={false} navigationProp={props.navigation} renderRecipeSearchedByIngredinets={true} />}
+                    gotDetailedData={false} navigationProp={props.navigation} renderRecipeSearchedByIngredients={true} />}
 
                 {recipesList.length < 1 && !loading && !couldNotFindRecipe && <TouchableWithoutFeedback disabled={recipesList.length > 0 ? true : false} style={{ flex: 1 }} onPress={() => { Keyboard.dismiss() }}>
                     <View style={{ flex: 1 }} />
@@ -127,7 +126,7 @@ const SearchByIngredientsScreen = (props) => {
             </View>
             <KeyboardAvoidingView style={{ position: 'absolute', height: "100%", width: "100%", backgroundColor: 'transparent', zIndex: 2 }} behavior='height' enabled={isKeyboardDisplayed}
                 pointerEvents="box-none" >
-                {ingredientsList.length > 0 && <FloatingSearchIcon onPress={searchHander} />}
+                {ingredientsList.length > 0 && <FloatingSearchIcon onPress={searchHandler} />}
             </KeyboardAvoidingView>
 
 

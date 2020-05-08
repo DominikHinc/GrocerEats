@@ -1,8 +1,7 @@
 import NetInfo from '@react-native-community/netinfo';
 import { useFocusEffect } from '@react-navigation/native';
 import React, { useCallback, useEffect, useState } from 'react';
-import { KeyboardAvoidingView, LayoutAnimation, SectionList, StyleSheet, View } from 'react-native';
-import { CustomLayoutMove } from '../constants/LayoutAnimations';
+import { KeyboardAvoidingView, SectionList, StyleSheet, View } from 'react-native';
 import Aisle from './Aisle';
 import Product from './Product';
 
@@ -10,18 +9,13 @@ const GroceryListList = ({ data }) => {
 
     const [localOrderedAislesList, setLocalOrderedAislesList] = useState([])
     const [visibilityOfAisles, setVisibilityOfAisles] = useState({ All: true })
-    const [canMove, setCanMove] = useState(true)
     const [noInternetConnection, setNoInternetConnection] = useState(false)
 
     const unorderedAislesList = {};
     let orderedAislesList = [];
 
     useEffect(() => {
-        //If can move if false, then that means that this effect was called because the order of products changed
-        if (canMove === false) {
-            LayoutAnimation.configureNext(CustomLayoutMove, () => setCanMove(true))
-        }
-        //Here is created data list that can be interperted by Section List
+        //Received data is converted to match SectionList requirements
         data.forEach(item => {
             if (unorderedAislesList["All"] === undefined) {
                 unorderedAislesList["All"] = [item]
@@ -52,7 +46,6 @@ const GroceryListList = ({ data }) => {
         //Because I don't want the aisles order to be dependent on index of products I sort them alphabetically
         Object.keys(unorderedAislesList).sort().forEach((key) => {
             orderedAislesList = [...orderedAislesList, { title: key, data: unorderedAislesList[key].sort((a,b)=>{
-                //Because I don't want the products order to be dependent on their id I sort them alphabetically
                 if(a.title < b.title){return -1}
                 if(a.title > b.title){return 1}
                 return 0;
@@ -79,36 +72,6 @@ const GroceryListList = ({ data }) => {
         })
     }, [setVisibilityOfAisles])
 
-
-    // const moveProductOneIndexUp = useCallback((index) => {
-    //     console.log(canMove)
-    //     if (canMove === true) {
-    //     // console.log("Moving " + index + " One up")
-    //     // const currnetArrayCopy = data;
-    //     // const movedItemCopy = currnetArrayCopy[index]
-    //     // currnetArrayCopy[index] = currnetArrayCopy[index - 1]
-    //     // currnetArrayCopy[index - 1] = movedItemCopy;
-    //     // dispatch(setNewProductsList(currnetArrayCopy))
-    //     setCanMove(false)
-    //     dispatch(swapTwoProductsOrder(index,-1))
-    //     }
-
-    // },[canMove,dispatch,setCanMove,data])
-
-    // const moveProductOneIndexDown = useCallback((index) => {
-    //     console.log(canMove)
-    //     if (canMove === true) {
-    //     // console.log("Moving " + index + " One down")
-    //     // const currnetArrayCopy = data;
-    //     // const movedItemCopy = currnetArrayCopy[index]
-    //     // currnetArrayCopy[index] = currnetArrayCopy[index + 1]
-    //     // currnetArrayCopy[index + 1] = movedItemCopy;
-    //     // dispatch(setNewProductsList(currnetArrayCopy))
-    //     setCanMove(false)
-    //     dispatch(swapTwoProductsOrder(index,1))
-    //     }
-
-    // },[canMove,dispatch,setCanMove,data])
 
     const renderListHeader = ({ section }) => {
         return <View key={section.title}><Aisle aisle={section.title} data={section.data}

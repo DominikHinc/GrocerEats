@@ -8,7 +8,7 @@ const AmountOfGroceriesManager = ({textInputRef, amount, setAmount, selectedUnit
     const [tabOfUnits, setTabOfUnits] = useState([{ label: "No Unit", value: "" }, { label: 'g', value: 'g' }]);
 
     useEffect(() => {
-        //Because picker does not allow creating dynamic list inside of its body the unit list must be created seperatly
+        //Because picker does not allow creating dynamic list inside of its body the unit list must be created separately
 
         setTabOfUnits([{ label: "No unit", value: "" }]);
         if (currentProduct.unitMain.length > 0) {
@@ -17,7 +17,7 @@ const AmountOfGroceriesManager = ({textInputRef, amount, setAmount, selectedUnit
         if (currentProduct.unitMain.toLowerCase() !== currentProduct.unitSecondary.toLowerCase() && currentProduct.unitSecondary.length > 0) {
             setTabOfUnits(prev => [...prev, { label: currentProduct.unitSecondary, value: currentProduct.unitSecondary }])
         }
-        //Beside units got from server there is option to add ingradient to list in standard weight units
+        //Beside units got from server there is option to add ingredients to list in standard weight units
         if (currentProduct.unitMain !== 'g' && currentProduct.unitSecondary !== 'g') {
             setTabOfUnits(prev => [...prev, { label: 'g', value: 'g' }])
         }
@@ -29,6 +29,7 @@ const AmountOfGroceriesManager = ({textInputRef, amount, setAmount, selectedUnit
         }
 
     }, [])
+    
     const setTextinputText = (text) => {
         setAmount(text.toString())
     }

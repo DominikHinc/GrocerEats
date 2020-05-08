@@ -25,12 +25,11 @@ const ProductAmountManager = React.memo(({id, amountMain, unitMain }) => {
         setAmountText(amountMain.toString())
     },[amountMain])
 
-    const setIsTextinputEditable = (isEditable) => {
+    const setIsTextInputEditable = (isEditable) => {
 
         if(isEditable === false){
             const isValid = amountTextInputValue.match(/^-?\d*(\.\d+)?$/);
             if (isValid && parseFloat(amountTextInputValue) > 0) {
-                //console.log("Object will be edited")
                 dispatch(editProductAmount(id, amountTextInputValue))
             } else {
                 Alert.alert("Invalid amount", "You can only enter numbers, that are greater than 0")
@@ -44,17 +43,16 @@ const ProductAmountManager = React.memo(({id, amountMain, unitMain }) => {
 
 
     return (
-        <View style={styles.amountMainConatiner}>
+        <View style={styles.amountMainContainer}>
             <View style={styles.textInputContainer}>
                 <TextInput ref={textInputRef} editable={isEditing} value={amountTextInputValue} onChangeText={setAmountText} 
-                style={styles.amountTextInput} maxLength={6} keyboardType='numeric' onSubmitEditing={()=>{setIsTextinputEditable(false)}}  />
+                style={styles.amountTextInput} maxLength={6} keyboardType='numeric' onSubmitEditing={()=>{setIsTextInputEditable(false)}}  />
             </View>
-            {/* <DefaultText style={styles.amountLabel}>{amountMain}</DefaultText> */}
             <DefaultText style={styles.amountLabel}>{unitMain}</DefaultText>
             {isEditing ?
-                <Feather name="check" size={normalizeIconSize(18)} style={styles.editIcon} color={Colors.green} onPress={() => setIsTextinputEditable(false)} />
+                <Feather name="check" size={normalizeIconSize(18)} style={styles.editIcon} color={Colors.green} onPress={() => setIsTextInputEditable(false)} />
                 :
-                <Feather name="edit" size={normalizeIconSize(18)} style={styles.editIcon}  onPress={() => setIsTextinputEditable(true)} />
+                <Feather name="edit" size={normalizeIconSize(18)} style={styles.editIcon}  onPress={() => setIsTextInputEditable(true)} />
             }
 
         </View>
@@ -62,7 +60,7 @@ const ProductAmountManager = React.memo(({id, amountMain, unitMain }) => {
 })
 
 const styles = StyleSheet.create({
-    amountMainConatiner: {
+    amountMainContainer: {
         flexDirection: 'row',
         alignItems: 'center'
     },

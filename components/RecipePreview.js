@@ -11,8 +11,6 @@ import { removeSavedRecipe, saveRecipe } from '../store/actions/SavedRecipesActi
 import FloatingHeartIcon from './FloatingHeartIcon'
 
 
-
-
 const RecipePreview = ({ title, id, image, readyInMinutes, servings, onPress, missedIngredients, usedIngredients, savedData }) => {
     const readyInMinutesChangedToHoursAndMinutes = changeMinutesToHoursAndMinutes(readyInMinutes)
     let clockColor = calculateTimeColor(readyInMinutes)
@@ -51,7 +49,7 @@ const RecipePreview = ({ title, id, image, readyInMinutes, servings, onPress, mi
                             {missedIngredients !== undefined && missedIngredients > 0 && <DefaultText style={styles.basicInfo}>{missedIngredients} missing</DefaultText>}
 
                         </View>
-                        <View style={[styles.arrowConatiner, { marginTop: usedIngredients !== undefined && missedIngredients !== undefined ? 0 : normalizeMarginSize(-5) }]}>
+                        <View style={[styles.arrowContainer, { marginTop: usedIngredients !== undefined && missedIngredients !== undefined ? 0 : normalizeMarginSize(-5) }]}>
                             <Ionicons name="ios-arrow-round-forward" size={normalizeIconSize(30)} />
                         </View>
                     </View>
@@ -98,7 +96,7 @@ const styles = StyleSheet.create({
         fontFamily: 'sofia-bold',
         fontSize: 20,
     },
-    arrowConatiner: {
+    arrowContainer: {
         flexDirection: 'row-reverse',
     },
     indicatorIcons: {

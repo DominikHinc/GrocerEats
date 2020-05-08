@@ -1,9 +1,10 @@
-import { AntDesign, SimpleLineIcons } from '@expo/vector-icons';
-import React, { useEffect, useState, useRef, useCallback } from 'react';
+import { SimpleLineIcons } from '@expo/vector-icons';
+import NetInfo from '@react-native-community/netinfo';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { ActivityIndicator, Alert, Animated, Dimensions, Easing, StyleSheet, View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { useDispatch, useSelector } from 'react-redux';
-import AdditonalMealInfo from '../components/AdditonalMealInfo';
+import AdditionalMealInfo from '../components/AdditionalMealInfo';
 import AddToGroceryListModal from '../components/AddToGroceryListModal';
 import BasicMealInfo from '../components/BasicMealInfo';
 import DefaultText from '../components/DefaultText';
@@ -11,13 +12,12 @@ import FloatingHeartIcon from '../components/FloatingHeartIcon';
 import GoBackArrow from '../components/GoBackArrow';
 import MealPreparation from '../components/MealPreparation';
 import MealTags from '../components/MealTags';
-import SwipableCard from '../components/SwipableCard';
+import SwipeableCard from '../components/SwipeableCard';
 import Colors from '../constants/Colors';
-import { ERROR_WHILE_FETCHING, fetchMealDetailsFromServer, MAXIMUM_NUMERS_OF_CALLS_REACHED, SUCCESS } from '../methods/fetchFromServer';
-import { normalizeIconSize, normalizePaddingSize, normalizeBorderRadiusSize } from '../methods/normalizeSizes';
-import { removeSavedRecipe, saveRecipe } from '../store/actions/SavedRecipesActions';
+import { ERROR_WHILE_FETCHING, fetchMealDetailsFromServer, MAXIMUM_NUMBERS_OF_CALLS_REACHED, SUCCESS } from '../methods/fetchFromServer';
+import { normalizeBorderRadiusSize, normalizeIconSize, normalizePaddingSize } from '../methods/normalizeSizes';
 import ProductModel from '../models/ProductModel';
-import NetInfo from '@react-native-community/netinfo';
+import { removeSavedRecipe, saveRecipe } from '../store/actions/SavedRecipesActions';
 
 
 const SCROLLING_TAB_BORDER_RADIUS = normalizeBorderRadiusSize(32) 
@@ -39,7 +39,7 @@ const MealDetailsScreen = (props) => {
     const dispatch = useDispatch()
 
     //Setters
-    const setModalVisiblilty = (shouldBeVisible) => {
+    const setModalVisibility = (shouldBeVisible) => {
         setModalVisible(shouldBeVisible)
     }
 
@@ -66,7 +66,7 @@ const MealDetailsScreen = (props) => {
                             props.navigation.goBack()
                             Alert.alert("Something went wrong", response.error)
                             break;
-                        case MAXIMUM_NUMERS_OF_CALLS_REACHED:
+                        case MAXIMUM_NUMBERS_OF_CALLS_REACHED:
                             props.navigation.goBack()
                             Alert.alert("Something went wrong", response.error)
                             break;
@@ -143,7 +143,7 @@ const MealDetailsScreen = (props) => {
 
                 ingredientsMap[item.id] = 1
                 return (
-                    <SwipableCard key={item.id} item={item} setScrolling={setScrolling} setInfoForModal={setInfoForModal} noInternetConnection={noInternetConnection} />
+                    <SwipeableCard key={item.id} item={item} setScrolling={setScrolling} setInfoForModal={setInfoForModal} noInternetConnection={noInternetConnection} />
                 )
             })
         }
@@ -196,13 +196,13 @@ const MealDetailsScreen = (props) => {
 
                     <View style={styles.additionalInfoContainer} >
                         <DefaultText style={styles.sectionTitle}>Additional info</DefaultText>
-                        <AdditonalMealInfo mealDetails={mealDetails} />
+                        <AdditionalMealInfo mealDetails={mealDetails} />
                     </View>
 
                 </View>
             </ScrollView>}
             {loading && <View style={styles.loadingContainer} ><ActivityIndicator size='large' color={color} /></View>}
-            <AddToGroceryListModal modalVisible={modalVisible} setModalVisible={setModalVisiblilty} currentProduct={currentProduct} noInternetConnection={noInternetConnection} />
+            <AddToGroceryListModal modalVisible={modalVisible} setModalVisible={setModalVisibility} currentProduct={currentProduct} noInternetConnection={noInternetConnection} />
 
         </View>
     )

@@ -6,7 +6,7 @@ import Colors from '../constants/Colors';
 import { normalizeBorderRadiusSize, normalizeIconSize, normalizeMarginSize, normalizePaddingSize } from '../methods/normalizeSizes';
 import ProductModel from '../models/ProductModel';
 import { addProduct, editProductAmount } from '../store/actions/GroceryListActions';
-import AmountOfGroceriesManager from './AmountOfIngradientManager';
+import AmountOfGroceriesManager from './AmountOfGroceriesManager';
 import DefaultText from './DefaultText';
 
 
